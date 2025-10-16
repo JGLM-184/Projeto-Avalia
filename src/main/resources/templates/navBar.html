@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+<div th:fragment="navbar">
+    <header class="coordinator-navbar">
+        <h2 th:text="${pageTitle}">Página</h2>
+
+        <nav>
+            <ul class="nav-menu">
+                <li class="nav-item active">
+					<a th:href="@{/cadastroQuestao}"><span class="material-icons">description</span> Cadastro de Questão</a>
+                </li>
+                <li class="nav-item"><a><span class="material-icons">edit_note</span> Montar Prova</a></li>
+                <li class="nav-item"><a><span class="material-icons">folder_open</span> Banco de Prova</a></li>
+                <li class="nav-item"><a><span class="material-icons">search</span> Gerenciar Questões</a></li>
+                <li class="nav-item"><a><span class="material-icons">group</span> Gerenciar Usuários</a></li>
+            </ul>
+        </nav>
+
+        <div class="user-profile">
+            <img th:src="@{/imagens/Avatar.png}" alt="Avatar">
+            <a class="logout-link">Sair</a>
+        </div>
+    </header>
+</div>
+</body>
+</html>
