@@ -6,6 +6,6 @@ import org.springframework.stereotype.Repository;
 import br.edu.fatecguarulhos.projetoavalia.model.entity.Questao;
 
 @Repository
-public interface QuestaoRepository extends JpaRepository<Questao, Long> {
+public interface QuestaoRepository extends JpaRepository<Questao, Integer> {
 
 }

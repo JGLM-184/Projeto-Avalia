@@ -6,6 +6,6 @@ import org.springframework.stereotype.Repository;
 import br.edu.fatecguarulhos.projetoavalia.model.entity.Alternativa;
 
 @Repository
-public interface AlternativaRepository extends JpaRepository<Alternativa, Long> {
+public interface AlternativaRepository extends JpaRepository<Alternativa, Integer> {
 
 }
