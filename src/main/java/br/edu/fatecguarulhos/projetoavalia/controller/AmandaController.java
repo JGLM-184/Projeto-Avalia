@@ -12,8 +12,17 @@ public class AmandaController {
 	/* NÃO MEXER NESTA CLASSE - NÃO MEXER NESTA CLASSE - NÃO MEXER NESTA CLASSE - NÃO MEXER NESTA CLASSE*/
 	
 	//TELA INICIAL
-    @GetMapping("/cadastroQuestao")
+    @GetMapping("/")
     public String inicio(Model model) {
+    	model.addAttribute("pageTitle", "Início");
+        return "index";
+    }
+	
+	
+	//TELA DE CADASTRO DE QUESTÕES
+    @GetMapping("/cadastroQuestao")
+    public String cadastroQuestao(Model model) {
+    	model.addAttribute("paginaAtiva", "cadastroQuestao");
     	model.addAttribute("pageTitle", "Cadastro de Questão");
         return "cadastroQuestao";
     }

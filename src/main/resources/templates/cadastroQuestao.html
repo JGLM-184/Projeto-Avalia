@@ -12,67 +12,94 @@
 
 <body class="coordinator-layout">
 
-    <!-- Navbar -->
-    <div th:replace="~{navbar :: navbar}"></div>
+<!-- Navbar -->
+<div th:replace="~{navbar :: navbar}"></div>
 
-    <main class="main-content">
-		<div class="card question-form-card wide-form">
-		            
-			<div class="discipline-container">
-			    <div class="discipline-selection">
-			        <span class="discipline-tag">
-			            Engenharia de Software I 
-			            <span class="material-icons">close</span>
-			        </span>
-			    </div>
-			    
-			    <div class="dropdown">
-			        <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown">
-			            Disciplina
-			        </button>
-			        <ul class="dropdown-menu">
-			            <li><a class="dropdown-item">Engenharia de Software I</a></li>
-			            <li><a class="dropdown-item">Projeto de Engenharia de Software</a></li>
-			            <li><a class="dropdown-item">1</a></li>
-			            <li><a class="dropdown-item">2</a></li>
-			        </ul>
-			    </div>
-			</div>
-			
-			<div class="custom-checkbox">
-			  <input type="checkbox"  id="simuladoBolean">
-			  <label for="simuladoBolean">Questão de Simulado</label>
-			</div>
+<!-- Conteúdo Principal da tela -->
+<main class="main-content">
+	<div class="card question-form-card wide-form">
+	            
+	<div class="discipline-container">
+	    <div class="discipline-selection">
+	        <span class="discipline-tag">
+	            Engenharia de Software I 
+	            <span class="material-icons">close</span>
+	        </span>
+	    </div>
 
-            <div class="enunciado-section">
-                <p style="margin-bottom: 10px;">Adicione o enunciado da questão:</p>
-                <div class="question-area">
-                    <div class="enunciado-input">
-                        <textarea placeholder="Exemplo: Qual é a melhor matéria do quinto semestre de ADS?"></textarea>
-                    </div>
-                    <div class="image-placeholder">
-                        <span class="material-icons">add</span>
-                    </div>
-                </div>
+<!-- Botões e Disciplinas -->
+	    <div class="dropdown">
+	        <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown">Disciplina</button>
+	        <ul class="dropdown-menu">
+	            <li><a class="dropdown-item">Engenharia de Software I</a></li>
+	            <li><a class="dropdown-item">Projeto de Engenharia de Software</a></li>
+	            <li><a class="dropdown-item">1</a></li>
+	            <li><a class="dropdown-item">2</a></li>
+	        </ul>
+	    </div>
+		
+		<div class="dropdown">
+	        <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown">Curso</button>
+	        <ul class="dropdown-menu">
+	            <li><a class="dropdown-item">curso 1</a></li>
+	            <li><a class="dropdown-item">curso 2</a></li>
+	            <li><a class="dropdown-item">3</a></li>
+	            <li><a class="dropdown-item">4</a></li>
+	        </ul>
+	    </div>
+	</div>
+	
+	<div class="custom-checkbox">
+	  <input type="checkbox"  id="simuladoBolean">
+	  <label for="simuladoBolean">Questão de Simulado?</label>
+	</div>
+
+<!-- Campo para Enunciado da Questão e Imagem -->
+    <div class="enunciado-section">
+        <p style="margin-bottom: 10px;">Adicione o enunciado da questão:</p>
+        <div class="question-area">
+            <div class="enunciado-input">
+                <textarea placeholder="Exemplo: Qual é a melhor matéria do quinto semestre de ADS?"></textarea>
             </div>
-
-			<ul class="alternatives-list">
-				<li class="alternative-item">a) <span class="editable" contenteditable="true" data-placeholder="Programação Linear"></span></li>
-				<li class="alternative-item">b) <span class="editable" contenteditable="true" data-placeholder="Redes de computadores"></span></li>
-				<li class="alternative-item">c) <span class="editable" contenteditable="true" data-placeholder="Projeto de Engenharia de Software"></span></li>
-				<li class="alternative-item">d) <span class="editable" contenteditable="true" data-placeholder="Sistemas Distribuidos"></span></li>
-				<li class="alternative-item">e) <span class="editable" contenteditable="true" data-placeholder="Nenhuma das alternativas"></span></li>
-			</ul>
-
-
-            <div class="action-footer">
-                <button class="btn btn-save"><span class="material-icons" style="font-size:16px;">save</span> Salvar</button>
-                <button class="btn btn-edit"><span class="material-icons" style="font-size:16px;">edit</span> Editar</button>
-                <button class="btn btn-favorite"><span class="material-icons" style="font-size:16px;">star_border</span> Favoritar</button>
-                <button class="btn btn-delete"><span class="material-icons" style="font-size:16px;">delete</span> Excluir</button>
+            <div class="image-placeholder">
+                <span class="material-icons">add</span>
             </div>
         </div>
-    </main>
+    </div>
+
+<!-- Campo para Alternativas -->		
+	<ul class="alternatives-list">
+		<p style="margin-bottom: 10px;">Adicione as alternativas da questão:</p>
+	    <li class="alternative-item">
+	        <input type="radio" name="correta" class="alt-radio">
+	        <label>a) <span class="editable" contenteditable="true" data-placeholder="Programação Linear"></span></label>
+	    </li>
+	    <li class="alternative-item">
+	        <input type="radio" name="correta" class="alt-radio">
+	        <label>b) <span class="editable" contenteditable="true" data-placeholder="Redes de computadores"></span></label>
+	    </li>
+	    <li class="alternative-item">
+	        <input type="radio" name="correta" class="alt-radio">
+	        <label>c) <span class="editable" contenteditable="true" data-placeholder="Projeto de Engenharia de Software"></span></label>
+	    </li>
+	    <li class="alternative-item">
+	        <input type="radio" name="correta" class="alt-radio">
+	        <label>d) <span class="editable" contenteditable="true" data-placeholder="Sistemas Distribuidos"></span></label>
+	    </li>
+	    <li class="alternative-item">
+	        <input type="radio" name="correta" class="alt-radio">
+	        <label>e) <span class="editable" contenteditable="true" data-placeholder="Nenhuma das alternativas"></span></label>
+	    </li>
+	</ul>
+
+<!-- Botões no final da tela -->
+        <div class="action-footer">
+            <button class="btn btn-save"><span class="material-icons" style="font-size:16px;">save</span> Salvar</button>
+            <button class="btn btn-cancel"><span class="material-icons" style="font-size:16px;">close</span> Cancelar</button>
+
+        </div>
+    </div>
+</main>
 
 </body>
 </html>
