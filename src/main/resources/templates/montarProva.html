@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro de Questão</title>
+    <link rel="stylesheet" th:href="@{/style.css}">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+<body class="coordinator-layout">
+
+<!-- Navbar -->
+<div th:replace="~{navbar :: navbar}"></div>
+	
+<main class="main-content">
+    <div class="exam-assembly-container">
+        <!-- Painel Esquerdo -->
+        <div class="left-panel">
+            <div class="card">
+                <h4 style="margin-bottom: 24px; color: var(--text-dark);">Configurações da Prova</h4>
+                
+                <!-- Seção Disciplina -->
+                <div class="discipline-section">
+                    <label class="discipline-label">Filtrar questões por disciplina</label>
+					<div class="dropdown">
+						<select class="form-select" id="disciplinas" name="escolherDisciplinas">
+						      <option>Todas as disciplinas</option>
+						      <option>Engenharia de Software I</option>
+						      <option>Projeto de Engenharia de Software</option>
+						      <option>3</option>
+							  <option>4</option>
+							  <option>5</option>
+							  <option>6</option>
+							  <option>7</option>
+						    </select>
+				    </div>
+                    
+                    <div class="quantity-section">
+                        <label class="discipline-label">Quantidade de questões por matéria</label>
+                        <div class="quantity-input-container">
+                            <input type="number" class="form-input quantity-input" value="4">   
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Botões de Ação -->
+                <div class="action-buttons-grid">
+					<button class="btn action-btn random-btn">
+                        <span class="material-icons">shuffle</span>
+                        Escolher Questões Aleatoriamente
+                    </button>
+                    <button class="btn action-btn">
+                        <span class="material-icons">shuffle</span>
+                        Embaralhar Questões
+                    </button>
+                    <a href="editar_cabecalho.html" class="btn action-btn">
+                        <span class="material-icons">description</span>
+                        Editar Cabeçalho
+                    </a>
+                    <button class="btn action-btn">
+                        <span class="material-icons">shuffle</span>
+                        Embaralhar Alternativas
+                    </button>
+                    <a href="previa_prova.html" class="btn action-btn">
+                        <span class="material-icons">visibility</span>
+                        Ver Prévia
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Painel Direito -->
+        <div class="right-panel">
+            <div class="card">
+                <h4 style="margin-bottom: 24px; color: var(--text-dark);">Lista de Questões</h4>
+                
+                <!-- Barra de Pesquisa -->
+                <div class="search-input-container">
+                    <span class="material-icons search-icon">arrow_back</span>
+                    <input type="text" class="form-input" placeholder="Pesquisar questão">
+                    <button class="clear-button">
+                        <span class="material-icons">close</span>
+                    </button>
+                </div>
+
+                <!-- Lista de Questões -->
+                <div class="questions-list">
+                    <div class="question-item">
+                        <div class="question-content">
+                            <div class="question-meta">
+                                <span class="discipline-badge">Sistemas Operacionais</span>
+                            </div>
+                            <p class="question-text">Como funciona o modelo de arquitetura...</p>
+                        </div>
+                        <label class="checkbox-container">
+                            <input type="checkbox" checked>
+                            <span class="checkmark"></span>
+                        </label>
+                    </div>
+
+                    <div class="question-item">
+                        <div class="question-content">
+                            <div class="question-meta">
+                                <span class="discipline-badge">Disciplina</span>
+                            </div>
+                            <p class="question-text">Teste teste teste...</p>
+                        </div>
+                        <label class="checkbox-container">
+                            <input type="checkbox">
+                            <span class="checkmark"></span>
+                        </label>
+                    </div>
+
+                    <div class="question-item">
+                        <div class="question-content">
+                            <div class="question-meta">
+                                <span class="discipline-badge">Engenharia de Software II</span>
+                            </div>
+                            <p class="question-text">De acordo com a imagem a seguir, escolha...</p>
+                        </div>
+                        <label class="checkbox-container">
+                            <input type="checkbox">
+                            <span class="checkmark"></span>
+                        </label>
+                    </div>
+
+                    <div class="question-item">
+                        <div class="question-content">
+                            <div class="question-meta">
+                                <span class="discipline-badge">Banco de dados</span>
+                            </div>
+                            <p class="question-text">Abluebabluelabuelaslvelu...</p>
+                            <div class="question-image">
+                                <span class="material-icons">image</span>
+                            </div>
+                        </div>
+                        <label class="checkbox-container">
+                            <input type="checkbox" checked>
+                            <span class="checkmark"></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Barra de Ações Inferior -->
+<div class="footer-actions">
+        <button class="btn btn-save">
+            <span class="material-icons" style="font-size:16px;">download</span>
+            Salvar
+        </button>
+        <button class="btn btn-pdf">
+            <span class="material-icons" style="font-size:16px;">edit</span>
+            Baixar PDF
+        </button>
+    </div>
+</main>
+
+</body>
+</html>

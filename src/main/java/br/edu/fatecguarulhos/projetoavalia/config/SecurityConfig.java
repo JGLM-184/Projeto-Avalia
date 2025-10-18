@@ -16,10 +16,10 @@ public class SecurityConfig {
 		 http
 	        .authorizeHttpRequests(auth -> auth
 	        		//TORNA ESSAS ROTAS PÚBLICAS (NÃO PEDE LOGIN) PARA O DESENVOLVIMENTO
-	        	    .requestMatchers("/login**", "/css/**", "/js/**").permitAll()
+	        	    .requestMatchers("/login**", "/css/**", "/js/**", "/**").permitAll()
 	        	    
 	        	    //QUALQUER USUÁRIO AUTENTICADO PODE ACESSAR ESSAS ROTAS
-	        	    .requestMatchers("/**").authenticated()
+	        	    //.requestMatchers("/**").authenticated()
 	        	    
 	        	    //SOMENTE UM COORDENADOR PODE ACESSAS ESSAS ROTAS
 	        	    //.requestMatchers("/", "/", "/").hasRole("ADMIN")

@@ -18,6 +18,11 @@ public class AmandaController {
         return "index";
     }
 	
+  //TELA DE LOGIN
+    @GetMapping("/login")
+    public String login(Model model) {
+        return "login";
+    }
 	
 	//TELA DE CADASTRO DE QUESTÕES
     @GetMapping("/cadastroQuestao")
@@ -27,12 +32,29 @@ public class AmandaController {
         return "cadastroQuestao";
     }
 	
-  //TELA DE LOGIN
-    @GetMapping("/login")
-    public String login(Model model) {
-        return "login";
+  //TELA DE MONTAR PROVA
+    @GetMapping("/montarProva")
+    public String montarProva(Model model) {
+    	model.addAttribute("paginaAtiva", "montarProva");
+    	model.addAttribute("pageTitle", "Montar prova");
+        return "montarProva";
     }
-
+    
+  //TELA DO BANCO DE PROVAS
+    @GetMapping("/bancoProvas")
+    public String bancoProvas(Model model) {
+    	model.addAttribute("paginaAtiva", "bancoProvas");
+    	model.addAttribute("pageTitle", "Banco de Provas");
+        return "bancoProvas";
+    }
+    
+  //TELA DE GERENCIAR QUESTÕES
+    @GetMapping("/gerenciarQuestoes")
+    public String gerenciarQuestoes(Model model) {
+    	model.addAttribute("paginaAtiva", "gerenciarQuestoes");
+    	model.addAttribute("pageTitle", "Gerenciar Questões");
+        return "gerenciarQuestoes";
+    }
 	
 	
 }

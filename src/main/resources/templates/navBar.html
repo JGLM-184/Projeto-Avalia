@@ -11,21 +11,34 @@
 
     <nav>
     <ul class="nav-menu">
+		<!-- Navbar: Cadastro de Questão -->
 		<li class="nav-item" th:classappend="${paginaAtiva == 'cadastroQuestao'} ? ' active' : ''">
-		    <a th:href="@{/cadastroQuestao}">
-		        <span class="material-icons">description</span> Cadastro de Questão
-		    </a>
+		    <a th:href="@{/cadastroQuestao}"> <span class="material-icons">description</span> Cadastro de Questão </a>
 		</li>
-        <li class="nav-item"><a><span class="material-icons">edit_note</span> Montar Prova</a></li>
-        <li class="nav-item"><a><span class="material-icons">folder_open</span> Banco de Prova</a></li>
-        <li class="nav-item"><a><span class="material-icons">search</span> Gerenciar Questões</a></li>
+		
+		<!-- Navbar: Montar Prova -->
+        <li class="nav-item" th:classappend="${paginaAtiva == 'montarProva'} ? ' active' : ''">
+		    <a th:href="@{/montarProva}"> <span class="material-icons">edit_note</span> Montar Prova </a>
+		</li>
+		
+		<!-- Navbar: Banco de provas -->
+        <li class="nav-item" th:classappend="${paginaAtiva == 'bancoProvas'} ? ' active' : ''">
+			<a th:href="@{/bancoProvas}"> <span class="material-icons">folder_open</span> Banco de Provas</a>
+		</li>
+		
+		<!-- Navbar: Gerenciar Questões -->
+        <li class="nav-item" th:classappend="${paginaAtiva == 'gerenciarQuestoes'} ? ' active' : ''">
+			<a th:href="@{/gerenciarQuestoes}"> <span class="material-icons">search</span> Gerenciar Questões</a>
+		</li>
+		
+		<!-- Navbar: Gerenciar Usuários -->
         <li class="nav-item"><a><span class="material-icons">group</span> Gerenciar Usuários</a></li>
     </ul>
     </nav>
 
     <div class="user-profile">
         <img th:src="@{/imagens/Avatar.png}" alt="Avatar">
-        <a class="logout-link">Sair</a>
+        <a th:href="@{/login}" class="logout-link">Sair</a>
     </div>
 	
 </header>
