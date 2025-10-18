@@ -36,10 +36,16 @@
     </ul>
     </nav>
 
-    <div class="user-profile">
-        <img th:src="@{/imagens/Avatar.png}" alt="Avatar">
-        <a th:href="@{/login}" class="logout-link">Sair</a>
-    </div>
+	<div class="user-profile">
+	        <img th:src="@{/imagens/Avatar.png}" alt="Avatar">
+			
+	        <!-- Logout -->
+	        <form th:action="@{/logout}" method="post" onsubmit="return confirm('Tem certeza que deseja sair?');">
+	            <button type="submit" class="logout-link">
+	                Sair
+	            </button>
+	        </form>
+	    </div>
 	
 </header>
 

@@ -3,10 +3,9 @@ package br.edu.fatecguarulhos.projetoavalia.dto;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.Size;
 import java.util.Set;
 
-public class ProfessorCadastroDTO {
+public class ProfessorAtualizarDTO {
 
     @NotBlank(message = "O nome é obrigatório.")
     private String nome;
@@ -18,10 +17,6 @@ public class ProfessorCadastroDTO {
     @NotBlank(message = "O RE é obrigatório.")
     private String re;
 
-    @NotBlank(message = "A senha é obrigatória.")
-    @Size(min = 6, message = "A senha deve ter no mínimo 6 caracteres.")
-    private String senha;
-
     private boolean coordenador;
 
     @NotEmpty(message = "É necessário informar pelo menos uma disciplina.")
@@ -30,28 +25,25 @@ public class ProfessorCadastroDTO {
     @NotEmpty(message = "É necessário informar pelo menos um curso.")
     private Set<Integer> idsCursos;
     
+    
     //CONSTRUTORES
-	public ProfessorCadastroDTO() {
-		
-	}
-	
-	public ProfessorCadastroDTO(@NotBlank(message = "O nome é obrigatório.") String nome,
+    public ProfessorAtualizarDTO() {
+    	
+    }
+
+	public ProfessorAtualizarDTO(@NotBlank(message = "O nome é obrigatório.") String nome,
 			@NotBlank(message = "O e-mail é obrigatório.") @Email(message = "Formato de e-mail inválido.") String email,
-			@NotBlank(message = "O RE é obrigatório.") String re,
-			@NotBlank(message = "A senha é obrigatória.") @Size(min = 6, message = "A senha deve ter no mínimo 6 caracteres.") String senha,
-			boolean coordenador,
+			@NotBlank(message = "O RE é obrigatório.") String re, boolean coordenador,
 			@NotEmpty(message = "É necessário informar pelo menos uma disciplina.") Set<Integer> idsDisciplinas,
 			@NotEmpty(message = "É necessário informar pelo menos um curso.") Set<Integer> idsCursos) {
 		this.nome = nome;
 		this.email = email;
 		this.re = re;
-		this.senha = senha;
 		this.coordenador = coordenador;
 		this.idsDisciplinas = idsDisciplinas;
 		this.idsCursos = idsCursos;
 	}
-	
-	//GETTERS E SETTERS
+
 	public String getNome() {
 		return nome;
 	}
@@ -76,14 +68,6 @@ public class ProfessorCadastroDTO {
 		this.re = re;
 	}
 
-	public String getSenha() {
-		return senha;
-	}
-
-	public void setSenha(String senha) {
-		this.senha = senha;
-	}
-
 	public boolean isCoordenador() {
 		return coordenador;
 	}
@@ -106,5 +90,5 @@ public class ProfessorCadastroDTO {
 
 	public void setIdsCursos(Set<Integer> idsCursos) {
 		this.idsCursos = idsCursos;
-	}    
+	}
 }
