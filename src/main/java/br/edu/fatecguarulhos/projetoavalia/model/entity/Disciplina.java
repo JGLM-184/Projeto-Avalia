@@ -9,9 +9,6 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
@@ -20,7 +17,7 @@ import jakarta.persistence.Table;
 public class Disciplina {
 	
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int disciplinaId;
+	private int id;
 	private String nome;
     
     // UMA DISCIPLINA POSSUI MUITAS QUESTÕES
@@ -33,4 +30,44 @@ public class Disciplina {
         fetch = FetchType.LAZY 
     )
     private Set<Questao> questoes = new HashSet<>();
+
+    //CONSTRUTORES
+    public Disciplina() {
+    	
+    }
+    
+	public Disciplina(int id, String nome, Set<Questao> questoes) {
+		super();
+		this.id = id;
+		this.nome = nome;
+		this.questoes = questoes;
+	}
+
+	//GETTERS E SETTERS
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public String getNome() {
+		return nome;
+	}
+
+	public void setNome(String nome) {
+		this.nome = nome;
+	}
+
+	public Set<Questao> getQuestoes() {
+		return questoes;
+	}
+
+	public void setQuestoes(Set<Questao> questoes) {
+		this.questoes = questoes;
+	}
+	
+    
+    
 }

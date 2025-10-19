@@ -13,7 +13,7 @@ import jakarta.persistence.Table;
 public class Prova {
 	
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int provaId;
+	private int id;
 	private String titulo;
 	/*private LocalDate dataCriacao;
 	private Questao questoes; //IMPLEMENTAR MULTIPLICIDADE

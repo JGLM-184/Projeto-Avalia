@@ -9,8 +9,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
@@ -20,8 +18,9 @@ import jakarta.persistence.Table;
 public class Questao {
 
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int idQuestao;
+	private int id;
 	private String enunciado;
+	private String imagem;
 	
 	// RELACIONAMENTOS MUITOS PARA UM
     @ManyToOne(fetch = FetchType.LAZY)
@@ -53,10 +52,11 @@ public class Questao {
 		
 	}
 
-	public Questao(int idQuestao, String enunciado, Professor autor, Curso curso, Disciplina disciplina,
+	public Questao(int id, String enunciado, String imagem, Professor autor, Curso curso, Disciplina disciplina,
 			boolean simulado) {
-		this.idQuestao = idQuestao;
+		this.id = id;
 		this.enunciado = enunciado;
+		this.imagem = imagem;
 		this.autor = autor;
 		this.curso = curso;
 		this.disciplina = disciplina;
@@ -64,12 +64,12 @@ public class Questao {
 	}
 
 	//GETTERS E SETTERS
-	public int getIdQuestao() {
-		return idQuestao;
+	public int getId() {
+		return id;
 	}
 
-	public void setIdQuestao(int idQuestao) {
-		this.idQuestao = idQuestao;
+	public void setId(int id) {
+		this.id = id;
 	}
 
 	public String getEnunciado() {
@@ -78,6 +78,14 @@ public class Questao {
 
 	public void setEnunciado(String enunciado) {
 		this.enunciado = enunciado;
+	}
+	
+	public String getImagem() {
+		return imagem;
+	}
+
+	public void setImagem(String imagem) {
+		this.imagem = imagem;
 	}
 
 	public Professor getAutor() {
@@ -111,4 +119,14 @@ public class Questao {
 	public void setSimulado(boolean simulado) {
 		this.simulado = simulado;
 	}
+
+	public Set<Alternativa> getAlternativas() {
+		return alternativas;
+	}
+
+	public void setAlternativas(Set<Alternativa> alternativas) {
+		this.alternativas = alternativas;
+	}
+	
+	
 }

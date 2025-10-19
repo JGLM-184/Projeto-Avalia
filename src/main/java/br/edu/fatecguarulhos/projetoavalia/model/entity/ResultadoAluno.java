@@ -12,7 +12,7 @@ import jakarta.persistence.Table;
 public class ResultadoAluno {
 	
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int resultadoAlunoId;
+	private int id;
 	private String aluno;
 	/*private Prova simulado;
 	private int totalAcertos;

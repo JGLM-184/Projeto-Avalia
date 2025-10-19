@@ -17,7 +17,7 @@ import jakarta.persistence.Table;
 public class Curso {
     
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int cursoId;
+	private int id;
 	private String nome;
     
 	// RELAÇÃO DE MUITOS PARA MUITOS (UNIDIRECIONAL) - DISCIPLINA
@@ -35,19 +35,19 @@ public class Curso {
 		
 	}
 
-	public Curso(int cursoId, String nome, Set<Disciplina> disciplinas) {
-		this.cursoId = cursoId;
+	public Curso(int id, String nome, Set<Disciplina> disciplinas) {
+		this.id = id;
 		this.nome = nome;
 		this.disciplinas = disciplinas;
 	}
 
 	//GETTERS E SETTERS
-	public int getCursoId() {
-		return cursoId;
+	public int getId() {
+		return id;
 	}
 
-	public void setCursoId(int cursoId) {
-		this.cursoId = cursoId;
+	public void setId(int id) {
+		this.id = id;
 	}
 
 	public String getNome() {

@@ -16,7 +16,7 @@ import jakarta.persistence.Table;
 public class Professor {
 
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int professorId;
+	private int id;
 	
 	private String nome;
 	private String email; 
@@ -30,7 +30,7 @@ public class Professor {
 	@ManyToMany
     @JoinTable(
         name = "professor_disciplina",
-        joinColumns = @JoinColumn(name = "professor_id"), 
+        joinColumns = @JoinColumn(name = "id"), 
         inverseJoinColumns = @JoinColumn(name = "disciplina_id")
     )
 	private Set<Disciplina> disciplinas = new HashSet<>();
@@ -50,9 +50,9 @@ public class Professor {
 		
 	}
 
-	public Professor(int professorId, String nome, String email, String re, String senha, Set<Disciplina> disciplinas,
+	public Professor(int id, String nome, String email, String re, String senha, Set<Disciplina> disciplinas,
 			Set<Curso> cursos, boolean coordenador, boolean primeiroAcesso) {
-		this.professorId = professorId;
+		this.id = id;
 		this.nome = nome;
 		this.email = email;
 		this.re = re;
@@ -64,12 +64,12 @@ public class Professor {
 	}
 
 	//GETTERS E SETTER
-	public int getProfessorId() {
-		return professorId;
+	public int getId() {
+		return id;
 	}
 
-	public void setProfessorId(int professorId) {
-		this.professorId = professorId;
+	public void setId(int id) {
+		this.id = id;
 	}
 
 	public String getNome() {

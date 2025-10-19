@@ -14,7 +14,7 @@ import jakarta.persistence.Table;
 public class Alternativa {
 
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY) //CHAVE PRIMÁRIA EM AUTOINCREMENTO
-	private int idAlternativa;
+	private int id;
 	private String texto;
 	private boolean correto;
 	
@@ -28,19 +28,19 @@ public class Alternativa {
 		
 	}
 
-	public Alternativa(int idAlternativa, String texto, boolean correto) {
-		this.idAlternativa = idAlternativa;
+	public Alternativa(int id, String texto, boolean correto) {
+		this.id = id;
 		this.texto = texto;
 		this.correto = correto;
 	}
 
 	//GETTERS E SETTERS
-	public int getIdAlternativa() {
-		return idAlternativa;
+	public int getId() {
+		return id;
 	}
 
-	public void setIdAlternativa(int idAlternativa) {
-		this.idAlternativa = idAlternativa;
+	public void setId(int id) {
+		this.id = id;
 	}
 
 	public String getTexto() {
@@ -57,5 +57,15 @@ public class Alternativa {
 
 	public void setCorreto(boolean correto) {
 		this.correto = correto;
+	}
+
+	public Questao getQuestao() {
+		return questao;
+	}
+
+	public void setQuestao(Questao questao) {
+		this.questao = questao;
 	}	
+	
+	
 }
