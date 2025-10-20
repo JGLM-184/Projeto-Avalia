@@ -1,8 +1,7 @@
 package br.edu.fatecguarulhos.projetoavalia.service;
 
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -58,14 +57,14 @@ public class ProfessorService {
         
         String senhaCriptografada = passwordEncoder.encode(dto.getSenha());
 
-        Set<Disciplina> disciplinas = new HashSet<>();
+        List<Disciplina> disciplinas = new ArrayList<>();
         if (dto.getIdsDisciplinas() != null) {
             dto.getIdsDisciplinas().forEach(id -> {
                 disciplinas.add(disciplinaRepository.findById(id).orElseThrow(() -> new RuntimeException("Disciplina com ID " + id + " não encontrada.")));
             });
         }
 
-        Set<Curso> cursos = new HashSet<>();
+        List<Curso> cursos = new ArrayList<>();
         if (dto.getIdsCursos() != null) {
             dto.getIdsCursos().forEach(id -> {
                 cursos.add(cursoRepository.findById(id)
@@ -81,6 +80,7 @@ public class ProfessorService {
         professor.setPrimeiroAcesso(true);
         professor.setDisciplinas(disciplinas);
         professor.setCursos(cursos);
+        professor.setAtivo(true);
         return professorRepository.save(professor);
     }
     
@@ -94,10 +94,11 @@ public class ProfessorService {
         professor.setEmail(dto.getEmail());
         professor.setRe(dto.getRe());
         professor.setCoordenador(dto.isCoordenador());
+        professor.setAtivo(dto.isAtivo());	
 
         //ATUALIZA DISCIPLINA
         if (dto.getIdsDisciplinas() != null) {
-            Set<Disciplina> disciplinas = new HashSet<>();
+            List<Disciplina> disciplinas = new ArrayList<>();
             dto.getIdsDisciplinas().forEach(disciplinaId -> {
                 Disciplina disciplina = disciplinaRepository.findById(disciplinaId)
                         .orElseThrow(() -> new RuntimeException("Disciplina com ID " + disciplinaId + " não encontrada."));
@@ -108,7 +109,7 @@ public class ProfessorService {
 
         //ATUALIZA CURSOS
         if (dto.getIdsCursos() != null) {
-            Set<Curso> cursos = new HashSet<>();
+            List<Curso> cursos = new ArrayList<>();
             dto.getIdsCursos().forEach(cursoId -> {
                 Curso curso = cursoRepository.findById(cursoId)
                         .orElseThrow(() -> new RuntimeException("Curso com ID " + cursoId + " não encontrado."));

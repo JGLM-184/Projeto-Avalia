@@ -25,6 +25,8 @@ public class ProfessorAtualizarDTO {
     @NotEmpty(message = "É necessário informar pelo menos um curso.")
     private Set<Integer> idsCursos;
     
+    private boolean ativo;
+    
     
     //CONSTRUTORES
     public ProfessorAtualizarDTO() {
@@ -35,13 +37,15 @@ public class ProfessorAtualizarDTO {
 			@NotBlank(message = "O e-mail é obrigatório.") @Email(message = "Formato de e-mail inválido.") String email,
 			@NotBlank(message = "O RE é obrigatório.") String re, boolean coordenador,
 			@NotEmpty(message = "É necessário informar pelo menos uma disciplina.") Set<Integer> idsDisciplinas,
-			@NotEmpty(message = "É necessário informar pelo menos um curso.") Set<Integer> idsCursos) {
+			@NotEmpty(message = "É necessário informar pelo menos um curso.") Set<Integer> idsCursos, boolean ativo) {
+		super();
 		this.nome = nome;
 		this.email = email;
 		this.re = re;
 		this.coordenador = coordenador;
 		this.idsDisciplinas = idsDisciplinas;
 		this.idsCursos = idsCursos;
+		this.ativo = ativo;
 	}
 
 	public String getNome() {
@@ -90,5 +94,13 @@ public class ProfessorAtualizarDTO {
 
 	public void setIdsCursos(Set<Integer> idsCursos) {
 		this.idsCursos = idsCursos;
+	}
+
+	public boolean isAtivo() {
+		return ativo;
+	}
+
+	public void setAtivo(boolean ativo) {
+		this.ativo = ativo;
 	}
 }

@@ -18,7 +18,7 @@ public class ProfessorCadastroDTO {
     @NotBlank(message = "O RE é obrigatório.")
     private String re;
 
-    @NotBlank(message = "A senha é obrigatória.")
+    @NotBlank(message = "A senha provisória é obrigatória.")
     @Size(min = 6, message = "A senha deve ter no mínimo 6 caracteres.")
     private String senha;
 
@@ -29,6 +29,8 @@ public class ProfessorCadastroDTO {
 
     @NotEmpty(message = "É necessário informar pelo menos um curso.")
     private Set<Integer> idsCursos;
+    
+    private boolean ativo = true;
     
     //CONSTRUTORES
 	public ProfessorCadastroDTO() {
@@ -49,6 +51,7 @@ public class ProfessorCadastroDTO {
 		this.coordenador = coordenador;
 		this.idsDisciplinas = idsDisciplinas;
 		this.idsCursos = idsCursos;
+		this.ativo = true;
 	}
 	
 	//GETTERS E SETTERS
@@ -106,5 +109,13 @@ public class ProfessorCadastroDTO {
 
 	public void setIdsCursos(Set<Integer> idsCursos) {
 		this.idsCursos = idsCursos;
+	}
+
+	public boolean isAtivo() {
+		return ativo;
+	}
+
+	public void setAtivo(boolean ativo) {
+		this.ativo = ativo;
 	}    
 }

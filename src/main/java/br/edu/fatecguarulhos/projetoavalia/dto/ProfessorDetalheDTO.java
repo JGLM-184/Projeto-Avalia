@@ -10,6 +10,7 @@ public class ProfessorDetalheDTO {
     private String re;
     private boolean coordenador;
     private boolean primeiroAcesso;
+    private boolean ativo;
     private Set<String> disciplinas;
     private Set<String> cursos;
 
@@ -19,7 +20,7 @@ public class ProfessorDetalheDTO {
     }
 
 	public ProfessorDetalheDTO(Integer id, String nome, String email, String re, boolean coordenador,
-			boolean primeiroAcesso, Set<String> disciplinas, Set<String> cursos) {
+			boolean primeiroAcesso, boolean ativo, Set<String> disciplinas, Set<String> cursos) {
 		super();
 		this.id = id;
 		this.nome = nome;
@@ -29,6 +30,7 @@ public class ProfessorDetalheDTO {
 		this.primeiroAcesso = primeiroAcesso;
 		this.disciplinas = disciplinas;
 		this.cursos = cursos;
+		this.ativo = ativo;
 	}
 
 	//GETTERS E SETTERS
@@ -94,5 +96,13 @@ public class ProfessorDetalheDTO {
 
 	public void setCursos(Set<String> cursos) {
 		this.cursos = cursos;
+	}
+
+	public boolean isAtivo() {
+		return ativo;
+	}
+
+	public void setAtivo(boolean ativo) {
+		this.ativo = ativo;
 	}
 }

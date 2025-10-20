@@ -3,6 +3,7 @@ package br.edu.fatecguarulhos.projetoavalia.config;
 import java.util.Collections;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -19,20 +20,23 @@ public class CustomUserDetailsService implements UserDetailsService{
     private ProfessorRepository professorRepository;
 
     //VERIFICA SE O USUÁRIO EXISTE
-    @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        Professor professor = professorRepository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado: " + email));
+	@Override
+	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+	    Professor professor = professorRepository.findByEmail(email)
+	            .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado: " + email));
 
-        // TRANSFORMA BOOLEAN DE "ADMIN" EM UM ROLE
-        //ROLE_ADMIN É A TAG QUE O SPRING USA PARA RECONHECER QUE AQUELE USUÁRIO TEM PRIVILÉGIOS DE ADMINISTRADOR
-        String role = professor.isCoordenador() ? "ROLE_ADMIN" : "ROLE_USER";
+	    if (!professor.isAtivo()) {
+	        throw new org.springframework.security.authentication.DisabledException(
+	                "Usuário inativo. Contate o coordenador."
+	        );
+	    }
 
-        //AUTENTICAÇÃO SEGURA COM A SENHA CRIPTOGRAFADA
-        return User.builder()
-                .username(professor.getEmail())
-                .password(professor.getSenha())
-                .authorities(Collections.singletonList(() -> role))
-                .build();
-    }
+	    String role = professor.isCoordenador() ? "ROLE_ADMIN" : "ROLE_USER";
+
+	    return User.builder()
+	            .username(professor.getEmail())
+	            .password(professor.getSenha())
+	            .authorities(Collections.singletonList(() -> role))
+	            .build();
+	}
 }

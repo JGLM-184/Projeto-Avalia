@@ -1,7 +1,7 @@
 package br.edu.fatecguarulhos.projetoavalia.model.entity;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -24,16 +24,17 @@ public class Professor {
 	private String senha; 
 	
 	private boolean coordenador;
-	private boolean primeiroAcesso = true; 
+	private boolean primeiroAcesso=true;
+	private boolean ativo=true;
 	
 	// RELAÇÃO DE MUITOS PARA MUITOS (DISCIPLINA)
 	@ManyToMany
     @JoinTable(
         name = "professor_disciplina",
-        joinColumns = @JoinColumn(name = "id"), 
+        joinColumns = @JoinColumn(name = "professor_id"), 
         inverseJoinColumns = @JoinColumn(name = "disciplina_id")
     )
-	private Set<Disciplina> disciplinas = new HashSet<>();
+	private List<Disciplina> disciplinas = new ArrayList<>();
 	
 	
 	// RELAÇÃO DE MUITOS PARA MUITOS (CURSO)
@@ -43,15 +44,15 @@ public class Professor {
         joinColumns = @JoinColumn(name = "professor_id"), 
         inverseJoinColumns = @JoinColumn(name = "curso_id")
     )
-	private Set<Curso> cursos = new HashSet<>();
+	private List<Curso> cursos = new ArrayList<>();
 	
 	//CONSTRUTORES
 	public Professor() {
 		
 	}
 
-	public Professor(int id, String nome, String email, String re, String senha, Set<Disciplina> disciplinas,
-			Set<Curso> cursos, boolean coordenador, boolean primeiroAcesso) {
+	public Professor(int id, String nome, String email, String re, String senha, List<Disciplina> disciplinas,
+			List<Curso> cursos, boolean coordenador) {
 		this.id = id;
 		this.nome = nome;
 		this.email = email;
@@ -60,7 +61,9 @@ public class Professor {
 		this.disciplinas = disciplinas;
 		this.cursos = cursos;
 		this.coordenador = coordenador;
-		this.primeiroAcesso = primeiroAcesso;
+		this.primeiroAcesso = true;
+		this.ativo = true;
+
 	}
 
 	//GETTERS E SETTER
@@ -104,19 +107,19 @@ public class Professor {
 		this.senha = senha;
 	}
 
-	public Set<Disciplina> getDisciplinas() {
+	public List<Disciplina> getDisciplinas() {
 		return disciplinas;
 	}
 
-	public void setDisciplinas(Set<Disciplina> disciplinas) {
+	public void setDisciplinas(List<Disciplina> disciplinas) {
 		this.disciplinas = disciplinas;
 	}
 
-	public Set<Curso> getCursos() {
+	public List<Curso> getCursos() {
 		return cursos;
 	}
 
-	public void setCursos(Set<Curso> cursos) {
+	public void setCursos(List<Curso> cursos) {
 		this.cursos = cursos;
 	}
 
@@ -134,5 +137,13 @@ public class Professor {
 
 	public void setPrimeiroAcesso(boolean primeiroAcesso) {
 		this.primeiroAcesso = primeiroAcesso;
+	}
+	
+	public boolean isAtivo() {
+		return ativo;
+	}
+
+	public void setAtivo(boolean ativo) {
+		this.ativo = ativo;
 	}
 }

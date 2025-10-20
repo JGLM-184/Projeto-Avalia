@@ -1,6 +1,6 @@
 package br.edu.fatecguarulhos.projetoavalia.model.entity;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -43,7 +43,7 @@ public class Questao {
         orphanRemoval = true,
         fetch = FetchType.LAZY 
     )
-    private Set<Alternativa> alternativas = new HashSet<>();
+    private List<Alternativa> alternativas = new ArrayList<>();
  	
 	private boolean simulado;	
 	
@@ -120,11 +120,11 @@ public class Questao {
 		this.simulado = simulado;
 	}
 
-	public Set<Alternativa> getAlternativas() {
+	public List<Alternativa> getAlternativas() {
 		return alternativas;
 	}
 
-	public void setAlternativas(Set<Alternativa> alternativas) {
+	public void setAlternativas(List<Alternativa> alternativas) {
 		this.alternativas = alternativas;
 	}
 	
