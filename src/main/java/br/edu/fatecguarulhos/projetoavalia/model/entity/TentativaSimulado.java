@@ -2,9 +2,7 @@ package br.edu.fatecguarulhos.projetoavalia.model.entity;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -23,8 +21,6 @@ public class TentativaSimulado {
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 	private String aluno;
-	
-	/*
 	
 	@ManyToOne
 	@JoinColumn(name = "prova_id")
@@ -131,5 +127,4 @@ public class TentativaSimulado {
 		this.ativo = ativo;
 	}
 	
-	*/
 }

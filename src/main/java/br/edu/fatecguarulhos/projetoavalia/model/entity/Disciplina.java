@@ -1,15 +1,11 @@
 package br.edu.fatecguarulhos.projetoavalia.model.entity;
 
-import java.util.HashSet;
-import java.util.Set;
-
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
@@ -19,28 +15,21 @@ public class Disciplina {
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 	private String nome;
-    
-    // UMA DISCIPLINA POSSUI MUITAS QUESTÕES
-    @OneToMany(
-        mappedBy = "disciplina", 
-        
-    //SE A DISCIPLINA FOR APAGADA, AS QUESTÕES TAMBÉM SÃO
-        cascade = CascadeType.REMOVE,
-        orphanRemoval = true,
-        fetch = FetchType.LAZY 
-    )
-    private Set<Questao> questoes = new HashSet<>();
+	
+	//UMA DISCIPLINA PERTENCE SOMENTE A UM CURSO
+    @ManyToOne
+    @JoinColumn(name = "curso_id", nullable = false)
+    private Curso curso;
 
     //CONSTRUTORES
     public Disciplina() {
     	
     }
     
-	public Disciplina(int id, String nome, Set<Questao> questoes) {
-		super();
+	public Disciplina(int id, String nome, Curso curso) {
 		this.id = id;
 		this.nome = nome;
-		this.questoes = questoes;
+		this.curso = curso;
 	}
 
 	//GETTERS E SETTERS
@@ -60,14 +49,13 @@ public class Disciplina {
 		this.nome = nome;
 	}
 
-	public Set<Questao> getQuestoes() {
-		return questoes;
+	public Curso getCurso() {
+		return curso;
 	}
 
-	public void setQuestoes(Set<Questao> questoes) {
-		this.questoes = questoes;
-	}
+	public void setCurso(Curso curso) {
+		this.curso = curso;
+	}    
 	
-    
     
 }

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciar Disciplinas</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body class="bg-light">
+    <div class="container py-5">
+        <h1 class="text-center mb-4">Gerenciar Disciplinas</h1>
+
+        <!-- ================= FORMULÁRIO ================= -->
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <h5 th:text="${isEdicaoDisciplina} ? 'Editar Disciplina' : 'Cadastrar Nova Disciplina'" class="card-title mb-3"></h5>
+
+                <!-- Formulário de criação -->
+                <form th:if="${isEdicaoDisciplina != true}" th:action="@{/teste/disciplinas/salvar}" method="post">
+                    <div class="mb-3">
+                        <label for="nome" class="form-label">Nome da Disciplina</label>
+                        <input type="text" id="nome" name="nome" th:value="${disciplinaDTO.nome}" class="form-control" placeholder="Digite o nome da disciplina" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="curso" class="form-label">Curso</label>
+                        <select id="curso" name="curso" class="form-select" required>
+                            <option value="" disabled selected>Selecione um curso</option>
+                            <option th:each="curso : ${cursos}" th:value="${curso.id}" th:text="${curso.nome}"></option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn btn-success">Salvar</button>
+                </form>
+
+                <!-- Formulário de edição -->
+                <form th:if="${isEdicaoDisciplina == true}" th:action="@{'/teste/disciplinas/atualizar/' + ${disciplinaDTO.id}}" method="post">
+                    <div class="mb-3">
+                        <label for="nome" class="form-label">Nome da Disciplina</label>
+                        <input type="text" id="nome" name="nome" th:value="${disciplinaDTO.nome}" class="form-control" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="curso" class="form-label">Curso</label>
+                        <select id="curso" name="curso" class="form-select" required>
+                            <option value="" disabled>Selecione um curso</option>
+                            <option th:each="curso : ${cursos}"
+                                    th:value="${curso.id}"
+                                    th:text="${curso.nome}"
+                                    th:selected="${disciplinaDTO.curso != null} ? ${curso.id} == ${disciplinaDTO.curso.id} : false">
+                            </option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Atualizar</button>
+                    <a th:href="@{/teste/disciplinas}" class="btn btn-secondary ms-2">Cancelar</a>
+                </form>
+            </div>
+        </div>
+
+        <!-- ================= LISTA DE DISCIPLINAS ================= -->
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title mb-3">Lista de Disciplinas</h5>
+
+                <table class="table table-bordered table-hover align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>ID</th>
+                            <th>Nome</th>
+                            <th>Curso</th>
+                            <th class="text-center" style="width: 180px;">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="disciplina : ${disciplinas}">
+                            <td th:text="${disciplina.id}"></td>
+                            <td th:text="${disciplina.nome}"></td>
+                            <td th:text="${disciplina.curso.nome}"></td>
+                            <td class="text-center">
+                                <a th:href="@{'/teste/disciplinas/editar/' + ${disciplina.id}}" class="btn btn-sm btn-warning">Editar</a>
+                                <a th:href="@{'/teste/disciplinas/excluir/' + ${disciplina.id}}"
+                                   onclick="return confirm('Tem certeza que deseja excluir esta disciplina?');"
+                                   class="btn btn-sm btn-danger ms-1">Excluir</a>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(disciplinas)}">
+                            <td colspan="4" class="text-center text-muted">Nenhuma disciplina cadastrada.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="text-center mt-4">
+            <a th:href="@{/teste}" class="btn btn-outline-secondary">Voltar à Página de Testes</a>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

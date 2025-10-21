@@ -23,22 +23,21 @@ public class Questao {
 	private String imagem;
 	
 	// RELACIONAMENTOS MUITOS PARA UM
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "professor_id", nullable = false) 
+    @ManyToOne
+    @JoinColumn(name = "autor_id", nullable = false) 
 	private Professor autor;
 	
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "curso_id", nullable = false) 
 	private Curso curso;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "disciplina_id", nullable = false) 
     private Disciplina disciplina;	
     
     // RELACIONAMENTO UM PARA MUITOS (ALTERNATIVAS)
     @OneToMany(
         mappedBy = "questao", 
-    //SE A QUESTÃO FOR APAGADA, AS ALTERNATIVAS TAMBÉM SÃO
         cascade = CascadeType.ALL,
         orphanRemoval = true,
         fetch = FetchType.LAZY 

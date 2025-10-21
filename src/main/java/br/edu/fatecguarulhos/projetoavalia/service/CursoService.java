@@ -28,7 +28,6 @@ public class CursoService {
     public Curso salvar(CursoDTO dto) {
         Curso curso = new Curso();
         curso.setNome(dto.getNome());
-        curso.setDisciplinas(dto.getDisciplinas());
         return cursoRepository.save(curso);
     }
 
@@ -37,7 +36,6 @@ public class CursoService {
         if (cursoOpt.isPresent()) {
             Curso curso = cursoOpt.get();
             curso.setNome(dto.getNome());
-            curso.setDisciplinas(dto.getDisciplinas());
             cursoRepository.save(curso);
         }
         return cursoOpt;

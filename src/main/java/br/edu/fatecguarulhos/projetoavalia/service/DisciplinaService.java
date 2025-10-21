@@ -28,7 +28,7 @@ public class DisciplinaService {
     public Disciplina salvar(DisciplinaDTO dto) {
         Disciplina disciplina = new Disciplina();
         disciplina.setNome(dto.getNome());
-        disciplina.setQuestoes(dto.getQuestoes());
+        disciplina.setCurso(dto.getCurso());
         return disciplinaRepository.save(disciplina);
     }
 
@@ -37,7 +37,7 @@ public class DisciplinaService {
         if (disciplinaOpt.isPresent()) {
             Disciplina disciplina = disciplinaOpt.get();
             disciplina.setNome(dto.getNome());
-            disciplina.setQuestoes(dto.getQuestoes());
+            disciplina.setCurso(dto.getCurso());
             disciplinaRepository.save(disciplina);
         }
         return disciplinaOpt;

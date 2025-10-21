@@ -1,5 +1,8 @@
 package br.edu.fatecguarulhos.projetoavalia.controller;
 
+import java.util.Collections;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 import br.edu.fatecguarulhos.projetoavalia.dto.CursoDTO;
 import br.edu.fatecguarulhos.projetoavalia.dto.DisciplinaDTO;
 import br.edu.fatecguarulhos.projetoavalia.dto.QuestaoDTO;
+import br.edu.fatecguarulhos.projetoavalia.model.entity.Questao;
 import br.edu.fatecguarulhos.projetoavalia.service.CursoService;
 import br.edu.fatecguarulhos.projetoavalia.service.DisciplinaService;
 import br.edu.fatecguarulhos.projetoavalia.service.ProfessorService;
@@ -35,38 +39,101 @@ public class TesteController {
     @Autowired
     private ProfessorService professorService;
 
-    // ------------------- LISTAR -------------------
+    // ------------------- MENU PRINCIPAL -------------------
     @GetMapping
-    public String listar(Model model) {
-        model.addAttribute("cursos", cursoService.listarTodos());
-        model.addAttribute("disciplinas", disciplinaService.listarTodas());
-        model.addAttribute("questoes", questaoService.listarTodas());
-        model.addAttribute("professores", professorService.listarTodos());
-        
-        // DTO para formulário de criação/edição de questão
-        QuestaoDTO questaoDTO = new QuestaoDTO();
-        
-        // Inicializa lista de alternativas com 5 objetos por padrão
-        questaoDTO.addAlternativa(5);
-        
-        model.addAttribute("questaoDTO", questaoDTO);
-        return "teste";
+    public String menu() {
+        return "teste"; // Página com links para cursos, disciplinas, questões e professores
     }
 
-    // ------------------- CRIAR -------------------
-    @PostMapping("/salvar-curso")
+    // =====================================================
+    // ===================== CURSOS ========================
+    // =====================================================
+    @GetMapping("/cursos")
+    public String listarCursos(Model model) {
+        model.addAttribute("cursos", cursoService.listarTodos());
+        model.addAttribute("cursoDTO", new CursoDTO());
+        return "testeCursos";
+    }
+
+    @PostMapping("/cursos/salvar")
     public String salvarCurso(@ModelAttribute CursoDTO dto) {
         cursoService.salvar(dto);
-        return "redirect:/teste";
+        return "redirect:/teste/cursos";
     }
 
-    @PostMapping("/salvar-disciplina")
+    @GetMapping("/cursos/editar/{id}")
+    public String editarCurso(@PathVariable int id, Model model) {
+        model.addAttribute("cursoDTO", new CursoDTO(cursoService.buscarPorId(id)));
+        model.addAttribute("isEdicaoCurso", true);
+        return "testeCursos";
+    }
+
+    @PostMapping("/cursos/atualizar/{id}")
+    public String atualizarCurso(@PathVariable int id, @ModelAttribute CursoDTO dto) {
+        cursoService.atualizar(id, dto);
+        return "redirect:/teste/cursos";
+    }
+
+    @GetMapping("/cursos/excluir/{id}")
+    public String excluirCurso(@PathVariable int id) {
+        cursoService.excluir(id);
+        return "redirect:/teste/cursos";
+    }
+
+    // =====================================================
+    // =================== DISCIPLINAS =====================
+    // =====================================================
+    @GetMapping("/disciplinas")
+    public String listarDisciplinas(Model model) {
+        model.addAttribute("disciplinas", disciplinaService.listarTodas());
+        model.addAttribute("disciplinaDTO", new DisciplinaDTO());
+        model.addAttribute("cursos", cursoService.listarTodos());
+        return "testeDisciplinas";
+    }
+
+    @PostMapping("/disciplinas/salvar")
     public String salvarDisciplina(@ModelAttribute DisciplinaDTO dto) {
         disciplinaService.salvar(dto);
-        return "redirect:/teste";
+        return "redirect:/teste/disciplinas";
     }
 
-    @PostMapping("/salvar-questao")
+    @GetMapping("/disciplinas/editar/{id}")
+    public String editarDisciplina(@PathVariable int id, Model model) {
+        model.addAttribute("disciplinaDTO", new DisciplinaDTO(disciplinaService.buscarPorId(id)));
+        model.addAttribute("cursos", cursoService.listarTodos());
+        model.addAttribute("isEdicaoDisciplina", true);
+        return "testeDisciplinas";
+    }
+
+    @PostMapping("/disciplinas/atualizar/{id}")
+    public String atualizarDisciplina(@PathVariable int id, @ModelAttribute DisciplinaDTO dto) {
+        disciplinaService.atualizar(id, dto);
+        return "redirect:/teste/disciplinas";
+    }
+
+    @GetMapping("/disciplinas/excluir/{id}")
+    public String excluirDisciplina(@PathVariable int id) {
+        disciplinaService.excluir(id);
+        return "redirect:/teste/disciplinas";
+    }
+
+    // =====================================================
+    // ===================== QUESTÕES ======================
+    // =====================================================
+    @GetMapping("/questoes")
+    public String listarQuestoes(Model model) {
+        model.addAttribute("questoes", questaoService.listarTodas());
+        model.addAttribute("professores", professorService.listarTodos());
+        model.addAttribute("cursos", cursoService.listarTodos());
+        model.addAttribute("disciplinas", disciplinaService.listarTodas());
+        
+        QuestaoDTO questaoDTO = new QuestaoDTO();
+        model.addAttribute("questaoDTO", questaoDTO);
+
+        return "testeQuestoes";
+    }
+
+    @PostMapping("/questoes/salvar")
     public String salvarQuestao(@ModelAttribute QuestaoDTO dto,
                                 @RequestParam(value = "file", required = false) MultipartFile file) {
         if (file != null && !file.isEmpty()) {
@@ -74,73 +141,65 @@ public class TesteController {
         } else {
             questaoService.salvar(dto);
         }
-        return "redirect:/teste";
+        return "redirect:/teste/questoes";
     }
 
-    // ------------------- EDITAR -------------------
-    @GetMapping("/editar-curso/{id}")
-    public String editarCurso(@PathVariable int id, Model model) {
-        model.addAttribute("cursoDTO", new CursoDTO(cursoService.buscarPorId(id)));
-        model.addAttribute("isEdicaoCurso", true);
-        return "teste";
-    }
-
-    @GetMapping("/editar-disciplina/{id}")
-    public String editarDisciplina(@PathVariable int id, Model model) {
-        model.addAttribute("disciplinaDTO", new DisciplinaDTO(disciplinaService.buscarPorId(id)));
-        model.addAttribute("isEdicaoDisciplina", true);
-        return "teste";
-    }
-
-    @GetMapping("/editar-questao/{id}")
+    @GetMapping("/questoes/editar/{id}")
     public String editarQuestao(@PathVariable int id, Model model) {
         model.addAttribute("questaoDTO", new QuestaoDTO(questaoService.buscarPorId(id)));
         model.addAttribute("professores", professorService.listarTodos());
         model.addAttribute("cursos", cursoService.listarTodos());
         model.addAttribute("disciplinas", disciplinaService.listarTodas());
         model.addAttribute("isEdicaoQuestao", true);
-        return "teste";
+        return "testeQuestoes";
     }
 
-    @PostMapping("/atualizar-curso/{id}")
-    public String atualizarCurso(@PathVariable int id, @ModelAttribute CursoDTO dto) {
-        cursoService.atualizar(id, dto);
-        return "redirect:/teste";
-    }
-
-    @PostMapping("/atualizar-disciplina/{id}")
-    public String atualizarDisciplina(@PathVariable int id, @ModelAttribute DisciplinaDTO dto) {
-        disciplinaService.atualizar(id, dto);
-        return "redirect:/teste";
-    }
-
-    @PostMapping("/atualizar-questao/{id}")
+    @PostMapping("/questoes/atualizar/{id}")
     public String atualizarQuestao(@PathVariable int id,
                                    @ModelAttribute QuestaoDTO dto,
                                    @RequestParam(value = "file", required = false) MultipartFile file) {
-        questaoService.atualizar(id, dto);
         if (file != null && !file.isEmpty()) {
             questaoService.atualizar(id, dto, file);
+        } else {
+            questaoService.atualizar(id, dto);
         }
-        return "redirect:/teste";
+        return "redirect:/teste/questoes";
     }
 
-    // ------------------- EXCLUIR -------------------
-    @GetMapping("/excluir-curso/{id}")
-    public String excluirCurso(@PathVariable int id) {
-        cursoService.excluir(id);
-        return "redirect:/teste";
-    }
-
-    @GetMapping("/excluir-disciplina/{id}")
-    public String excluirDisciplina(@PathVariable int id) {
-        disciplinaService.excluir(id);
-        return "redirect:/teste";
-    }
-
-    @GetMapping("/excluir-questao/{id}")
+    @GetMapping("/questoes/excluir/{id}")
     public String excluirQuestao(@PathVariable int id) {
         questaoService.excluir(id);
-        return "redirect:/teste";
+        return "redirect:/teste/questoes";
+    }
+
+    // =====================================================
+    // ==================== PROFESSORES ====================
+    // =====================================================
+    @GetMapping("/professores")
+    public String listarProfessores(Model model) {
+        model.addAttribute("professores", professorService.listarTodos());
+        return "testeProfessores";
+    }
+    
+    // =====================================================
+    // ======================= PROVA =======================
+    // =====================================================
+    @GetMapping("/provas")
+    public String selecionarDisciplina(Model model) {
+        model.addAttribute("disciplinas", disciplinaService.listarTodas());
+        return "testeProva";
+    }
+
+    @PostMapping("/provas/gerar-prova")
+    public String gerarProva(@RequestParam int disciplinaId, @RequestParam int qntQuestoes, Model model) {
+        // Busca todas as questões da disciplina
+        List<Questao> questoes = questaoService.buscarPorDisciplina(disciplinaId);
+
+        // Embaralha e seleciona algumas questões aleatórias
+        Collections.shuffle(questoes);
+        List<Questao> questoesSelecionadas = questoes.stream().limit(qntQuestoes).toList();
+
+        model.addAttribute("questoes", questoesSelecionadas);
+        return "testeProvaGerada";
     }
 }

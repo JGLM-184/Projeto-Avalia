@@ -32,7 +32,9 @@ public class QuestaoDTO {
 
     private List<AlternativaDTO> alternativas = new ArrayList<>();
 
-    public QuestaoDTO() { }
+    public QuestaoDTO() { 
+    	this.addAlternativa(5); 
+    }
 
     public QuestaoDTO(int id, String enunciado, String imagem, Professor autor,
                       Curso curso, Disciplina disciplina, boolean simulado) {
@@ -132,5 +134,6 @@ public class QuestaoDTO {
         }
 
         return alternativas;
-    }
+    }    
+    
 }

@@ -1,10 +1,7 @@
 package br.edu.fatecguarulhos.projetoavalia.dto;
 
-import java.util.HashSet;
-import java.util.Set;
-
+import br.edu.fatecguarulhos.projetoavalia.model.entity.Curso;
 import br.edu.fatecguarulhos.projetoavalia.model.entity.Disciplina;
-import br.edu.fatecguarulhos.projetoavalia.model.entity.Questao;
 import jakarta.validation.constraints.NotBlank;
 
 public class DisciplinaDTO {
@@ -13,21 +10,20 @@ public class DisciplinaDTO {
 
     @NotBlank(message = "O nome da disciplina é obrigatório")
     private String nome;
+    
+    @NotBlank(message = "O nome do curso é obrigatório")
+    private Curso curso;  
 
-    private Set<Questao> questoes = new HashSet<>();
+	public DisciplinaDTO() { }
 
-    public DisciplinaDTO() { }
-
-    public DisciplinaDTO(int id, String nome, Set<Questao> questoes) {
+    public DisciplinaDTO(int id, String nome) {
         this.id = id;
         this.nome = nome;
-        this.questoes = questoes;
     }
 
     public DisciplinaDTO(Disciplina disciplina) {
         this.id = disciplina.getId();
         this.nome = disciplina.getNome();
-        this.questoes = disciplina.getQuestoes();
     }
 
     public int getId() {
@@ -45,12 +41,12 @@ public class DisciplinaDTO {
     public void setNome(String nome) {
         this.nome = nome;
     }
+    
+    public Curso getCurso() {
+		return curso;
+	}
 
-    public Set<Questao> getQuestoes() {
-        return questoes;
-    }
-
-    public void setQuestoes(Set<Questao> questoes) {
-        this.questoes = questoes;
-    }
+	public void setCurso(Curso curso) {
+		this.curso = curso;
+	}
 }

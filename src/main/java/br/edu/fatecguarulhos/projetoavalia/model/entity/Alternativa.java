@@ -1,7 +1,6 @@
 package br.edu.fatecguarulhos.projetoavalia.model.entity;
 
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -19,7 +18,7 @@ public class Alternativa {
 	private boolean correto;
 	
 	//UMA ALTERNATIVA PERTENCE SOMENTE A UMA QUESTÃO
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "questao_id", nullable = false)
     private Questao questao;
 	
