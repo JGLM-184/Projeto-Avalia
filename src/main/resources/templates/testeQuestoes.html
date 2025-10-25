@@ -79,45 +79,8 @@
             
             <h5>Alternativas</h5>
             
-            <div class="mb-3 alternativa-item">
-		        <div class="input-group">
-		            <span class="input-group-text">A) </span>
-		            <input type="text" class="form-control" th:field="*{alternativas[0].texto}" placeholder="Digite o texto da alternativa...">
-		            <input type="radio" name="alternativaCorretaIndex" value="0" />Correta
-		        </div>
-		    </div>
-		    
-		    <div class="mb-3 alternativa-item">
-		        <div class="input-group">
-		            <span class="input-group-text">B) </span>
-		            <input type="text" class="form-control" th:field="*{alternativas[1].texto}" placeholder="Digite o texto da alternativa...">
-		        	<input type="radio" name="alternativaCorretaIndex" value="1" />Correta
-		        </div>
-		    </div>
-		    
-		    <div class="mb-3 alternativa-item">
-		        <div class="input-group">
-		            <span class="input-group-text">C) </span>
-		            <input type="text" class="form-control" th:field="*{alternativas[2].texto}" placeholder="Digite o texto da alternativa...">
-		        	<input type="radio" name="alternativaCorretaIndex" value="2" />Correta
-		        </div>
-		    </div>
-		    
-		    <div class="mb-3 alternativa-item">
-		        <div class="input-group">
-		            <span class="input-group-text">D) </span>
-		            <input type="text" class="form-control" th:field="*{alternativas[3].texto}" placeholder="Digite o texto da alternativa...">
-		        	<input type="radio" name="alternativaCorretaIndex" value="3" />Correta
-		        </div>
-		    </div>
-		    
-		    <div class="mb-3 alternativa-item">
-		        <div class="input-group">
-		            <span class="input-group-text">E) </span>
-		            <input type="text" class="form-control" th:field="*{alternativas[4].texto}" placeholder="Digite o texto da alternativa...">
-		        	<input type="radio" name="alternativaCorretaIndex" value="4" />Correta
-		        </div>
-		    </div>
+			<!-- Os campos de alternativa são criados nesta div por meio da função JavaScript -->
+			<div id="alternativasContainer"></div>
 
             <div class="text-end mt-4">
                 <button type="submit" class="btn btn-success">Salvar Questão</button>
@@ -178,14 +141,31 @@
             </div>
 
             <hr>
-            <h5>Alternativas</h5>
-
-            <div id="alternativasContainer">
+            
+			<div class="mb-3">
+			    <label class="form-label">Quantidade de Alternativas</label>
+			    <select id="quantidadeAlternativasEditar" class="form-select">
+			        <option value="2" th:selected="${qntAlternativas == 2}">2</option>
+			        <option value="3" th:selected="${qntAlternativas == 3}">3</option>
+			        <option value="4" th:selected="${qntAlternativas == 4}">4</option>
+			        <option value="5" th:selected="${qntAlternativas == 5}">5</option>
+			    </select>
+			</div>
+			
+			<h5>Alternativas</h5>
+			
+			<div id="alternativasContainerEditar">
+			    <!-- Render inicial das alternativas vindas do servidor -->
 			    <div th:each="alt, iterStat : *{alternativas}" class="mb-3 alternativa-item">
 			        <div class="input-group">
-			            <span class="input-group-text">Alternativa [[${iterStat.index + 1}]]</span>
-			            <input type="text" class="form-control" th:field="*{alternativas[__${iterStat.index}__].texto}" placeholder="Digite o texto da alternativa...">
-			        	<input type="radio" name="alternativaCorretaIndex" th:value="${iterStat.index}" th:checked="${alt.isCorreto}" />Correta
+			            <span class="input-group-text">[[${(iterStat.index + 1) + ')'}]]</span>
+			            <input type="text" class="form-control"
+			                   th:field="*{alternativas[__${iterStat.index}__].texto}"
+			                   placeholder="Digite o texto da alternativa...">
+			            <input type="radio"
+			                   name="alternativaCorretaIndex"
+			                   th:value="${iterStat.index}"
+			                   th:checked="${alt.correto}" /> Correta
 			        </div>
 			    </div>
 			</div>
@@ -235,8 +215,83 @@
             </table>
         </div>
     </div>
-
 </div>
+
+<!-- Script para formulário de criação -->
+<script>
+    const container = document.getElementById("alternativasContainer");
+    const select = document.getElementById("quantidadeAlternativas");
+
+    // Função que cria os campos de alternativas dinamicamente
+    function gerarAlternativas(qtd) {
+        container.innerHTML = ""; // limpa o container
+
+        for (let i = 0; i < qtd; i++) {
+            const div = document.createElement("div");
+            div.classList.add("mb-3", "alternativa-item");
+
+            div.innerHTML = `
+                <div class="input-group">
+                    <span class="input-group-text">${i+1})</span>
+                    <input type="text" class="form-control" 
+                        name="alternativas[${i}].texto" 
+                        placeholder="Digite o texto da alternativa..."
+                        required>
+                    <input type="radio" name="alternativaCorretaIndex" value="${i}"> Correta
+                </div>
+            `;
+            container.appendChild(div);
+        }
+    }
+
+    // Atualiza sempre que o select muda
+    select.addEventListener("change", function() {
+        gerarAlternativas(this.value);
+    });
+
+    // Gera inicialmente o padrão selecionado (5)
+    gerarAlternativas(select.value);
+</script>
+
+<!-- Script para formulário de edição -->
+<script>
+    const containerEditar = document.getElementById("alternativasContainerEditar");
+    const selectEditar = document.getElementById("quantidadeAlternativasEditar");
+
+    function gerarAlternativasEditar(qtd) {
+        // Captura os valores já existentes (para não perder o que o usuário digitou)
+        const valoresExistentes = Array.from(containerEditar.querySelectorAll('input[type="text"]'))
+            .map(input => input.value);
+        const indexCorreta = containerEditar.querySelector('input[type="radio"]:checked')?.value;
+
+        containerEditar.innerHTML = ""; // limpa o container
+
+        for (let i = 0; i < qtd; i++) {
+            const div = document.createElement("div");
+            div.classList.add("mb-3", "alternativa-item");
+
+            const textoExistente = valoresExistentes[i] || "";
+            const checked = indexCorreta == i ? "checked" : "";
+
+            div.innerHTML = `
+                <div class="input-group">
+                    <span class="input-group-text">${i+1})</span>
+                    <input type="text" class="form-control"
+                        name="alternativas[${i}].texto"
+                        value="${textoExistente}"
+                        placeholder="Digite o texto da alternativa..."
+                        required>
+                    <input type="radio" name="alternativaCorretaIndex" value="${i}" ${checked}> Correta
+                </div>
+            `;
+            containerEditar.appendChild(div);
+        }
+    }
+
+    selectEditar.addEventListener("change", function() {
+        gerarAlternativasEditar(this.value);
+    });
+</script>
 
 </body>
 </html>

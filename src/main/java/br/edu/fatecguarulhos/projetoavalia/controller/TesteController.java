@@ -148,6 +148,7 @@ public class TesteController {
     public String editarQuestao(@PathVariable int id, Model model) {
     	QuestaoDTO questaoDTO = new QuestaoDTO(questaoService.buscarPorId(id));
     	questaoDTO.setTamanhoListaAlternativas(questaoService.contarAlternativasPorId(id));
+    	model.addAttribute("qntAlternativas", questaoService.contarAlternativasPorId(id));
         model.addAttribute("questaoDTO", new QuestaoDTO(questaoService.buscarPorId(id)));
         model.addAttribute("professores", professorService.listarTodos());
         model.addAttribute("cursos", cursoService.listarTodos());
