@@ -1,5 +1,6 @@
-INSERT INTO professor (nome, email, re, senha, coordenador, primeiro_acesso, ativo) VALUES ('Alecio Aparecido', 'teste@teste.com', '123456', '$2a$10$PGbBlRRc2YfnzSOXvh6PKe5GHzlJkY6UP2.LrPrv8suAmFfYykxdq', true, false, true);
+INSERT INTO professor (nome, email, re, senha, coordenador, primeiro_acesso, ativo) VALUES ('Alecio Aparecido', 'teste@teste.com', '123456', '$2a$10$PGbBlRRc2YfnzSOXvh6PKe5GHzlJkY6UP2.LrPrv8suAmFfYykxdq', true, true, true);
 INSERT INTO professor (nome, email, re, senha, coordenador, primeiro_acesso, ativo) VALUES ('Teste Usuário Inativo', 'usuarioinativo@teste.com', '123456', '$2a$10$PGbBlRRc2YfnzSOXvh6PKe5GHzlJkY6UP2.LrPrv8suAmFfYykxdq', true, false, true);
+
 
 INSERT INTO curso (nome) VALUES ('Análise e Desenvolvimento de Sistemas');
 INSERT INTO curso (nome) VALUES ('Logística');

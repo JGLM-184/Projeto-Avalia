@@ -3,7 +3,14 @@ package br.edu.fatecguarulhos.projetoavalia.dto;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Size;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
+
+import br.edu.fatecguarulhos.projetoavalia.model.entity.Curso;
+import br.edu.fatecguarulhos.projetoavalia.model.entity.Disciplina;
 
 public class ProfessorAtualizarDTO {
 
@@ -16,15 +23,17 @@ public class ProfessorAtualizarDTO {
 
     @NotBlank(message = "O RE é obrigatório.")
     private String re;
-
-    private boolean coordenador;
-
+    
     @NotEmpty(message = "É necessário informar pelo menos uma disciplina.")
-    private Set<Integer> idsDisciplinas;
+    private List<Integer> idsDisciplinas = new ArrayList<>();
 
     @NotEmpty(message = "É necessário informar pelo menos um curso.")
-    private Set<Integer> idsCursos;
+    private List<Integer> idsCursos = new ArrayList<>();
+
+    @Size(min = 6, message = "A senha deve ter no mínimo 6 caracteres.")
+    private String senha;    
     
+    private boolean coordenador;
     private boolean ativo;
     
     
@@ -36,8 +45,8 @@ public class ProfessorAtualizarDTO {
 	public ProfessorAtualizarDTO(@NotBlank(message = "O nome é obrigatório.") String nome,
 			@NotBlank(message = "O e-mail é obrigatório.") @Email(message = "Formato de e-mail inválido.") String email,
 			@NotBlank(message = "O RE é obrigatório.") String re, boolean coordenador,
-			@NotEmpty(message = "É necessário informar pelo menos uma disciplina.") Set<Integer> idsDisciplinas,
-			@NotEmpty(message = "É necessário informar pelo menos um curso.") Set<Integer> idsCursos, boolean ativo) {
+			@NotEmpty(message = "É necessário informar pelo menos uma disciplina.") List<Integer> idsDisciplinas,
+			@NotEmpty(message = "É necessário informar pelo menos um curso.") List<Integer> idsCursos, boolean ativo) {
 		super();
 		this.nome = nome;
 		this.email = email;
@@ -80,19 +89,19 @@ public class ProfessorAtualizarDTO {
 		this.coordenador = coordenador;
 	}
 
-	public Set<Integer> getIdsDisciplinas() {
+	public List<Integer> getIdsDisciplinas() {
 		return idsDisciplinas;
 	}
 
-	public void setIdsDisciplinas(Set<Integer> idsDisciplinas) {
+	public void setIdsDisciplinas(List<Integer> idsDisciplinas) {
 		this.idsDisciplinas = idsDisciplinas;
 	}
 
-	public Set<Integer> getIdsCursos() {
+	public List<Integer> getIdsCursos() {
 		return idsCursos;
 	}
 
-	public void setIdsCursos(Set<Integer> idsCursos) {
+	public void setIdsCursos(List<Integer> idsCursos) {
 		this.idsCursos = idsCursos;
 	}
 
@@ -103,4 +112,14 @@ public class ProfessorAtualizarDTO {
 	public void setAtivo(boolean ativo) {
 		this.ativo = ativo;
 	}
+
+	public String getSenha() {
+		return senha;
+	}
+
+	public void setSenha(String senha) {
+		this.senha = senha;
+	}
+	
+	
 }

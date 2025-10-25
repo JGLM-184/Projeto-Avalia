@@ -1,18 +1,23 @@
 package br.edu.fatecguarulhos.projetoavalia.dto;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
+
+import br.edu.fatecguarulhos.projetoavalia.model.entity.Curso;
+import br.edu.fatecguarulhos.projetoavalia.model.entity.Disciplina;
 
 public class ProfessorDetalheDTO {
 
-	private Integer id;
+	private int id;
     private String nome;
     private String email;
     private String re;
     private boolean coordenador;
     private boolean primeiroAcesso;
     private boolean ativo;
-    private Set<String> disciplinas;
-    private Set<String> cursos;
+    private List<Disciplina> disciplinas = new ArrayList<>();
+    private List<Curso> cursos = new ArrayList<>();
 
     //CONSTRUTORES
     public ProfessorDetalheDTO() {
@@ -20,7 +25,7 @@ public class ProfessorDetalheDTO {
     }
 
 	public ProfessorDetalheDTO(Integer id, String nome, String email, String re, boolean coordenador,
-			boolean primeiroAcesso, boolean ativo, Set<String> disciplinas, Set<String> cursos) {
+			boolean primeiroAcesso, boolean ativo, List<Disciplina> disciplinas, List<Curso> cursos) {
 		super();
 		this.id = id;
 		this.nome = nome;
@@ -82,19 +87,19 @@ public class ProfessorDetalheDTO {
 		this.primeiroAcesso = primeiroAcesso;
 	}
 
-	public Set<String> getDisciplinas() {
+	public List<Disciplina> getDisciplinas() {
 		return disciplinas;
 	}
 
-	public void setDisciplinas(Set<String> disciplinas) {
+	public void setDisciplinas(List<Disciplina> disciplinas) {
 		this.disciplinas = disciplinas;
 	}
 
-	public Set<String> getCursos() {
+	public List<Curso> getCursos() {
 		return cursos;
 	}
 
-	public void setCursos(Set<String> cursos) {
+	public void setCursos(List<Curso> cursos) {
 		this.cursos = cursos;
 	}
 

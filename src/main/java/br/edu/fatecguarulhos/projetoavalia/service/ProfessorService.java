@@ -85,7 +85,7 @@ public class ProfessorService {
     }
     
    //ALTERAR
-    public Professor atualizarProfessor(int id, ProfessorAtualizarDTO dto) {
+   public Professor atualizarProfessor(int id, ProfessorAtualizarDTO dto) {
     	Professor professor = professorRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Professor não encontrado."));
 
@@ -94,9 +94,18 @@ public class ProfessorService {
         professor.setEmail(dto.getEmail());
         professor.setRe(dto.getRe());
         professor.setCoordenador(dto.isCoordenador());
-        professor.setAtivo(dto.isAtivo());	
+        professor.setAtivo(dto.isAtivo());
+        //ALTERA A SENHA SE ELA FOR INFORMADA
+        if (dto.getSenha() != null && !dto.getSenha().isBlank()) {
+            if (passwordEncoder.matches(dto.getSenha(), professor.getSenha())) {
+                throw new IllegalArgumentException("A nova senha não pode ser igual à senha antiga!");
+            }
+            professor.setSenha(passwordEncoder.encode(dto.getSenha()));
+        }
 
-        //ATUALIZA DISCIPLINA
+
+
+        //ATUALIZA DISCIPLINA 
         if (dto.getIdsDisciplinas() != null) {
             List<Disciplina> disciplinas = new ArrayList<>();
             dto.getIdsDisciplinas().forEach(disciplinaId -> {
@@ -128,6 +137,21 @@ public class ProfessorService {
                 .orElseThrow(() -> new RuntimeException("Professor não encontrado."));
 
         professorRepository.delete(professor);
+    }
+    
+    //TROCAR SENHA PRIMEIRO ACESSO
+    public void trocarSenha(Professor professor, String novaSenha, String confirmarSenha) {
+        if (!novaSenha.equals(confirmarSenha)) {
+            throw new IllegalArgumentException("As senhas não coincidem!");
+        }
+
+        if (passwordEncoder.matches(novaSenha, professor.getSenha())) {
+            throw new IllegalArgumentException("A nova senha não pode ser igual à senha antiga!");
+        }
+
+        professor.setSenha(passwordEncoder.encode(novaSenha));
+        professor.setPrimeiroAcesso(false);
+        professorRepository.save(professor);
     }
 
 }
