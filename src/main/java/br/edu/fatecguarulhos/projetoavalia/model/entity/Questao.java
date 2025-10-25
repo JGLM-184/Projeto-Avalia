@@ -127,5 +127,10 @@ public class Questao {
 		this.alternativas = alternativas;
 	}
 	
+	public void setTamanhoListaAlternativas(int tamanho) {
+		while (alternativas.size() > tamanho) {
+			alternativas.remove(alternativas.size()-1);
+		}
+	}
 	
 }

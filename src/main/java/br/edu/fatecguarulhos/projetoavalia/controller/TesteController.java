@@ -127,7 +127,7 @@ public class TesteController {
         model.addAttribute("cursos", cursoService.listarTodos());
         model.addAttribute("disciplinas", disciplinaService.listarTodas());
         
-        QuestaoDTO questaoDTO = new QuestaoDTO();
+        QuestaoDTO questaoDTO = new QuestaoDTO(5);
         model.addAttribute("questaoDTO", questaoDTO);
 
         return "testeQuestoes";
@@ -146,11 +146,14 @@ public class TesteController {
 
     @GetMapping("/questoes/editar/{id}")
     public String editarQuestao(@PathVariable int id, Model model) {
+    	QuestaoDTO questaoDTO = new QuestaoDTO(questaoService.buscarPorId(id));
+    	questaoDTO.setTamanhoListaAlternativas(questaoService.contarAlternativasPorId(id));
         model.addAttribute("questaoDTO", new QuestaoDTO(questaoService.buscarPorId(id)));
         model.addAttribute("professores", professorService.listarTodos());
         model.addAttribute("cursos", cursoService.listarTodos());
         model.addAttribute("disciplinas", disciplinaService.listarTodas());
         model.addAttribute("isEdicaoQuestao", true);
+        
         return "testeQuestoes";
     }
 

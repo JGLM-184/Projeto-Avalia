@@ -78,16 +78,46 @@
             
             
             <h5>Alternativas</h5>
-
-            <div id="alternativasContainer">
-			    <div th:each="alt, iterStat : *{alternativas}" class="mb-3 alternativa-item">
-			        <div class="input-group">
-			            <span class="input-group-text">Alternativa [[${iterStat.index + 1}]]</span>
-			            <input type="text" class="form-control" th:field="*{alternativas[__${iterStat.index}__].texto}" placeholder="Digite o texto da alternativa...">
-			        </div>
-			    </div>
-			</div>
             
+            <div class="mb-3 alternativa-item">
+		        <div class="input-group">
+		            <span class="input-group-text">A) </span>
+		            <input type="text" class="form-control" th:field="*{alternativas[0].texto}" placeholder="Digite o texto da alternativa...">
+		            <input type="radio" name="alternativaCorretaIndex" value="0" />Correta
+		        </div>
+		    </div>
+		    
+		    <div class="mb-3 alternativa-item">
+		        <div class="input-group">
+		            <span class="input-group-text">B) </span>
+		            <input type="text" class="form-control" th:field="*{alternativas[1].texto}" placeholder="Digite o texto da alternativa...">
+		        	<input type="radio" name="alternativaCorretaIndex" value="1" />Correta
+		        </div>
+		    </div>
+		    
+		    <div class="mb-3 alternativa-item">
+		        <div class="input-group">
+		            <span class="input-group-text">C) </span>
+		            <input type="text" class="form-control" th:field="*{alternativas[2].texto}" placeholder="Digite o texto da alternativa...">
+		        	<input type="radio" name="alternativaCorretaIndex" value="2" />Correta
+		        </div>
+		    </div>
+		    
+		    <div class="mb-3 alternativa-item">
+		        <div class="input-group">
+		            <span class="input-group-text">D) </span>
+		            <input type="text" class="form-control" th:field="*{alternativas[3].texto}" placeholder="Digite o texto da alternativa...">
+		        	<input type="radio" name="alternativaCorretaIndex" value="3" />Correta
+		        </div>
+		    </div>
+		    
+		    <div class="mb-3 alternativa-item">
+		        <div class="input-group">
+		            <span class="input-group-text">E) </span>
+		            <input type="text" class="form-control" th:field="*{alternativas[4].texto}" placeholder="Digite o texto da alternativa...">
+		        	<input type="radio" name="alternativaCorretaIndex" value="4" />Correta
+		        </div>
+		    </div>
 
             <div class="text-end mt-4">
                 <button type="submit" class="btn btn-success">Salvar Questão</button>
@@ -155,6 +185,7 @@
 			        <div class="input-group">
 			            <span class="input-group-text">Alternativa [[${iterStat.index + 1}]]</span>
 			            <input type="text" class="form-control" th:field="*{alternativas[__${iterStat.index}__].texto}" placeholder="Digite o texto da alternativa...">
+			        	<input type="radio" name="alternativaCorretaIndex" th:value="${iterStat.index}" th:checked="${alt.isCorreto}" />Correta
 			        </div>
 			    </div>
 			</div>

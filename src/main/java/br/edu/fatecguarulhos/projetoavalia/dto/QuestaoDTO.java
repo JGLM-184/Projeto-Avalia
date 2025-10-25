@@ -30,24 +30,34 @@ public class QuestaoDTO {
 
     private boolean simulado;
 
-    private List<AlternativaDTO> alternativas = new ArrayList<>();
+    private List<AlternativaDTO> alternativas = new ArrayList<>(); 
+    private int alternativaCorretaIndex = 0;
 
-    public QuestaoDTO() { 
-    	this.addAlternativa(5); 
+    public QuestaoDTO() {
+    	
+    }
+    
+    public QuestaoDTO(int qntAlternativas) { 
+    	this.addAlternativa(qntAlternativas); 
     }
 
     public QuestaoDTO(int id, String enunciado, String imagem, Professor autor,
-                      Curso curso, Disciplina disciplina, boolean simulado) {
-        this.id = id;
-        this.enunciado = enunciado;
-        this.imagem = imagem;
-        this.autor = autor;
-        this.curso = curso;
-        this.disciplina = disciplina;
-        this.simulado = simulado;
-    }
+    		Curso curso, Disciplina disciplina, boolean simulado,
+			List<AlternativaDTO> alternativas, int alternativaCorretaIndex) {
+		this.id = id;
+		this.enunciado = enunciado;
+		this.imagem = imagem;
+		this.autor = autor;
+		this.curso = curso;
+		this.disciplina = disciplina;
+		this.simulado = simulado;
+		this.alternativas = alternativas;
+		this.alternativaCorretaIndex = alternativaCorretaIndex;
+	}
 
-    public QuestaoDTO(Questao questao) {
+
+
+	public QuestaoDTO(Questao questao) {
         this.id = questao.getId();
         this.enunciado = questao.getEnunciado();
         this.imagem = questao.getImagem();
@@ -134,6 +144,21 @@ public class QuestaoDTO {
         }
 
         return alternativas;
-    }    
+    }
+
+	public int getAlternativaCorretaIndex() {
+		return alternativaCorretaIndex;
+	}
+
+	public void setAlternativaCorretaIndex(int alternativaCorretaIndex) {
+		this.alternativaCorretaIndex = alternativaCorretaIndex;
+	}    
+	
+	public void setTamanhoListaAlternativas(int tamanho) {
+		while (alternativas.size() > tamanho) {
+			this.alternativas.remove(alternativas.size()-1);
+		}
+	}
+    
     
 }

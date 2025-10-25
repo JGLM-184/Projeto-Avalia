@@ -10,5 +10,7 @@ import br.edu.fatecguarulhos.projetoavalia.model.entity.Questao;
 public interface AlternativaRepository extends JpaRepository<Alternativa, Integer> {
 
 	void deleteByQuestao(Questao questao);
+	
+	int countByQuestaoId(int questaoId);
 
 }

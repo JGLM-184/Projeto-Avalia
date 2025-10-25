@@ -77,6 +77,10 @@ public class QuestaoService {
                 .orElseThrow(() -> new RuntimeException("Professor não encontrado"));
         return questaoRepository.findByAutor(professor);
     }
+    
+    public int contarAlternativasPorId(int questaoId) {
+    	return alternativaRepository.countByQuestaoId(questaoId);
+    }
 
     //-------------------- CRUD --------------------
 
@@ -102,12 +106,18 @@ public class QuestaoService {
 
         // Salvar alternativas vinculadas
         if (dto.getAlternativas() != null) {
+        	int i = 0;
             for (AlternativaDTO altDTO : dto.getAlternativas()) {
-                Alternativa alternativa = new Alternativa();
-                alternativa.setTexto(altDTO.getTexto());
-                alternativa.setCorreto(altDTO.isCorreto());
-                alternativa.setQuestao(questaoSalva);
-                alternativaRepository.save(alternativa);
+            	if (!altDTO.getTexto().equals("")) {            		
+	                Alternativa alternativa = new Alternativa();
+	                alternativa.setTexto(altDTO.getTexto());
+	                if (i++ == dto.getAlternativaCorretaIndex()) {
+	                	altDTO.setCorreto(true);
+	                }
+	                alternativa.setCorreto(altDTO.isCorreto());
+	                alternativa.setQuestao(questaoSalva);
+	                alternativaRepository.save(alternativa);
+            	}
             }
         }
 
@@ -169,14 +179,19 @@ public class QuestaoService {
 
             // Atualiza alternativas: remove antigas e salva novas
             alternativaRepository.deleteByQuestao(questao);
-
             if (dto.getAlternativas() != null) {
+            	int i = 0;
                 for (AlternativaDTO altDTO : dto.getAlternativas()) {
-                    Alternativa alternativa = new Alternativa();
-                    alternativa.setTexto(altDTO.getTexto());
-                    alternativa.setCorreto(altDTO.isCorreto());
-                    alternativa.setQuestao(questao);
-                    alternativaRepository.save(alternativa);
+                	if (!altDTO.getTexto().equals("")) {            		
+    	                Alternativa alternativa = new Alternativa();
+    	                alternativa.setTexto(altDTO.getTexto());
+    	                if (i++ == dto.getAlternativaCorretaIndex()) {
+    	                	altDTO.setCorreto(true);
+    	                }
+    	                alternativa.setCorreto(altDTO.isCorreto());
+    	                alternativa.setQuestao(questao);
+    	                alternativaRepository.save(alternativa);
+                	}
                 }
             }
 
