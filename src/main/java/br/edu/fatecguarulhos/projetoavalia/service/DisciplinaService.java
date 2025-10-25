@@ -8,13 +8,18 @@ import org.springframework.stereotype.Service;
 
 import br.edu.fatecguarulhos.projetoavalia.dto.DisciplinaDTO;
 import br.edu.fatecguarulhos.projetoavalia.model.entity.Disciplina;
+import br.edu.fatecguarulhos.projetoavalia.model.entity.Questao;
 import br.edu.fatecguarulhos.projetoavalia.repository.DisciplinaRepository;
+import br.edu.fatecguarulhos.projetoavalia.repository.QuestaoRepository;
 
 @Service
 public class DisciplinaService {
 
     @Autowired
     private DisciplinaRepository disciplinaRepository;
+    
+    @Autowired
+    private QuestaoRepository questaoRepository;
 
     public List<Disciplina> listarTodas() {
         return disciplinaRepository.findAll();
@@ -24,6 +29,17 @@ public class DisciplinaService {
         return disciplinaRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Disciplina não encontrada com id: " + id));
     }
+    
+    public List<Disciplina> buscarPorCursoId(int cursoId) {
+        return disciplinaRepository.findByCursoId(cursoId);
+    }
+    
+	public List<Disciplina> buscarPorCursoQuestaoId(int questaoId) {
+		Questao questao = questaoRepository.findById(questaoId)
+				.orElseThrow(() -> new RuntimeException("Questão não encontrada com id: " + questaoId));
+		
+		return disciplinaRepository.findByCursoId(questao.getCurso().getId());
+	}
 
     public Disciplina salvar(DisciplinaDTO dto) {
         Disciplina disciplina = new Disciplina();

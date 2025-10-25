@@ -37,27 +37,25 @@
                                 th:text="${professor.nome}"></option>
                     </select>
                 </div>
-
-                <div class="col-md-4 mb-3">
-                    <label class="form-label">Curso</label>
-                    <select class="form-select" th:field="*{curso.id}" required>
-                        <option value="0" disabled>Selecione...</option>
-                        <option th:each="curso : ${cursos}"
-                                th:value="${curso.id}"
-                                th:text="${curso.nome}"></option>
-                    </select>
-                </div>
-
-                <div class="col-md-4 mb-3">
-                    <label class="form-label">Disciplina</label>
-                    <select class="form-select" th:field="*{disciplina.id}" required>
-                        <option value="0" disabled>Selecione...</option>
-                        <option th:each="disciplina : ${disciplinas}"
-                                th:value="${disciplina.id}"
-                                th:text="${disciplina.nome}"></option>
-                    </select>
-                </div>
-            </div>
+				
+				<div class="col-md-4 mb-3">
+				    <label class="form-label">Curso</label>
+				    <select id="cursoSelect" class="form-select" th:field="*{curso.id}" required>
+				        <option value="0" disabled selected>Selecione...</option>
+				        <option th:each="curso : ${cursos}"
+				                th:value="${curso.id}"
+				                th:text="${curso.nome}"></option>
+				    </select>
+				</div>
+				
+				<div class="col-md-4 mb-3">
+				    <label class="form-label">Disciplina</label>
+				    <select id="disciplinaSelect" class="form-select" th:field="*{disciplina.id}" required>
+				        <option value="0" disabled selected>Selecione Um Curso...</option>
+				    </select>
+				</div>
+			
+			</div>
 
             <div class="form-check mb-3">
                 <input class="form-check-input" type="checkbox" th:field="*{simulado}" id="simulado">
@@ -116,23 +114,25 @@
                     </select>
                 </div>
 
-                <div class="col-md-4 mb-3">
-                    <label class="form-label">Curso</label>
-                    <select class="form-select" th:field="*{curso.id}" required>
-                        <option th:each="curso : ${cursos}"
-                                th:value="${curso.id}"
-                                th:text="${curso.nome}"></option>
-                    </select>
-                </div>
-
-                <div class="col-md-4 mb-3">
-                    <label class="form-label">Disciplina</label>
-                    <select class="form-select" th:field="*{disciplina.id}" required>
-                        <option th:each="disciplina : ${disciplinas}"
-                                th:value="${disciplina.id}"
-                                th:text="${disciplina.nome}"></option>
-                    </select>
-                </div>
+				<div class="col-md-4 mb-3">
+				    <label class="form-label">Curso</label>
+				    <select id="cursoSelect" class="form-select" th:field="*{curso.id}" required>
+				        <option value="0" disabled selected>Selecione...</option>
+				        <option th:each="curso : ${cursos}"
+				                th:value="${curso.id}"
+				                th:text="${curso.nome}"></option>
+				    </select>
+				</div>
+				
+				<div class="col-md-4 mb-3">
+				    <label class="form-label">Disciplina</label>
+				    <select id="disciplinaSelect" class="form-select" th:field="*{disciplina.id}" required>
+				        <option value="0" disabled selected>Selecione...</option>
+				        <option th:each="disciplina : ${disciplinas}"
+				                th:value="${disciplina.id}"
+				                th:text="${disciplina.nome}"></option>
+				    </select>
+				</div>
             </div>
 
             <div class="form-check mb-3">
@@ -165,7 +165,8 @@
 			            <input type="radio"
 			                   name="alternativaCorretaIndex"
 			                   th:value="${iterStat.index}"
-			                   th:checked="${alt.correto}" /> Correta
+			                   th:checked="${alt.correto}" 
+			                   required/> Correta
 			        </div>
 			    </div>
 			</div>
@@ -217,7 +218,7 @@
     </div>
 </div>
 
-<!-- Script para formulário de criação -->
+<!-- Script para q quantidade de alternativas variarem no formulário de criação -->
 <script>
     const container = document.getElementById("alternativasContainer");
     const select = document.getElementById("quantidadeAlternativas");
@@ -237,7 +238,7 @@
                         name="alternativas[${i}].texto" 
                         placeholder="Digite o texto da alternativa..."
                         required>
-                    <input type="radio" name="alternativaCorretaIndex" value="${i}"> Correta
+                    <input type="radio" name="alternativaCorretaIndex" value="${i}" required> Correta
                 </div>
             `;
             container.appendChild(div);
@@ -253,7 +254,7 @@
     gerarAlternativas(select.value);
 </script>
 
-<!-- Script para formulário de edição -->
+<!-- Script para a quantidade de alternativas variarem no formulário de edição -->
 <script>
     const containerEditar = document.getElementById("alternativasContainerEditar");
     const selectEditar = document.getElementById("quantidadeAlternativasEditar");
@@ -281,7 +282,7 @@
                         value="${textoExistente}"
                         placeholder="Digite o texto da alternativa..."
                         required>
-                    <input type="radio" name="alternativaCorretaIndex" value="${i}" ${checked}> Correta
+                    <input type="radio" name="alternativaCorretaIndex" value="${i}" ${checked} required> Correta
                 </div>
             `;
             containerEditar.appendChild(div);
@@ -291,6 +292,41 @@
     selectEditar.addEventListener("change", function() {
         gerarAlternativasEditar(this.value);
     });
+</script>
+
+
+<!--  Script para as disciplinas mudarem de acordo com o curso selecionado -->
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const cursoSelect = document.getElementById("cursoSelect");
+    const disciplinaSelect = document.getElementById("disciplinaSelect");
+
+    cursoSelect.addEventListener("change", function() {
+        const cursoId = this.value;
+
+        if (!cursoId) return;
+
+        fetch(`/teste/api/disciplinas/por-curso/${cursoId}`)
+            .then(response => {
+                if (!response.ok) throw new Error("Erro ao buscar disciplinas");
+                return response.json();
+            })
+            .then(disciplinas => {
+                disciplinaSelect.innerHTML = '<option value="" disabled selected>Selecione...</option>';
+
+                disciplinas.forEach(d => {
+                    const option = document.createElement("option");
+                    option.value = d.id;
+                    option.textContent = d.nome;
+                    disciplinaSelect.appendChild(option);
+                });
+            })
+            .catch(err => {
+                console.error(err);
+                disciplinaSelect.innerHTML = '<option value="" disabled selected>Erro ao carregar disciplinas</option>';
+            });
+    });
+});
 </script>
 
 </body>

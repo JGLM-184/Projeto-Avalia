@@ -8,5 +8,5 @@ import br.edu.fatecguarulhos.projetoavalia.model.entity.Disciplina;
 
 public interface DisciplinaRepository extends JpaRepository<Disciplina, Integer>{
 
-	List<Disciplina> findByCursoId(Long cursoId);
+	List<Disciplina> findByCursoId(int cursoId);
 }

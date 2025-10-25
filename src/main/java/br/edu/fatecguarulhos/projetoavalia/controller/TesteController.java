@@ -12,11 +12,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import br.edu.fatecguarulhos.projetoavalia.dto.CursoDTO;
 import br.edu.fatecguarulhos.projetoavalia.dto.DisciplinaDTO;
 import br.edu.fatecguarulhos.projetoavalia.dto.QuestaoDTO;
+import br.edu.fatecguarulhos.projetoavalia.model.entity.Disciplina;
 import br.edu.fatecguarulhos.projetoavalia.model.entity.Questao;
 import br.edu.fatecguarulhos.projetoavalia.service.CursoService;
 import br.edu.fatecguarulhos.projetoavalia.service.DisciplinaService;
@@ -116,6 +118,12 @@ public class TesteController {
         disciplinaService.excluir(id);
         return "redirect:/teste/disciplinas";
     }
+    
+    @ResponseBody
+    @GetMapping("api/disciplinas/por-curso/{id}")
+    public List<Disciplina> listarDisciplinasPorCurso(@PathVariable int id) {
+    	return disciplinaService.buscarPorCursoId(id);
+    }
 
     // =====================================================
     // ===================== QUESTÕES ======================
@@ -127,6 +135,7 @@ public class TesteController {
         model.addAttribute("cursos", cursoService.listarTodos());
         model.addAttribute("disciplinas", disciplinaService.listarTodas());
         
+        //Objeto é criado com uma lista de 5 alternativas
         QuestaoDTO questaoDTO = new QuestaoDTO(5);
         model.addAttribute("questaoDTO", questaoDTO);
 
@@ -145,14 +154,15 @@ public class TesteController {
     }
 
     @GetMapping("/questoes/editar/{id}")
-    public String editarQuestao(@PathVariable int id, Model model) {
-    	QuestaoDTO questaoDTO = new QuestaoDTO(questaoService.buscarPorId(id));
-    	questaoDTO.setTamanhoListaAlternativas(questaoService.contarAlternativasPorId(id));
-    	model.addAttribute("qntAlternativas", questaoService.contarAlternativasPorId(id));
-        model.addAttribute("questaoDTO", new QuestaoDTO(questaoService.buscarPorId(id)));
-        model.addAttribute("professores", professorService.listarTodos());
+    public String editarQuestao(@PathVariable int id, Model model) {   	
+    	model.addAttribute("questaoDTO", new QuestaoDTO(questaoService.buscarPorId(id)));
+    	model.addAttribute("professores", professorService.listarTodos());
         model.addAttribute("cursos", cursoService.listarTodos());
-        model.addAttribute("disciplinas", disciplinaService.listarTodas());
+        model.addAttribute("qntAlternativas", questaoService.contarAlternativasPorId(id));
+
+        //Busca as disciplinas com base no curso da questao
+        model.addAttribute("disciplinas", disciplinaService.buscarPorCursoQuestaoId(id));
+        
         model.addAttribute("isEdicaoQuestao", true);
         
         return "testeQuestoes";
