@@ -14,7 +14,7 @@
     <h3 th:if="${isEdicaoQuestao == true}" class="mb-4">Editar Questão</h3>
 
     <!-- FORMULÁRIO DE QUESTÃO -->
-    <form th:if="${isEdicaoQuestao != true}" th:action="@{/teste/questoes/salvar}" method="post" enctype="multipart/form-data" th:object="${questaoDTO}">
+    <form th:action="@{/teste/questoes/salvar}" method="post" enctype="multipart/form-data" th:object="${questaoDTO}">
         <div class="card p-4 shadow-sm">
             
             <div class="mb-3">

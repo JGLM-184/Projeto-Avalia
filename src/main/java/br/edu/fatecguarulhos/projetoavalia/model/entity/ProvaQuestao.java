@@ -7,9 +7,11 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 
 @Entity
-@Table(name="prova_questao")
+@Table(name="prova_questao",
+	   uniqueConstraints = @UniqueConstraint(columnNames = {"prova_id", "questao_id"}))
 public class ProvaQuestao {
 	
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)

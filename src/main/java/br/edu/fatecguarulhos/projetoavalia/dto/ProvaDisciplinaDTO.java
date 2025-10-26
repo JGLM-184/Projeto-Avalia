@@ -2,16 +2,21 @@ package br.edu.fatecguarulhos.projetoavalia.dto;
 
 import br.edu.fatecguarulhos.projetoavalia.model.entity.Disciplina;
 import br.edu.fatecguarulhos.projetoavalia.model.entity.Prova;
+import jakarta.validation.constraints.NotBlank;
 
 public class ProvaDisciplinaDTO {
 	
 	private int id;
 	private int qntQuestoes;
+	
+	@NotBlank(message = "A disciplina é obrigatória")
     private Disciplina disciplina;
-    private Prova prova;
+    
+	@NotBlank(message = "A prova é obrigatória")
+	private Prova prova;
 	
     public ProvaDisciplinaDTO() {
-    	
+    	qntQuestoes = 0;
     }
 
 	public ProvaDisciplinaDTO(int id, int qntQuestoes, Disciplina disciplina, Prova prova) {

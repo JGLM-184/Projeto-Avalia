@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Edição da Prova</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+<div class="container py-4">
+
+    <h2 class="mb-4">Edição da Prova</h2>
+
+    <!-- ================= Formulário de Edição ================= -->
+    <form th:action="@{'/teste/provas/atualizar/' + ${provaDTO.id}}"
+          th:object="${provaDTO}" method="post" class="card p-4 shadow-sm mb-5">
+
+        <div class="mb-3">
+            <label for="titulo" class="form-label">Título</label>
+            <input type="text" id="titulo" th:field="*{titulo}" class="form-control" required>
+        </div>
+
+        <div class="form-check mb-3">
+            <input type="checkbox" id="simulado" th:field="*{simulado}" class="form-check-input">
+            <label class="form-check-label" for="simulado">É simulado?</label>
+        </div>
+
+        <div class="d-flex justify-content-end">
+            <button type="submit" class="btn btn-primary me-2">Salvar Alterações</button>
+            <a href="/teste/provas" class="btn btn-secondary">Voltar</a>
+        </div>
+    </form>
+    
+    <form th:action="@{'/teste/provas/editar/' + ${provaDTO.id} + '/adicionar-disciplina'}" 
+    	  th:object="${provaDisciplinaDTO}" method="post">
+    	<div class="row mb-3 align-items-end">
+		    <div class="col-md-8">
+		        <label class="form-label">Disciplina</label>
+		        <select id="cursoSelect" class="form-select" th:field="*{disciplina}" required>
+		            <option th:each="disciplina : ${disciplinas}"
+		                    th:value="${disciplina.id}"
+		                    th:text="${disciplina.nome}"></option>
+		        </select>
+		    </div>
+		    <div class="col-md-4 d-flex justify-content-start">
+		        <button type="submit" class="btn btn-primary w-100">Adicionar Disciplina</button>
+		    </div>
+		</div>
+    </form>
+    
+    <h5>Disciplinas</h5>
+    
+    <div th:each="disciplina : ${disciplinasProva}">
+    	<p th:text="${disciplina.disciplina.nome}"></p>
+    </div>
+
+    <!-- ================= Conteúdo de Edição ================= -->
+    <div class="row">
+
+        <!-- Questões na prova -->
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    Questões da Prova
+                </div>
+                <div class="card-body" th:if="${#lists.isEmpty(questoesProva)}">
+                    <p class="text-muted">Nenhuma questão adicionada ainda.</p>
+                </div>
+                <ul class="list-group list-group-flush" th:each="questao : ${questoesProva}">
+                    <li class="list-group-item">
+                        <strong th:text="${questao.questao.enunciado}"></strong>
+                        <small class="text-muted d-block" th:text="${questao.questao.disciplina.nome}"></small>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Questões disponíveis -->
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-success text-white">
+                    Questões Disponíveis
+                </div>
+                <div class="card-body" th:if="${#lists.isEmpty(questoesDisponiveis)}">
+                    <p class="text-muted">Nenhuma questão disponível para as disciplinas da prova.</p>
+                </div>
+                <ul class="list-group list-group-flush" th:each="questao : ${questoesDisponiveis}">
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <strong th:text="${questao.enunciado}"></strong>
+                            <small class="text-muted d-block" th:text="${questao.disciplina.nome}"></small>
+                        </div>
+                        <form th:action="@{'/teste/provas/editar/' + ${provaDTO.id} + '/adicionar-questao'}"
+                              method="post" class="m-0">
+                            <input type="hidden" name="prova.id" th:value="${provaDTO.id}">
+                            <input type="hidden" name="questao.id" th:value="${questao.id}">
+                            <button type="submit" class="btn btn-sm btn-success">Adicionar</button>
+                        </form>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ================= Disciplinas ================= -->
+    <!-- 
+    <div class="mt-5 card shadow-sm">
+        <div class="card-header bg-info text-white">
+            Disciplinas da Prova
+        </div>
+        <div class="card-body">
+            <form th:action="@{'/teste/provas/editar/' + ${provaDTO.id} + '/adicionar-disciplina'}"
+                  method="post" class="row g-3 align-items-end">
+                <input type="hidden" name="prova.id" th:value="${provaDTO.id}">
+
+                <div class="col-md-6">
+                    <label class="form-label">Disciplina</label>
+                    <select class="form-select" name="disciplina.id" required>
+                        <option th:each="disc : ${cursos[0].disciplinas}" 
+                                th:value="${disc.id}" 
+                                th:text="${disc.nome}"></option>
+                    </select>
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label">Qtd. Questões</label>
+                    <input type="number" class="form-control" name="qntQuestoes" min="1" required>
+                </div>
+
+                <div class="col-md-3">
+                    <button type="submit" class="btn btn-info w-100">Adicionar Disciplina</button>
+                </div>
+            </form>
+
+            <hr>
+
+            <ul class="list-group mt-3" th:each="pd : ${disciplinasProva}">
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <span th:text="${pd.disciplina.nome}"></span>
+                    <span class="badge bg-secondary" th:text="${pd.qntQuestoes + ' questões'}"></span>
+                </li>
+            </ul>
+        </div>
+    </div>
+    -->
+
+</div>
+
+</body>
+</html>

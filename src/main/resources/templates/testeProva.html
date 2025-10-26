@@ -1,45 +1,73 @@
 <!DOCTYPE html>
-<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gerar Prova</title>
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>Cadastro de Provas</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body class="bg-light">
 
-    <div class="container py-5">
-        <h1 class="text-center mb-4">Gerar Prova</h1>
+<div class="container py-4">
 
-        <div class="card shadow-sm">
-            <div class="card-body">
-                <h5 class="card-title mb-3">Selecione uma disciplina para gerar a prova:</h5>
+    <h2 class="mb-4">Criação de Provas</h2>
 
-                <form th:action="@{/teste/provas/gerar-prova}" method="post">
-                    <div class="mb-3">
-                        <select class="form-select" name="disciplinaId">
-                            <option th:each="disciplina : ${disciplinas}"
-                                    th:value="${disciplina.id}"
-                                    th:text="${disciplina.nome}">
-                            </option>
-                        </select>
-                    </div>
-                    
-                    <div class="mb-3">
-				        <label for="quantidade" class="form-label">Quantidade de questões:</label>
-				        <input type="number" name="qntQuestoes" class="form-control" 
-				               min="1" max="50" value="5" required>
-				    </div>
+    <!-- Formulário de Criação -->
+    <form th:action="@{/teste/provas/salvar}"
+          th:object="${provaDTO}" method="post" class="card p-4 shadow-sm">
 
-                    <button type="submit" class="btn btn-primary">Gerar Prova</button>
-                </form>
-
-            </div>
+        <div class="mb-3">
+            <label for="titulo" class="form-label">Título da Prova</label>
+            <input type="text" id="titulo" th:field="*{titulo}" class="form-control" placeholder="Digite o título" required>
         </div>
-    </div>
 
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+        <div class="mb-3">
+            <label for="curso" class="form-label">Curso</label>
+            <select id="curso" class="form-select" th:field="*{curso.id}" required>
+                <option th:each="curso : ${cursos}" 
+                        th:value="${curso.id}" 
+                        th:text="${curso.nome}"></option>
+            </select>
+        </div>
+
+        <div class="d-flex justify-content-end mt-4">
+            <button type="submit" class="btn btn-primary me-2">Criar Prova</button>
+            <a href="/teste/provas" class="btn btn-secondary">Cancelar</a>
+        </div>
+    </form>
+
+    <hr class="my-5">
+
+    <!-- Listagem de Provas -->
+    <h3>Provas Cadastradas</h3>
+
+    <table class="table table-striped align-middle mt-3">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Título</th>
+                <th>Curso</th>
+                <th>Autor</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="prova : ${provas}">
+                <td th:text="${prova.id}"></td>
+                <td th:text="${prova.titulo}"></td>
+                <td th:text="${prova.curso.nome}"></td>
+                <td th:text="${prova.professor.nome}"></td>
+                <td>
+                    <a th:href="@{'/teste/provas/detalhes/' + ${prova.id}}" class="btn btn-sm btn-info">Detalhes</a>
+                    <a th:href="@{'/teste/provas/editar/' + ${prova.id}}" class="btn btn-sm btn-warning">Editar</a>
+                    <a th:href="@{'/teste/provas/excluir/' + ${prova.id}}" 
+                       class="btn btn-sm btn-danger"
+                       onclick="return confirm('Tem certeza que deseja excluir esta prova?')">Excluir</a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+</div>
+
 </body>
 </html>

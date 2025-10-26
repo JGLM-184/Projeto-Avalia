@@ -2,6 +2,7 @@ package br.edu.fatecguarulhos.projetoavalia.model.entity;
 
 import java.time.LocalDate;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -16,12 +17,19 @@ public class Prova {
 	
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
+	
+	@Column(unique = true)
 	private String titulo;
 	private LocalDate dataCriacao;		
 	
 	@ManyToOne
 	@JoinColumn(name = "professor_id")
 	private Professor professor;
+	
+	@ManyToOne
+	@JoinColumn(name = "curso_id")
+	private Curso curso;
+	
 	private boolean simulado;
 	private boolean ativo;
 	
@@ -30,18 +38,18 @@ public class Prova {
 	public Prova() {
 		
 	}
-
-	public Prova(int id, String titulo, LocalDate dataCriacao,
-			Professor professor, boolean simulado, boolean ativo) {
+	
+	public Prova(int id, String titulo, LocalDate dataCriacao, Professor professor, Curso curso, boolean simulado,
+			boolean ativo) {
 		this.id = id;
 		this.titulo = titulo;
 		this.dataCriacao = dataCriacao;
 		this.professor = professor;
+		this.curso = curso;
 		this.simulado = simulado;
 		this.ativo = ativo;
 	}
 
-	
 	//GETTERS E SETTERS
 	public int getId() {
 		return id;
@@ -60,7 +68,7 @@ public class Prova {
 	}
 
 	public LocalDate getDataCriacao() {
-		return dataCriacao;
+		return dataCriacao;		
 	}
 
 	public void setDataCriacao(LocalDate dataCriacao) {
@@ -73,6 +81,14 @@ public class Prova {
 
 	public void setProfessor(Professor professor) {
 		this.professor = professor;
+	}
+
+	public Curso getCurso() {
+		return curso;
+	}
+
+	public void setCurso(Curso curso) {
+		this.curso = curso;
 	}
 
 	public boolean isSimulado() {

@@ -1,6 +1,5 @@
 package br.edu.fatecguarulhos.projetoavalia.controller;
 
-import java.util.Collections;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,12 +16,15 @@ import org.springframework.web.multipart.MultipartFile;
 
 import br.edu.fatecguarulhos.projetoavalia.dto.CursoDTO;
 import br.edu.fatecguarulhos.projetoavalia.dto.DisciplinaDTO;
+import br.edu.fatecguarulhos.projetoavalia.dto.ProvaDTO;
+import br.edu.fatecguarulhos.projetoavalia.dto.ProvaDisciplinaDTO;
+import br.edu.fatecguarulhos.projetoavalia.dto.ProvaQuestaoDTO;
 import br.edu.fatecguarulhos.projetoavalia.dto.QuestaoDTO;
 import br.edu.fatecguarulhos.projetoavalia.model.entity.Disciplina;
-import br.edu.fatecguarulhos.projetoavalia.model.entity.Questao;
 import br.edu.fatecguarulhos.projetoavalia.service.CursoService;
 import br.edu.fatecguarulhos.projetoavalia.service.DisciplinaService;
 import br.edu.fatecguarulhos.projetoavalia.service.ProfessorService;
+import br.edu.fatecguarulhos.projetoavalia.service.ProvaService;
 import br.edu.fatecguarulhos.projetoavalia.service.QuestaoService;
 
 @Controller
@@ -40,6 +42,9 @@ public class TesteController {
 
     @Autowired
     private ProfessorService professorService;
+    
+    @Autowired
+    private ProvaService provaService;
 
     // ------------------- MENU PRINCIPAL -------------------
     @GetMapping
@@ -136,8 +141,7 @@ public class TesteController {
         model.addAttribute("disciplinas", disciplinaService.listarTodas());
         
         //Objeto é criado com uma lista de 5 alternativas
-        QuestaoDTO questaoDTO = new QuestaoDTO(5);
-        model.addAttribute("questaoDTO", questaoDTO);
+        model.addAttribute("questaoDTO", new QuestaoDTO(5));
 
         return "testeQuestoes";
     }
@@ -198,22 +202,75 @@ public class TesteController {
     // =====================================================
     // ======================= PROVA =======================
     // =====================================================
+
     @GetMapping("/provas")
-    public String selecionarDisciplina(Model model) {
-        model.addAttribute("disciplinas", disciplinaService.listarTodas());
+    public String listarProvas(Model model) {
+        model.addAttribute("provas", provaService.listarTodas());
+        model.addAttribute("provaDTO", new ProvaDTO());
+        model.addAttribute("cursos", cursoService.listarTodos());
         return "testeProva";
     }
 
-    @PostMapping("/provas/gerar-prova")
-    public String gerarProva(@RequestParam int disciplinaId, @RequestParam int qntQuestoes, Model model) {
-        // Busca todas as questões da disciplina
-        List<Questao> questoes = questaoService.buscarPorDisciplina(disciplinaId);
+    @PostMapping("/provas/salvar")
+    public String salvarProva(@ModelAttribute ProvaDTO provaDTO) {
+        provaService.criar(provaDTO);
+        int id = provaService.buscarPorTitulo(provaDTO.getTitulo()).getId();
+        return "redirect:/teste/provas/editar/" + id;
+    }
 
-        // Embaralha e seleciona algumas questões aleatórias
-        Collections.shuffle(questoes);
-        List<Questao> questoesSelecionadas = questoes.stream().limit(qntQuestoes).toList();
+    @GetMapping("/provas/editar/{id}")
+    public String editarProva(@PathVariable int id, Model model) {
+        ProvaDTO provaDTO = new ProvaDTO(provaService.buscarPorId(id));
+        
+        
+        // Lista de disciplinas baseadas no curso da prova
+        model.addAttribute("disciplinas", disciplinaService.buscarPorCursoId(provaDTO.getCurso().getId()));
+        
+        // Lista de disciplinas e questões já associadas à prova
+        model.addAttribute("disciplinasProva", provaService.listarDisciplinasPorProva(id));
+        model.addAttribute("questoesProva", provaService.listarQuestoesPorProva(id));
 
-        model.addAttribute("questoes", questoesSelecionadas);
-        return "testeProvaGerada";
+        // Lista de questões disponíveis (de disciplinas já associadas)
+        model.addAttribute("questoesDisponiveis", provaService.listarQuestoesDisponiveisPorProva(id));
+
+        // Dados para o formulário
+        model.addAttribute("provaDTO", provaDTO);
+        model.addAttribute("provaDisciplinaDTO", new ProvaDisciplinaDTO());
+        model.addAttribute("provaQuestaoDTO", new ProvaQuestaoDTO());
+
+        return "testeProvaEdicao";
+    }
+    
+    @PostMapping("/provas/editar/{id}/adicionar-questao")
+    public String adicionarQuestao(@PathVariable int id, @ModelAttribute ProvaQuestaoDTO provaQuestaoDTO) {
+    	provaService.adicionarQuestao(provaQuestaoDTO);
+    	return "redirect:/teste/provas/editar/{id}";
+    }
+    
+    @PostMapping("/provas/editar/{id}/adicionar-disciplina")
+    public String adicionarQuestao(@PathVariable int id, @ModelAttribute ProvaDisciplinaDTO provaDisciplinaDTO) {
+    	provaDisciplinaDTO.setProva(provaService.buscarPorId(id));
+    	provaService.adicionarDisciplina(provaDisciplinaDTO);
+    	return "redirect:/teste/provas/editar/{id}";
+    }
+
+    @PostMapping("/provas/atualizar/{id}")
+    public String atualizarProva(@PathVariable int id, @ModelAttribute ProvaDTO provaDTO) {
+        provaService.atualizar(id, provaDTO);
+        return "redirect:/teste/provas";
+    }
+
+    @GetMapping("/provas/excluir/{id}")
+    public String excluirProva(@PathVariable int id) {
+        provaService.excluir(id);
+        return "redirect:/teste/provas";
+    }
+
+    @GetMapping("/provas/detalhes/{id}")
+    public String detalhesProva(@PathVariable int id, Model model) {
+        model.addAttribute("provaDTO", new ProvaDTO(provaService.buscarPorId(id)));
+        model.addAttribute("questoes", provaService.listarQuestoesPorProva(id));
+        model.addAttribute("disciplinas", provaService.listarDisciplinasPorProva(id));
+        return "testeProvaDetalhes";
     }
 }
