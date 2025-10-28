@@ -17,41 +17,39 @@
 
 <!-- Conteúdo Principal da tela -->
 <main class="main-content">
+
 	<div class="card question-form-card wide-form">
-	            
+		<form method="post" enctype="multipart/form-data" th:object="${questaoDTO}">
 	<div class="discipline-container">
-	    <div class="discipline-selection">
-	        <span class="discipline-tag">
-	            Engenharia de Software I 
-	            <span class="material-icons">close</span>
-	        </span>
-	    </div>
+		
+<!-- Tag de usuário - a fazer -->		
+
+
+
 
 <!-- Botões e Disciplinas -->
-	    <div class="dropdown">
-	        <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown">Disciplina</button>
-	        <ul class="dropdown-menu">
-	            <li><a class="dropdown-item">Engenharia de Software I</a></li>
-	            <li><a class="dropdown-item">Projeto de Engenharia de Software</a></li>
-	            <li><a class="dropdown-item">1</a></li>
-	            <li><a class="dropdown-item">2</a></li>
-	        </ul>
-	    </div>
+
+		<div class="col-md-4 mb-3">
+		    <label class="form-label">Curso</label>
+		    <select id="cursoSelect" class="form-select" th:field="*{curso.id}" required>
+		        <option value="0" disabled selected>Selecione...</option>
+		        <option th:each="curso : ${cursos}"
+		                th:value="${curso.id}"
+		                th:text="${curso.nome}"></option>
+		    </select>
+		</div>
 		
-		<div class="dropdown">
-	        <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown">Curso</button>
-	        <ul class="dropdown-menu">
-	            <li><a class="dropdown-item">curso 1</a></li>
-	            <li><a class="dropdown-item">curso 2</a></li>
-	            <li><a class="dropdown-item">3</a></li>
-	            <li><a class="dropdown-item">4</a></li>
-	        </ul>
-	    </div>
-	</div>
+		<div class="col-md-4 mb-3">
+		    <label class="form-label">Disciplina</label>
+		    <select id="disciplinaSelect" class="form-select" th:field="*{disciplina.id}" required>
+		        <option value="0" disabled selected>Selecione Um Curso...</option>
+		    </select>
+		</div>
+</div>
 	
 	<div class="custom-checkbox">
-	  <input type="checkbox"  id="simuladoBolean">
-	  <label for="simuladoBolean">Questão de Simulado?</label>
+		<input type="checkbox" th:field="*{simulado}" id="simulado">
+		<label for="simulado">Questão de Simulado</label>
 	</div>
 
 <!-- Campo para Enunciado da Questão e Imagem -->
@@ -59,64 +57,142 @@
         <p style="margin-bottom: 10px;">Adicione o enunciado da questão:</p>
         <div class="question-area">
             <div class="enunciado-input">
-                <textarea placeholder="Exemplo: Qual é a melhor matéria do quinto semestre de ADS?"></textarea>
+                <textarea th:field="*{enunciado}" rows="3" placeholder="Digite o enunciado da questão..." required></textarea>
             </div>
-            <div class="image-placeholder">
-                <span class="material-icons">add</span>
-            </div>
+			<div class="image-placeholder">
+			    <input type="file" class="image-input" name="file" accept="image/*" onchange="previewImage(event)">
+			    <div class="image-content">
+			        <span class="material-icons">add</span>
+			        <p>Adicionar imagem</p>
+			    </div>
+			</div>
         </div>
     </div>
-
+	
 <!-- Campo para Alternativas -->		
 	<ul class="alternatives-list">
 		
-		<p style="margin-bottom: 10px;">Escolha o número de alternativas para esta questão:</p>
-		<div class="radio-group">
-		  <div class="form-check">
-		    <input type="radio" class="form-check-input" id="radio1" name="optradio" value="option1">
-		    <label class="form-check-label" for="radio1">2</label>
-		  </div>
-		  <div class="form-check">
-		    <input type="radio" class="form-check-input" id="radio2" name="optradio" value="option2">
-		    <label class="form-check-label" for="radio2">4</label>
-		  </div>
-		  <div class="form-check">
-		    <input type="radio" class="form-check-input" id="radio3" name="optradio" value="option3">
-		    <label class="form-check-label" for="radio3">5</label>
-		  </div>
+		<div class="mb-3">
+		    <label class="form-label">Quantidade de Alternativas</label>
+		    <select id="quantidadeAlternativas" class="form-check-label">
+		        <option value="2">2</option>
+		        <option value="4">4</option>
+		        <option value="5" selected>5</option>
+		    </select>
 		</div>
-		
-		<p style="margin-bottom: 10px; margin-top: 15px;">Adicione as alternativas da questão:</p>
-	    <li class="alternative-item">
-	        <input type="radio" name="correta" class="alt-radio">
-	        <label>a) <span class="editable" contenteditable="true" data-placeholder="Programação Linear"></span></label>
-	    </li>
-	    <li class="alternative-item">
-	        <input type="radio" name="correta" class="alt-radio">
-	        <label>b) <span class="editable" contenteditable="true" data-placeholder="Redes de computadores"></span></label>
-	    </li>
-	    <li class="alternative-item">
-	        <input type="radio" name="correta" class="alt-radio">
-	        <label>c) <span class="editable" contenteditable="true" data-placeholder="Projeto de Engenharia de Software"></span></label>
-	    </li>
-	    <li class="alternative-item">
-	        <input type="radio" name="correta" class="alt-radio">
-	        <label>d) <span class="editable" contenteditable="true" data-placeholder="Sistemas Distribuidos"></span></label>
-	    </li>
-	    <li class="alternative-item">
-	        <input type="radio" name="correta" class="alt-radio">
-	        <label>e) <span class="editable" contenteditable="true" data-placeholder="Nenhuma das alternativas"></span></label>
-	    </li>
-	</ul>
+	
+		<p style="margin-bottom: 10px; margin-top: 15px;">Alternativas:</p>
+		<div id="alternativasContainer"></div>
+	    
 
 <!-- Botões no final da tela -->
         <div class="action-footer">
-            <button class="btn btn-save"><span class="material-icons" style="font-size:16px;">save</span> Salvar</button>
-            <button class="btn btn-cancel"><span class="material-icons" style="font-size:16px;">close</span> Cancelar</button>
-
+            <button type="submit" class="btn btn-save"><span class="material-icons">save</span> Salvar</button>
+            <a th:href="@{/}" class="btn btn-cancel" ><span class="material-icons">close</span> Cancelar</a>
         </div>
+		
+		</form>
     </div>
 </main>
+
+<!-- Script para mostrar imagem dentro da area -->
+<script>
+function previewImage(event) {
+    const placeholder = event.target.closest('.image-placeholder');
+    const content = placeholder.querySelector('.image-content');
+
+    // cria um elemento <img> com a prévia
+    const file = event.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            // cria ou atualiza o preview
+            let img = placeholder.querySelector('.image-preview');
+            if (!img) {
+                img = document.createElement('img');
+                img.classList.add('image-preview');
+                placeholder.appendChild(img);
+            }
+            img.src = e.target.result;
+            content.style.display = 'none'; // esconde o texto/ícone
+        };
+        reader.readAsDataURL(file);
+    }
+}
+</script>
+
+
+<!-- Script para q quantidade de alternativas variarem no formulário de criação -->
+<script>
+    const container = document.getElementById("alternativasContainer");
+    const select = document.getElementById("quantidadeAlternativas");
+
+    // Função que cria os campos de alternativas dinamicamente
+	function gerarAlternativas(qtd) {
+	    container.innerHTML = ""; // limpa o container
+
+	    for (let i = 0; i < qtd; i++) {
+	        const div = document.createElement("div");
+	        div.classList.add("mb-3", "alternativa-item");
+
+	        const letra = String.fromCharCode(65 + i); // A, B, C...
+
+	        div.innerHTML = `
+	            <div class="input-group" style="display: flex; align-items: center; gap: 10px;">
+	                <input type="radio" name="alternativaCorretaIndex" value="${i}" required>
+	                <span>${letra})</span>
+	                <input type="text" class="alternative-item" 
+	                    name="alternativas[${i}].texto" 
+	                    placeholder="Digite o texto da alternativa..."
+	                    required>
+	            </div>
+	        `;
+	        container.appendChild(div);
+	    }
+	}
+
+    // Atualiza sempre que o select muda
+    select.addEventListener("change", function() {
+        gerarAlternativas(this.value);
+    });
+
+    // Gera inicialmente o padrão selecionado (5)
+    gerarAlternativas(select.value);
+</script>
+
+<!--  Script para as disciplinas mudarem de acordo com o curso selecionado -->
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const cursoSelect = document.getElementById("cursoSelect");
+    const disciplinaSelect = document.getElementById("disciplinaSelect");
+
+    cursoSelect.addEventListener("change", function() {
+        const cursoId = this.value;
+
+        if (!cursoId) return;
+
+        fetch(`/teste/api/disciplinas/por-curso/${cursoId}`)
+            .then(response => {
+                if (!response.ok) throw new Error("Erro ao buscar disciplinas");
+                return response.json();
+            })
+            .then(disciplinas => {
+                disciplinaSelect.innerHTML = '<option value="" disabled selected>Selecione...</option>';
+
+                disciplinas.forEach(d => {
+                    const option = document.createElement("option");
+                    option.value = d.id;
+                    option.textContent = d.nome;
+                    disciplinaSelect.appendChild(option);
+                });
+            })
+            .catch(err => {
+                console.error(err);
+                disciplinaSelect.innerHTML = '<option value="" disabled selected>Erro ao carregar disciplinas</option>';
+            });
+    });
+});
+</script>
 
 </body>
 </html>

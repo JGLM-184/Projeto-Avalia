@@ -10,10 +10,16 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.edu.fatecguarulhos.projetoavalia.dto.QuestaoDTO;
 import br.edu.fatecguarulhos.projetoavalia.dto.TrocaSenhaDTO;
 import br.edu.fatecguarulhos.projetoavalia.model.entity.Professor;
 import br.edu.fatecguarulhos.projetoavalia.repository.ProfessorRepository;
 import br.edu.fatecguarulhos.projetoavalia.service.ProfessorService;
+
+import br.edu.fatecguarulhos.projetoavalia.service.CursoService;
+import br.edu.fatecguarulhos.projetoavalia.service.DisciplinaService;
+import br.edu.fatecguarulhos.projetoavalia.service.ProvaService;
+import br.edu.fatecguarulhos.projetoavalia.service.QuestaoService;
 
 @Controller
 @RequestMapping
@@ -26,6 +32,18 @@ public class AmandaController {
 	
 	@Autowired
     private ProfessorService professorService;
+	
+	@Autowired
+    private CursoService cursoService;
+
+    @Autowired
+    private DisciplinaService disciplinaService;
+
+    @Autowired
+    private QuestaoService questaoService;
+    
+    @Autowired
+    private ProvaService provaService;
     
 	@GetMapping("/")
 	public String index(Model model, Authentication authentication) {
@@ -52,9 +70,21 @@ public class AmandaController {
     public String cadastroQuestao(Model model) {
     	model.addAttribute("paginaAtiva", "cadastroQuestao");
     	model.addAttribute("pageTitle", "Cadastro de Questão");
+    	model.addAttribute("professores", professorService.listarTodos());
+        model.addAttribute("cursos", cursoService.listarTodos());
+        model.addAttribute("disciplinas", disciplinaService.listarTodas());
+    	model.addAttribute("questaoDTO", new QuestaoDTO(5));
         return "cadastroQuestao";
     }
-	
+    
+   //TELA DE GERENCIAR QUESTÕES
+    @GetMapping("/gerenciarQuestoes")
+    public String gerenciarQuestoes(Model model) {
+    	model.addAttribute("paginaAtiva", "gerenciarQuestoes");
+    	model.addAttribute("pageTitle", "Banco de Questões");
+        return "gerenciarQuestoes";
+    }
+    
   //TELA DE MONTAR PROVA
     @GetMapping("/montarProva")
     public String montarProva(Model model) {
@@ -71,13 +101,7 @@ public class AmandaController {
         return "bancoProvas";
     }
     
-  //TELA DE GERENCIAR QUESTÕES
-    @GetMapping("/gerenciarQuestoes")
-    public String gerenciarQuestoes(Model model) {
-    	model.addAttribute("paginaAtiva", "gerenciarQuestoes");
-    	model.addAttribute("pageTitle", "Gerenciar Questões");
-        return "gerenciarQuestoes";
-    }
+  
 	
     
     @PostMapping("/alterar-senha")

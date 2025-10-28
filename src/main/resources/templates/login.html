@@ -12,9 +12,8 @@
 <body class="login-page">
 	
 	<div class="card login-card">
-	        <img class="user-icon" th:src="@{/imagens/Avatar.png}" alt="Avatar">
-			
-	        <h2><b>Login</b></h2>
+	        <img class="user-icon" th:src="@{/imagens/flor.png}" alt="Flor.Logo">
+			<h3><b>Sistema Avalia</b></h3>
 			
 	        <!-- BLOCOS DE MENSAGEM DO SPRING SECURITY -->
 	        <div th:if="${param.error}" class="alert alert-danger mt-3" role="alert">
@@ -44,11 +43,7 @@
 	            <button type="submit" class="btn btn-primary">Entrar</button>
 	        </form>
 
-        <a href="#" class="link-forgot">Esqueceu a senha?</a>
-
-        <div class="divider">Ou</div>
-
-        <p>Para Alunos:</p>
+        <a>Para Alunos:</a>
         <a href="#" class="link-simulado">Fazer simulado</a>
     </div>
 

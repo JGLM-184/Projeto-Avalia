@@ -97,6 +97,7 @@ body {
     color: var(--text-light);
     border: none;
     box-shadow: var(--shadow-md);
+	margin-bottom: 2rem;
 }
 
 .btn-primary:hover {
@@ -181,6 +182,7 @@ body {
 
 /* Inputs de Formulário Modernos */
 .form-group {
+	margin-top: 1.5rem;
     margin-bottom: 1.5rem;
     position: relative;
 }
@@ -260,11 +262,12 @@ body {
     top: 0;
     z-index: 100;
     box-shadow: var(--shadow-md);
+	overflow: hidden;
 }
 
 .coordinator-navbar h2 {
     font-size: 1.4rem;
-    font-weight: 600;
+    font-weight: 500;
     color: var(--text-light);
     text-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.1);
 }
@@ -301,7 +304,7 @@ body {
     text-decoration: none;
     color: rgba(255, 255, 255, 0.9);
     font-weight: 500;
-    font-size: 14px;
+    font-size: 13px;
     display: flex;
     align-items: center;
     gap: 8px;
@@ -325,7 +328,7 @@ body {
 
 .nav-item.active a {
     color: var(--text-light);
-    font-weight: 600;
+    font-weight: 500;
 }
 
 .user-profile {
@@ -341,21 +344,6 @@ body {
     border: 0.125rem solid rgba(255, 255, 255, 0.3);
 }
 
-.user-profile .logout-link {
-    color: rgba(255, 255, 255, 0.9);
-    text-decoration: none;
-    font-size: 0.875rem;
-    font-weight: 500;
-    padding: 0.5rem 1rem;
-    border-radius: 0.5rem;
-    transition: all 0.3s ease;
-}
-
-.user-profile .logout-link:hover {
-    background: rgba(255, 255, 255, 0.1);
-    color: var(--text-light);
-}
-
 .main-content {
     padding: 32px 24px;
     flex-grow: 1;
@@ -363,6 +351,97 @@ body {
     justify-content: center;
     background-color: var(--background-light);
     min-height: calc(100vh - 80px);
+}
+
+/* ------------------------------------------- */
+/* MODEL DENTRO DA NAVBAR */
+/* ------------------------------------------- */
+
+/* Botão "Sair" personalizado */
+.navbar-logout-btn {
+  border: 0.1rem solid rgb(64, 0, 128);   /* roxo (Bootstrap purple) */
+  color: rgb(64, 0, 128);
+  border-radius: 0.5rem;
+  padding: 0.3rem 0.75rem;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  transition: all 0.3s ease;
+  background-color: transparent;
+}
+
+/* Hover: fundo roxo claro e texto branco */
+.navbar-logout-btn:hover {
+  background-color: #6f42c1;
+  color: #fff;
+}
+
+/* Ícone menor e alinhado */
+.navbar-logout-btn .material-icons {
+  font-size: 1rem; /* padrão é 24px (~1.5rem) */
+  line-height: 1;
+  vertical-align: middle;
+}
+
+#logoutModal .modal-dialog {
+  max-width: 25rem; /* ~400px */
+  margin: 1.5rem auto;
+}
+
+/* Caixa principal */
+#logoutModal .modal-content {
+  background-color: #f8f9fa;
+  border-radius: 1rem;
+  border: 0.06rem solid #dee2e6;
+  box-shadow: 0 0 1.5rem rgba(0, 0, 0, 0.2);
+}
+
+/* Cabeçalho */
+#logoutModal .modal-header {
+  background-color: rgb(64, 0, 128);
+  color: #fff;
+  border-top-left-radius: 1rem;
+  border-top-right-radius: 1rem;
+  padding: 0.9rem 1.2rem;
+}
+
+/* Corpo */
+#logoutModal .modal-body {
+  color: #333;
+  font-size: 0.95rem;
+  padding: 1.25rem;
+}
+
+/* Rodapé */
+#logoutModal .modal-footer {
+  border-top: none;
+  justify-content: space-between;
+  padding: 1rem 1.25rem;
+}
+
+/* Botão confirmar */
+#logoutModal .btn-danger {
+  background-color: rgb(255, 128, 0);
+  border: none;
+  border-radius: 0.5rem;
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  transition: background-color 0.3s ease;
+}
+
+#logoutModal .btn-danger:hover {
+  background-color: rgb(255, 128, 64);
+}
+
+/* Botão cancelar */
+#logoutModal .btn-secondary {
+  background-color: rgb(128, 0, 255);
+  border: none;
+  border-radius: 0.5rem;
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  transition: background-color 0.3s ease;
 }
 
 /* ------------------------------------------- */
@@ -431,14 +510,11 @@ body {
 .user-icon {
     font-size: 80px;
     color: var(--primary-color);
-    border: 4px solid var(--primary-color);
-    border-radius: 50%;
-    width: 100px;
-    height: 100px;
+    border-radius: 20%;
+    width: 140px;
+    height: 140px;
     line-height: 112px;
-    margin: 0 auto 32px;
-    background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
-    box-shadow: var(--shadow-lg);
+    margin: 0 auto;
     transition: transform 0.3s ease;
 }
 
@@ -528,7 +604,7 @@ body {
 
 .enunciado-input textarea {
     width: 100%;
-    min-height: 7.5rem;
+    min-height: 9rem;
     padding: 1rem;
     border: 0.125rem solid var(--border-color);
     border-radius: 0.75rem;
@@ -546,26 +622,62 @@ body {
 }
 
 .image-placeholder {
-    width: 120px;
-    height: 120px;
-    border: 2px dashed var(--border-color);
+    width: 9rem;
+    height: 9rem;
+    border: 2px dashed var(--border-color, #ccc);
     border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     transition: all 0.3s ease;
-    background-color: var(--hover-light);
+    background-color: var(--hover-light, #f9f9f9);
+    position: relative;
+    overflow: hidden;
 }
 
+.image-input {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.image-content {
+    text-align: center;
+    pointer-events: none; /* deixa clicar no input mesmo por cima */
+}
+
+.image-content .material-icons {
+    font-size: 32px;
+    color: var(--text-muted, #777);
+    display: block;
+}
+
+.image-content p {
+    margin-top: 8px;
+    font-size: 14px;
+    color: var(--text-muted, #777);
+}
+
+/* A imagem de preview */
+.image-preview {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 12px;
+}
+
+/* Efeito hover */
 .image-placeholder:hover {
-    border-color: var(--primary-color);
+    border-color: var(--primary-color, #6366f1);
     background-color: rgba(99, 102, 241, 0.05);
 }
 
-.image-placeholder .material-icons {
-    font-size: 32px;
-    color: var(--text-muted);
+/* Efeito ao passar o mouse */
+.image-placeholder:hover {
+    border-color: var(--primary-color, #6366f1);
+    background-color: rgba(99, 102, 241, 0.05);
 }
 
 /* Alternatives List */
@@ -576,25 +688,20 @@ body {
 
 .alternative-item {
 	display: flex;
+	flex: 1;
+	min-height: 3rem;
+	width: 100%;
 	gap: 8px;
+	grid-row: auto;
     background: var(--background-card);
     border: 2px solid var(--border-color);
     border-radius: 12px;
-    padding: 16px 20px;
+    padding: 1rem;
     margin-bottom: 12px;
-    transition: all 0.3s ease;
+	resize: vertical;
 }
 
-.alternative-item[contenteditable="true"]:empty:before {
-    content: attr(data-placeholder);
-    color: #999;
-}
 
-.alternative-item[contenteditable="true"] {
-    outline: none;
-    min-height: 24px;
-    cursor: text;
-}
 .editable {
   flex: 1;
   display: inline-block;
@@ -616,46 +723,21 @@ body {
 
 /* checkbox */
 .custom-checkbox input {
-  display: none; /* esconde o checkbox real */
+	position: relative;
+	padding-left: 30px;
+	cursor: pointer;
+	user-select: none;
+	margin-bottom: 20px;
 }
 
-.custom-checkbox label {
-  position: relative;
-  padding-left: 30px;
-  cursor: pointer;
-  user-select: none;
-  margin-bottom: 20px;
+.form-check-label {
+	text-align: center;
+	width: 4.5rem;
+	height: 2.3rem;
+	margin-left: 1rem;
+	border-radius: 8px;
+	border-color: rgb(140, 140, 140);
 }
-
-/* caixa do checkbox */
-.custom-checkbox label::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 20px;
-  height: 20px;
-  border: 2px solid rgb(242, 118, 6);
-  border-radius: 4px;
-  background: white;
-}
-
-/* check quando marcado */
-.custom-checkbox input:checked + label::before {
-  background: rgb(255, 128, 0); /* cor de fundo quando marcado */
-  border-color: rgb(242, 118, 6);
-}
-
-/* opcional: desenho do check */
-.custom-checkbox input:checked + label::after {
-  content: "✓";
-  position: absolute;
-  left: 3px;
-  top: 0px;
-  color: white;
-  font-size: 16px;
-}
-
 
 /* Action Footer */
 .action-footer {

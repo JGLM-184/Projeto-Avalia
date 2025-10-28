@@ -1,7 +1,6 @@
 INSERT INTO professor (nome, email, re, senha, coordenador, primeiro_acesso, ativo) VALUES ('Alecio Aparecido', 'teste@teste.com', '123456', '$2a$10$PGbBlRRc2YfnzSOXvh6PKe5GHzlJkY6UP2.LrPrv8suAmFfYykxdq', true, true, true);
 INSERT INTO professor (nome, email, re, senha, coordenador, primeiro_acesso, ativo) VALUES ('Teste Usuário Inativo', 'usuarioinativo@teste.com', '123456', '$2a$10$PGbBlRRc2YfnzSOXvh6PKe5GHzlJkY6UP2.LrPrv8suAmFfYykxdq', true, false, true);
 
-
 INSERT INTO curso (nome) VALUES ('Análise e Desenvolvimento de Sistemas');
 INSERT INTO curso (nome) VALUES ('Logística');
 INSERT INTO curso (nome) VALUES ('Gestão da Produção Industrial');
@@ -14,6 +13,11 @@ INSERT INTO disciplina (nome, curso_id) VALUES ('Engenharia de Software', 1);
 INSERT INTO disciplina (nome, curso_id) VALUES ('Gestão de Estoques', 2);
 INSERT INTO disciplina (nome, curso_id) VALUES ('Transporte e Distribuição', 2);
 INSERT INTO disciplina (nome, curso_id) VALUES ('Logística Reversa', 2);
+
+INSERT INTO professor_curso (curso_id, professor_id) VALUES (1, 1);
+INSERT INTO professor_disciplina (disciplina_id, professor_id) VALUES (1, 1);
+
+
 
 INSERT INTO questao (enunciado, autor_id, curso_id, disciplina_id, simulado) VALUES ('O que é um algoritmo?', 1, 1, 1, false);
 INSERT INTO questao (enunciado, autor_id, curso_id, disciplina_id, simulado) VALUES ('Qual a função de uma variável?', 1, 1, 1, false);
