@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.edu.fatecguarulhos.projetoavalia.dto.QuestaoDTO;
@@ -46,6 +48,7 @@ public class AmandaController {
     @Autowired
     private ProvaService provaService;
     
+  //TELA INICIAL
 	@GetMapping("/")
 	public String index(Model model, Authentication authentication) {
 	    model.addAttribute("mostrarPopup", false);
@@ -58,8 +61,6 @@ public class AmandaController {
 	    return "index";
 	}
 
-
-	
   //TELA DE LOGIN
     @GetMapping("/login")
     public String login(Model model) {
@@ -82,15 +83,32 @@ public class AmandaController {
         model.addAttribute("questaoDTO", new QuestaoDTO(5));
         return "cadastroQuestao";
     }
+    
+    @PostMapping("/cadastroQuestao")
+    public String salvarQuestao(@ModelAttribute QuestaoDTO dto,
+                                @RequestParam(value = "file", required = false) MultipartFile file) {
+        if (file != null && !file.isEmpty()) {
+            questaoService.salvar(dto, file);
+        } else {
+            questaoService.salvar(dto);
+        }
+        return "redirect:/cadastroQuestao";
+    }
 
 
     
-   //TELA DE GERENCIAR QUESTÕES
-    @GetMapping("/gerenciarQuestoes")
-    public String gerenciarQuestoes(Model model) {
-    	model.addAttribute("paginaAtiva", "gerenciarQuestoes");
+    //TELA DE GERENCIAR QUESTÕES
+    @GetMapping("/bancoDeQuestoes")
+    public String bancoDeQuestoes(Model model) {
+    	model.addAttribute("paginaAtiva", "bancoQuestoes");
     	model.addAttribute("pageTitle", "Banco de Questões");
-        return "gerenciarQuestoes";
+    	
+    	model.addAttribute("questoes", questaoService.listarTodas());
+        model.addAttribute("professores", professorService.listarTodos());
+        model.addAttribute("cursos", cursoService.listarTodos());
+        model.addAttribute("disciplinas", disciplinaService.listarTodas());
+    	
+        return "bancoDeQuestoes";
     }
     
   //TELA DE MONTAR PROVA
@@ -124,7 +142,7 @@ public class AmandaController {
             professorService.trocarSenha(professor, dto.getNovaSenha(), dto.getConfirmarSenha());
         } catch (IllegalArgumentException e) {
             model.addAttribute("erro", e.getMessage());
-            model.addAttribute("professor", professor); // <-- essencial
+            model.addAttribute("professor", professor);
             return "index"; // ou mantém o popup aberto
         }
 

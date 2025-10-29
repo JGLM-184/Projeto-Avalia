@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Banco de Questões</title>
+    <link rel="stylesheet" th:href="@{/style.css}">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+
+<body class="coordinator-layout">
+<!-- Navbar -->
+<div th:replace="~{navbar :: navbar}"></div>
+
+<!-- Conteúdo Principal da tela -->
+<main class="main-content">
+    <div class="bank-container">
+        <div class="card">
+            
+            <!-- Barra de Pesquisa -->
+            <div class="search-input-container">
+                <input type="text" class="form-input" placeholder="Pesquisar questão por enunciado...">
+                <button class="clear-button">
+                    <span class="material-icons">close</span>
+                </button>
+            </div>
+
+            <!-- Lista de Provas -->
+			
+<!-- LISTAGEM DE QUESTÕES -->
+<!--    <div class="card mt-5 shadow-sm">-->
+<!--        <div class="provas-list">-->
+<!--            <h5 class="discipline-badge">Questões Cadastradas</h5>-->
+<!--        </div>-->
+<!--        <div class="card-body">-->
+<!--            <table class="table table-hover align-middle">-->
+<!--                <thead>-->
+<!--                <tr>-->
+<!--                    <th>ID</th>-->
+<!--                    <th>Enunciado</th>-->
+<!--                    <th>Autor</th>-->
+<!--                    <th>Curso</th>-->
+<!--                    <th>Disciplina</th>-->
+<!--                    <th>Simulado</th>-->
+<!--                    <th>Ações</th>-->
+<!--                </tr>-->
+<!--                </thead>-->
+<!--                <tbody>-->
+<!--                <tr th:each="questao : ${questoes}">-->
+					
+<!--                    <td th:text="${questao.id}"></td>-->
+<!--                    <td th:text="${questao.enunciado}" class="quebraTexto"></td>-->
+<!--                    <td th:text="${questao.autor.nome}"></td>-->
+<!--                    <td th:text="${questao.curso.nome}"></td>-->
+<!--                    <td th:text="${questao.disciplina.nome}"></td>-->
+<!--                    <td>-->
+<!--                        <span th:text="${questao.simulado} ? 'Sim' : 'Não'"></span>-->
+<!--                    </td>-->
+<!--                    <td>-->
+<!--                        <a th:href="@{'/teste/questoes/editar/' + ${questao.id}}" class="btn btn-sm btn-warning">Editar</a>-->
+<!--                        <a th:href="@{'/teste/questoes/excluir/' + ${questao.id}}" class="btn btn-sm btn-danger" -->
+<!--                           onclick="return confirm('Tem certeza que deseja excluir esta questão?')">Excluir</a>-->
+<!--                    </td>-->
+					
+<!--                </tr>-->
+<!--                </tbody>-->
+<!--            </table>-->
+<!--        </div>-->
+<!--    </div>	*/-->
+	
+	<div class="card mt-5 shadow-sm">
+	<div class="provas-list">
+        <h5 class="discipline-badge">Questões Cadastradas</h5>
+    </div>
+            <div class="provas-list">
+				<tr th:each="questao : ${questoes}">
+                <div class="prova-item">
+                    <div class="prova-content quebraTexto">
+                        <div class="prova-meta">
+                            <td th:text="${questao.disciplina.nome}" class="discipline-badge"></td>
+							<td th:text="${questao.curso.nome}" class="discipline-badge"></td>
+							<td th:text="${questao.autor.nome}" class="discipline-badge"></td>
+							<td><span th:text="${questao.simulado} ? 'Sim' : 'Não'"></span></td>
+                        </div>
+                        <td th:text="${questao.enunciado}" class="quebraTexto"></td>
+                    </div>
+                    <div class="prova-actions">
+						<td>
+	                        <a th:href="@{'/teste/questoes/editar/' + ${questao.id}}" class="btn action-btn">
+								<span class="material-icons">edit</span>Editar</a>
+	                        <a th:href="@{'/teste/questoes/excluir/' + ${questao.id}}" class="btn action-btn" 
+	                           onclick="return confirm('Tem certeza que deseja excluir esta questão?')">
+							   <span class="material-icons">delete</span>Excluir</a>
+	                    </td>
+                    </div>
+                </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+</body>
+</html>

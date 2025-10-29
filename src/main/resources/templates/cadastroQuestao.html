@@ -19,21 +19,16 @@
 <main class="main-content">
 
 	<div class="card question-form-card wide-form">
-		<form method="post" enctype="multipart/form-data" th:object="${questaoDTO}">
+		<form th:action="@{/cadastroQuestao}" method="post" enctype="multipart/form-data" th:object="${questaoDTO}">
 	<div class="discipline-container">
 		
-<!-- Tag de usuário - a fazer 
-
-
-o chat disse que o código ficaria mais ou menos assim:
+<!-- Tag de usuário -->
 
 <div class="mb-3">
-    <label>Autor da questão:</label>
+    <label class="form-label">Autor</label>
     <input type="text" class="form-control" th:value="${autorLogado.nome}" disabled>
 </div>
 
-Eu mexi no QuestaoDTO, no QuestaoService e no AmandaController onde tem essa API
-caso você precise alterar algo -->		
 
 <!-- Botões e Disciplinas -->
 
@@ -79,7 +74,6 @@ caso você precise alterar algo -->
 	
 <!-- Campo para Alternativas -->		
 	<ul class="alternatives-list">
-		
 		<div class="mb-3">
 		    <label class="form-label">Quantidade de Alternativas</label>
 		    <select id="quantidadeAlternativas" class="form-check-label">
@@ -91,7 +85,7 @@ caso você precise alterar algo -->
 	
 		<p style="margin-bottom: 10px; margin-top: 15px;">Alternativas:</p>
 		<div id="alternativasContainer"></div>
-	    
+	</ul>
 
 <!-- Botões no final da tela -->
         <div class="action-footer">
