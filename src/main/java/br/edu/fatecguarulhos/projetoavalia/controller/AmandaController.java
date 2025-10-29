@@ -1,6 +1,7 @@
 package br.edu.fatecguarulhos.projetoavalia.controller;
 
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -65,17 +66,24 @@ public class AmandaController {
         return "login";
     }
 	
-	//TELA DE CADASTRO DE QUESTÕES
     @GetMapping("/cadastroQuestao")
     public String cadastroQuestao(Model model) {
-    	model.addAttribute("paginaAtiva", "cadastroQuestao");
-    	model.addAttribute("pageTitle", "Cadastro de Questão");
-    	model.addAttribute("professores", professorService.listarTodos());
+
+    	//Pega o autor logado
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        Professor autorLogado = professorRepository.findByEmail(auth.getName())
+                .orElseThrow(() -> new RuntimeException("Professor não encontrado"));
+
+        model.addAttribute("paginaAtiva", "cadastroQuestao");
+        model.addAttribute("pageTitle", "Cadastro de Questão");
+        model.addAttribute("autorLogado", autorLogado); // Envia para a tela
         model.addAttribute("cursos", cursoService.listarTodos());
         model.addAttribute("disciplinas", disciplinaService.listarTodas());
-    	model.addAttribute("questaoDTO", new QuestaoDTO(5));
+        model.addAttribute("questaoDTO", new QuestaoDTO(5));
         return "cadastroQuestao";
     }
+
+
     
    //TELA DE GERENCIAR QUESTÕES
     @GetMapping("/gerenciarQuestoes")

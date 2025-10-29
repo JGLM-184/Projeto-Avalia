@@ -9,9 +9,12 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.security.core.Authentication;
+
 
 import br.edu.fatecguarulhos.projetoavalia.dto.AlternativaDTO;
 import br.edu.fatecguarulhos.projetoavalia.dto.QuestaoDTO;
@@ -85,8 +88,12 @@ public class QuestaoService {
     //-------------------- CRUD --------------------
 
     public Questao salvar(QuestaoDTO dto) {
-        Professor autor = professorRepository.findById(dto.getAutor().getId())
+    	
+    	// Pega o professor logado
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        Professor autor = professorRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Professor não encontrado"));
+
 
         Curso curso = cursoRepository.findById(dto.getCurso().getId())
                 .orElseThrow(() -> new RuntimeException("Curso não encontrado"));

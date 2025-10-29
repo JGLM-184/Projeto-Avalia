@@ -19,7 +19,6 @@ public class QuestaoDTO {
 
     private String imagem;
 
-    @NotNull(message = "O autor é obrigatório")
     private Professor autor;
 
     @NotNull(message = "O curso é obrigatório")

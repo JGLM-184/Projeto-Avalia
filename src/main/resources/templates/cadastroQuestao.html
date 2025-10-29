@@ -22,10 +22,18 @@
 		<form method="post" enctype="multipart/form-data" th:object="${questaoDTO}">
 	<div class="discipline-container">
 		
-<!-- Tag de usuário - a fazer -->		
+<!-- Tag de usuário - a fazer 
 
 
+o chat disse que o código ficaria mais ou menos assim:
 
+<div class="mb-3">
+    <label>Autor da questão:</label>
+    <input type="text" class="form-control" th:value="${autorLogado.nome}" disabled>
+</div>
+
+Eu mexi no QuestaoDTO, no QuestaoService e no AmandaController onde tem essa API
+caso você precise alterar algo -->		
 
 <!-- Botões e Disciplinas -->
 
