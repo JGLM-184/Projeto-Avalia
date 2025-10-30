@@ -19,89 +19,95 @@
     <div class="bank-container">
         <div class="card">
             
-            <!-- Barra de Pesquisa -->
-            <div class="search-input-container">
-                <input type="text" class="form-input" placeholder="Pesquisar questão por enunciado...">
-                <button class="clear-button">
-                    <span class="material-icons">close</span>
-                </button>
-            </div>
-
-            <!-- Lista de Provas -->
-			
-<!-- LISTAGEM DE QUESTÕES -->
-<!--    <div class="card mt-5 shadow-sm">-->
-<!--        <div class="provas-list">-->
-<!--            <h5 class="discipline-badge">Questões Cadastradas</h5>-->
-<!--        </div>-->
-<!--        <div class="card-body">-->
-<!--            <table class="table table-hover align-middle">-->
-<!--                <thead>-->
-<!--                <tr>-->
-<!--                    <th>ID</th>-->
-<!--                    <th>Enunciado</th>-->
-<!--                    <th>Autor</th>-->
-<!--                    <th>Curso</th>-->
-<!--                    <th>Disciplina</th>-->
-<!--                    <th>Simulado</th>-->
-<!--                    <th>Ações</th>-->
-<!--                </tr>-->
-<!--                </thead>-->
-<!--                <tbody>-->
-<!--                <tr th:each="questao : ${questoes}">-->
-					
-<!--                    <td th:text="${questao.id}"></td>-->
-<!--                    <td th:text="${questao.enunciado}" class="quebraTexto"></td>-->
-<!--                    <td th:text="${questao.autor.nome}"></td>-->
-<!--                    <td th:text="${questao.curso.nome}"></td>-->
-<!--                    <td th:text="${questao.disciplina.nome}"></td>-->
-<!--                    <td>-->
-<!--                        <span th:text="${questao.simulado} ? 'Sim' : 'Não'"></span>-->
-<!--                    </td>-->
-<!--                    <td>-->
-<!--                        <a th:href="@{'/teste/questoes/editar/' + ${questao.id}}" class="btn btn-sm btn-warning">Editar</a>-->
-<!--                        <a th:href="@{'/teste/questoes/excluir/' + ${questao.id}}" class="btn btn-sm btn-danger" -->
-<!--                           onclick="return confirm('Tem certeza que deseja excluir esta questão?')">Excluir</a>-->
-<!--                    </td>-->
-					
-<!--                </tr>-->
-<!--                </tbody>-->
-<!--            </table>-->
-<!--        </div>-->
-<!--    </div>	*/-->
-	
-	<div class="card mt-5 shadow-sm">
-	<div class="provas-list">
-        <h5 class="discipline-badge">Questões Cadastradas</h5>
-    </div>
-            <div class="provas-list">
+        <!-- Barra de Pesquisa -->
+		<form th:action="@{/questao/pesquisa}" method="get">
+		    <div class="search-input-container">
+		        <input type="text" class="form-input" id="pesquisaInput" name="nome" list="sugestoes"
+		               placeholder="Pesquisar questão por enunciado, disciplina ou curso...">
+		        <datalist id="sugestoes"></datalist>
+		        <button class="clear-button" type="submit">
+		            <span class="material-icons">search</span>
+		        </button>
+				<button class="clear-button" type="reset">
+		            <span class="material-icons">close</span>
+		        </button>
+		    </div>
+		</form>
+		
+		<!-- Checkbox para "apenas minhas questões" -->
+		<form th:action="@{/bancoDeQuestoes}" method="get" class="filtro-form">
+		    <div class="custom-checkbox-filtrar">
+		        <input type="checkbox" name="meus" id="meus"
+		               th:checked="${mostrarApenasMinhasQuestoes}" 
+		               onchange="this.form.submit()">
+		        <label for="meus">Mostrar apenas minhas questões</label>
+		    </div>
+		</form>
+		
+        <!-- Lista de Provas -->
+	<div class="card mt-3 shadow-sm">
+		<div class="provas-list">
+	        <h5 class="discipline-badge">Questões Cadastradas</h5>
+	    </div>
+            <div>
 				<tr th:each="questao : ${questoes}">
                 <div class="prova-item">
                     <div class="prova-content quebraTexto">
                         <div class="prova-meta">
-                            <td th:text="${questao.disciplina.nome}" class="discipline-badge"></td>
-							<td th:text="${questao.curso.nome}" class="discipline-badge"></td>
-							<td th:text="${questao.autor.nome}" class="discipline-badge"></td>
-							<td><span th:text="${questao.simulado} ? 'Sim' : 'Não'"></span></td>
+							<td><span th:text="${questao.autor.nome}" class="disciplineAutor"></span></td>
+							<br><br>
+                            <td><span th:text="${questao.disciplina.nome}" class="discipline"></span></td>
+							<td><span th:text="${questao.curso.nome}" class="discipline"></span></td>
+						
+							<td><span class="disciplineSimulado" th:text="${questao.simulado} ? 'Simulado' : 'Prova'"></span></td>
+							
                         </div>
                         <td th:text="${questao.enunciado}" class="quebraTexto"></td>
                     </div>
-                    <div class="prova-actions">
-						<td>
-	                        <a th:href="@{'/teste/questoes/editar/' + ${questao.id}}" class="btn action-btn">
-								<span class="material-icons">edit</span>Editar</a>
-	                        <a th:href="@{'/teste/questoes/excluir/' + ${questao.id}}" class="btn action-btn" 
-	                           onclick="return confirm('Tem certeza que deseja excluir esta questão?')">
-							   <span class="material-icons">delete</span>Excluir</a>
-	                    </td>
-                    </div>
-                </div>
+					<div class="prova-actions">
+					    <!-- Editar: coordenador OU autor -->
+					    <a th:if="${professorLogado.coordenador or questao.autor.id == professorLogado.id}"
+					       th:href="@{'/teste/questoes/editar/' + ${questao.id}}"
+					       class="btn action-btn"
+					       style="background: rgb(243, 243, 243);">
+					        <span class="material-icons">edit</span>Editar
+					    </a>
 
+					    <!-- Excluir: somente coordenador -->
+					    <a th:if="${professorLogado.coordenador}"
+					       th:href="@{'/teste/questoes/excluir/' + ${questao.id}}"
+					       class="btn action-btn"
+					       style="background: rgb(255, 188, 185);"
+					       onclick="return confirm('Tem certeza que deseja excluir esta questão?')">
+					        <span class="material-icons">delete</span>Excluir
+					    </a>
+					</div>
                 </div>
             </div>
         </div>
+        </div>
     </div>
 </main>
+
+<!-- Script para metodo de pesquisa -->
+<script>
+document.getElementById("pesquisaInput").addEventListener("input", function() {
+    const termo = this.value;
+    if (termo.length < 2) return; // só busca se digitar 2+ letras
+
+    fetch(`/questao/sugestoes?termo=${encodeURIComponent(termo)}`)
+        .then(res => res.json())
+        .then(data => {
+            const lista = document.getElementById("sugestoes");
+            lista.innerHTML = ""; // limpa sugestões antigas
+            data.forEach(item => {
+                const option = document.createElement("option");
+                option.value = item;
+                lista.appendChild(option);
+            });
+        });
+});
+</script>
 
 </body>
 </html>

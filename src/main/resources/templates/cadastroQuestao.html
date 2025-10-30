@@ -20,11 +20,25 @@
 
 	<div class="card question-form-card wide-form">
 		<form th:action="@{/cadastroQuestao}" method="post" enctype="multipart/form-data" th:object="${questaoDTO}">
+			
+	<!-- Toast para mensagem "Questão cadastrada com sucesso!" -->
+	<div class="toast-container position-fixed top-0 p-3">
+	  <div id="successToast" class="toast align-items-center text-bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
+	    <div class="d-flex">
+	      <div class="toast-body">
+	        Questão cadastrada com sucesso!
+	      </div>
+	      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Fechar"></button>
+	    </div>
+	  </div>
+	</div>
+	
+			
 	<div class="discipline-container">
-		
+	
 <!-- Tag de usuário -->
-
 <div class="mb-3">
+	
     <label class="form-label">Autor</label>
     <input type="text" class="form-control" th:value="${autorLogado.nome}" disabled>
 </div>
@@ -35,8 +49,8 @@
 		<div class="col-md-4 mb-3">
 		    <label class="form-label">Curso</label>
 		    <select id="cursoSelect" class="form-select" th:field="*{curso.id}" required>
-		        <option value="0" disabled selected>Selecione...</option>
-		        <option th:each="curso : ${cursos}"
+		        <option value="0" disabled selected>Selecione um curso...</option>
+		        <option th:each="curso : ${autorLogado.cursos}"
 		                th:value="${curso.id}"
 		                th:text="${curso.nome}"></option>
 		    </select>
@@ -45,7 +59,7 @@
 		<div class="col-md-4 mb-3">
 		    <label class="form-label">Disciplina</label>
 		    <select id="disciplinaSelect" class="form-select" th:field="*{disciplina.id}" required>
-		        <option value="0" disabled selected>Selecione Um Curso...</option>
+		        <option value="0" disabled selected>Selecione uma disciplina...</option>
 		    </select>
 		</div>
 </div>
@@ -72,7 +86,7 @@
         </div>
     </div>
 	
-<!-- Campo para Alternativas -->		
+	<!-- Campo para Alternativas -->		
 	<ul class="alternatives-list">
 		<div class="mb-3">
 		    <label class="form-label">Quantidade de Alternativas</label>
@@ -87,12 +101,12 @@
 		<div id="alternativasContainer"></div>
 	</ul>
 
-<!-- Botões no final da tela -->
-        <div class="action-footer">
-            <button type="submit" class="btn btn-save"><span class="material-icons">save</span> Salvar</button>
-            <a th:href="@{/}" class="btn btn-cancel" ><span class="material-icons">close</span> Cancelar</a>
-        </div>
-		
+	<!-- Botões no final da tela -->
+    <div class="action-footer">
+        <button type="submit" class="btn btn-save" id="toastbtn"><span class="material-icons">save</span> Salvar</button>
+        <a th:href="@{/}" class="btn btn-cancel" ><span class="material-icons">close</span> Cancelar</a>
+    </div>
+			
 		</form>
     </div>
 </main>
@@ -195,6 +209,15 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 });
 </script>
+
+<!--  Script para pop-up do botão de salvar questão -->
+<script th:if="${sucesso}">
+  const toastEl = document.getElementById('successToast');
+  const toast = new bootstrap.Toast(toastEl, { delay: 4000 });
+  toast.show();
+</script>
+
+
 
 </body>
 </html>

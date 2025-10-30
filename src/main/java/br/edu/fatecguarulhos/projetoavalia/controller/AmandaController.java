@@ -1,8 +1,10 @@
 package br.edu.fatecguarulhos.projetoavalia.controller;
 
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,12 +12,18 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.edu.fatecguarulhos.projetoavalia.dto.QuestaoDTO;
 import br.edu.fatecguarulhos.projetoavalia.dto.TrocaSenhaDTO;
 import br.edu.fatecguarulhos.projetoavalia.model.entity.Professor;
+import br.edu.fatecguarulhos.projetoavalia.model.entity.Questao;
 import br.edu.fatecguarulhos.projetoavalia.repository.ProfessorRepository;
 import br.edu.fatecguarulhos.projetoavalia.service.ProfessorService;
 
@@ -77,40 +85,104 @@ public class AmandaController {
 
         model.addAttribute("paginaAtiva", "cadastroQuestao");
         model.addAttribute("pageTitle", "Cadastro de Questão");
+        
         model.addAttribute("autorLogado", autorLogado); // Envia para a tela
         model.addAttribute("cursos", cursoService.listarTodos());
         model.addAttribute("disciplinas", disciplinaService.listarTodas());
         model.addAttribute("questaoDTO", new QuestaoDTO(5));
+        
         return "cadastroQuestao";
     }
     
     @PostMapping("/cadastroQuestao")
     public String salvarQuestao(@ModelAttribute QuestaoDTO dto,
-                                @RequestParam(value = "file", required = false) MultipartFile file) {
-        if (file != null && !file.isEmpty()) {
-            questaoService.salvar(dto, file);
-        } else {
-            questaoService.salvar(dto);
+                                @RequestParam(value = "file", required = false) MultipartFile file,
+                                RedirectAttributes redirectAttributes) {
+        try {
+            if (file != null && !file.isEmpty()) {
+                questaoService.salvar(dto, file);
+            } else {
+                questaoService.salvar(dto);
+            }
+
+            // ✅ adiciona a flag de sucesso
+            redirectAttributes.addFlashAttribute("sucesso", true);
+
+        } catch (Exception e) {
+            // opcional: adiciona uma flag de erro também
+            redirectAttributes.addFlashAttribute("erro", true);
         }
+
         return "redirect:/cadastroQuestao";
     }
 
-
     
-    //TELA DE GERENCIAR QUESTÕES
+    //TELA DE LISTAR QUESTÕES
     @GetMapping("/bancoDeQuestoes")
-    public String bancoDeQuestoes(Model model) {
-    	model.addAttribute("paginaAtiva", "bancoQuestoes");
-    	model.addAttribute("pageTitle", "Banco de Questões");
-    	
-    	model.addAttribute("questoes", questaoService.listarTodas());
+    public String bancoDeQuestoes(@RequestParam(value = "meus", required = false) Boolean apenasMinhas,
+                                  Model model) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        Professor professorLogado = professorService.buscarPorEmail(auth.getName());
+
+        model.addAttribute("paginaAtiva", "bancoQuestoes");
+        model.addAttribute("pageTitle", "Banco de Questões");
+        model.addAttribute("professorLogado", professorLogado);
+
+        List<Questao> questoes;
+
+        // Se o checkbox estiver marcado, mostrar apenas as do autor logado
+        if (Boolean.TRUE.equals(apenasMinhas)) {
+            questoes = questaoService.buscarPorAutor(professorLogado.getId());
+            // ainda restringe ao(s) curso(s) do professor (caso queira manter)
+            questoes = questoes.stream()
+                    .filter(q -> professorLogado.getCursos().contains(q.getCurso()))
+                    .toList();
+        } else {
+            // mostra todas dentro dos cursos/disciplina do professor
+            questoes = questaoService.listarPorCursosEDisciplinasDoProfessor(professorLogado);
+        }
+
+        model.addAttribute("questoes", questoes);
         model.addAttribute("professores", professorService.listarTodos());
         model.addAttribute("cursos", cursoService.listarTodos());
         model.addAttribute("disciplinas", disciplinaService.listarTodas());
-    	
+        model.addAttribute("mostrarApenasMinhasQuestoes", apenasMinhas);
+
         return "bancoDeQuestoes";
     }
     
+    @GetMapping("/questao/pesquisa")
+    public String pesquisarQuestoes(@RequestParam("nome") String termo, Model model) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        Professor professorLogado = professorService.buscarPorEmail(auth.getName());
+
+        List<Questao> questoes = questaoService.pesquisar(termo);
+
+        // Restringir conforme os cursos do professor:
+        questoes = questoes.stream()
+        .filter(q -> professorLogado.getCursos().contains(q.getCurso()))
+        .toList();
+
+        model.addAttribute("paginaAtiva", "bancoQuestoes");
+        model.addAttribute("pageTitle", "Banco de Questões");
+        model.addAttribute("professorLogado", professorLogado);
+        model.addAttribute("questoes", questoes);
+        model.addAttribute("professores", professorService.listarTodos());
+        model.addAttribute("cursos", cursoService.listarTodos());
+        model.addAttribute("disciplinas", disciplinaService.listarTodas());
+        model.addAttribute("termoPesquisa", termo);
+
+        return "bancoDeQuestoes";
+    }
+    
+    // SUGESTÃO DE PESQUISA DE QUESTÃO POR ENUNCIADO, DISCIPLINA OU CURSO
+    @GetMapping("/questao/sugestoes")
+    @ResponseBody
+    public List<String> obterSugestoes(@RequestParam("termo") String termo) {
+        return questaoService.buscarSugestoes(termo);
+    }
+
+
   //TELA DE MONTAR PROVA
     @GetMapping("/montarProva")
     public String montarProva(Model model) {

@@ -84,7 +84,50 @@ public class QuestaoService {
     public int contarAlternativasPorId(int questaoId) {
     	return alternativaRepository.countByQuestaoId(questaoId);
     }
+    
+    /* adicionado por amanda */
+    public List<Questao> listarPorCursosEDisciplinasDoProfessor(Professor professor) {
+        return questaoRepository.findByCursosOrDisciplinas(professor.getCursos(), professor.getDisciplinas());
+    }
+    
+    public List<Questao> pesquisar(String termo) {
+        if (termo == null || termo.trim().isEmpty()) {
+            return questaoRepository.findAll(); // Se não digitar nada, retorna todas
+        }
+        return questaoRepository.pesquisarPorTermo(termo);
+    }
+    
+    public List<String> buscarSugestoes(String termo) {
+        termo = termo.toLowerCase();
 
+        // Busque nas questões que contêm o termo no enunciado
+        List<String> sugestoes = questaoRepository.findByEnunciadoContainingIgnoreCase(termo)
+                .stream()
+                .map(Questao::getEnunciado)
+                .toList();
+
+        // Também busque pelas disciplinas
+        List<String> disciplinas = questaoRepository.findByDisciplinaNomeContainingIgnoreCase(termo)
+                .stream()
+                .map(q -> q.getDisciplina().getNome())
+                .toList();
+
+        // E pelos cursos
+        List<String> cursos = questaoRepository.findByCursoNomeContainingIgnoreCase(termo)
+                .stream()
+                .map(q -> q.getCurso().getNome())
+                .toList();
+
+        // Unir e remover duplicados
+        return sugestoes.stream()
+                .distinct()
+                .limit(10)
+                .toList();
+    }
+
+
+    /* adicionado por amanda */
+    
     //-------------------- CRUD --------------------
 
     public Questao salvar(QuestaoDTO dto) {

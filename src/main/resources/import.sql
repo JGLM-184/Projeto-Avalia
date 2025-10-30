@@ -1,5 +1,5 @@
 INSERT INTO professor (nome, email, re, senha, coordenador, primeiro_acesso, ativo) VALUES ('Alecio Aparecido', 'teste@teste.com', '123456', '$2a$10$PGbBlRRc2YfnzSOXvh6PKe5GHzlJkY6UP2.LrPrv8suAmFfYykxdq', true, true, true);
-INSERT INTO professor (nome, email, re, senha, coordenador, primeiro_acesso, ativo) VALUES ('Teste Usuário Inativo', 'usuarioinativo@teste.com', '123456', '$2a$10$PGbBlRRc2YfnzSOXvh6PKe5GHzlJkY6UP2.LrPrv8suAmFfYykxdq', true, false, true);
+INSERT INTO professor (nome, email, re, senha, coordenador, primeiro_acesso, ativo) VALUES ('Teste Usuário Inativo', 'usuarioinativo@teste.com', '123456', '$2a$10$PGbBlRRc2YfnzSOXvh6PKe5GHzlJkY6UP2.LrPrv8suAmFfYykxdq', false, true, true);
 
 INSERT INTO curso (nome) VALUES ('Análise e Desenvolvimento de Sistemas');
 INSERT INTO curso (nome) VALUES ('Logística');
@@ -17,6 +17,11 @@ INSERT INTO disciplina (nome, curso_id) VALUES ('Logística Reversa', 2);
 INSERT INTO professor_curso (curso_id, professor_id) VALUES (1, 1);
 INSERT INTO professor_disciplina (disciplina_id, professor_id) VALUES (1, 1);
 
+INSERT INTO professor_curso (curso_id, professor_id) VALUES (1, 2);
+INSERT INTO professor_disciplina (disciplina_id, professor_id) VALUES (1, 2);
+INSERT INTO professor_curso (curso_id, professor_id) VALUES (2, 2);
+INSERT INTO professor_disciplina (disciplina_id, professor_id) VALUES (4, 2);
+
 
 
 INSERT INTO questao (enunciado, autor_id, curso_id, disciplina_id, simulado) VALUES ('O que é um algoritmo?', 1, 1, 1, false);
@@ -29,6 +34,8 @@ INSERT INTO questao (enunciado, autor_id, curso_id, disciplina_id, simulado) VAL
 INSERT INTO questao (enunciado, autor_id, curso_id, disciplina_id, simulado) VALUES ('O que é uma classe em programação orientada a objetos?', 1, 1, 1, false);
 INSERT INTO questao (enunciado, autor_id, curso_id, disciplina_id, simulado) VALUES ('Qual a função do comando return em uma função?', 1, 1, 1, false);
 INSERT INTO questao (enunciado, autor_id, curso_id, disciplina_id, simulado) VALUES ('O que significa depuração (debugging)?', 1, 1, 1, false);
+INSERT INTO questao (enunciado, autor_id, curso_id, disciplina_id, simulado) VALUES ('Questao de logistica', 2, 2, 4, true);
+
 
 INSERT INTO alternativa (texto, correto, questao_id) VALUES ('Sequência de passos para resolver um problema', true, 1);
 INSERT INTO alternativa (texto, correto, questao_id) VALUES ('Uma variável que armazena apenas números', false, 1);
@@ -79,3 +86,9 @@ INSERT INTO alternativa (texto, correto, questao_id) VALUES ('Processo de identi
 INSERT INTO alternativa (texto, correto, questao_id) VALUES ('Criar funções matemáticas', false, 10);
 INSERT INTO alternativa (texto, correto, questao_id) VALUES ('Declarar variáveis', false, 10);
 INSERT INTO alternativa (texto, correto, questao_id) VALUES ('Executar loops infinitos', false, 10);
+
+
+INSERT INTO alternativa (texto, correto, questao_id) VALUES ('logistica', true, 11);
+INSERT INTO alternativa (texto, correto, questao_id) VALUES ('logistica a', false, 11);
+INSERT INTO alternativa (texto, correto, questao_id) VALUES ('logistica b', false, 11);
+INSERT INTO alternativa (texto, correto, questao_id) VALUES ('logistica c', false, 11);
