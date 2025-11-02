@@ -19,6 +19,47 @@
     <div class="bank-container">
         <div class="card">
             <h4 style="margin-bottom: 24px; color: var(--text-dark);">Banco de Provas</h4>
+            
+            <!-- Tabela de Provas -->
+            <div class="table-responsive" th:if="${not provas.empty}">
+                <table class="table table-striped align-middle mt-3">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Título</th>
+                            <th>Curso</th>
+                            <th>Autor</th>
+                            <th>Data</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="prova : ${provas}">
+                            <td th:text="${prova.id}"></td>
+                            <td th:text="${prova.titulo}"></td>
+                            <td th:text="${prova.curso.nome}"></td>
+                            <td th:text="${prova.professor.nome}"></td>
+                            <td th:text="${#temporals.format(prova.dataCriacao, 'dd/MM/yyyy')}"></td>
+                            <td>
+                                <a th:href="@{'/provas/detalhes/' + ${prova.id}}" class="btn btn-sm btn-info">Detalhes</a>
+                                <a th:href="@{'/provas/editar/' + ${prova.id}}" class="btn btn-sm btn-warning">Editar</a>
+                                <a th:href="@{'/provas/excluir/' + ${prova.id}}" 
+                                   class="btn btn-sm btn-danger"
+                                   onclick="return confirm('Tem certeza que deseja excluir esta prova?')">Excluir</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Mensagem quando não há provas -->
+            <div th:if="${provas.empty}" class="text-center py-5">
+                <span class="material-icons" style="font-size: 48px; color: #ccc;">description</span>
+                <p class="text-muted mt-3">Nenhuma prova encontrada</p>
+                <a th:href="@{/provas/criar}" class="btn btn-primary mt-2">
+                    <span class="material-icons">add</span> Criar Primeira Prova
+                </a>
+            </div>
         </div>
     </div>
             
@@ -26,4 +67,3 @@
 
 </body>
 </html>
-

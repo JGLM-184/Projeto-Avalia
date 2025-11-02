@@ -12,7 +12,7 @@
     <h2 class="mb-4">Criação de Provas</h2>
 
     <!-- Formulário de Criação -->
-    <form th:action="@{/provas/salvar}"
+    <form th:action="@{/teste/provas/salvar}"
           th:object="${provaDTO}" method="post" class="card p-4 shadow-sm">
 
         <div class="mb-3">
@@ -31,7 +31,7 @@
 
         <div class="d-flex justify-content-end mt-4">
             <button type="submit" class="btn btn-primary me-2">Criar Prova</button>
-            <a href="/provas/criar" class="btn btn-secondary">Cancelar</a>
+            <a href="/teste/provas" class="btn btn-secondary">Cancelar</a>
         </div>
     </form>
 
@@ -57,9 +57,9 @@
                 <td th:text="${prova.curso.nome}"></td>
                 <td th:text="${prova.professor.nome}"></td>
                 <td>
-                    <a th:href="@{'/provas/detalhes/' + ${prova.id}}" class="btn btn-sm btn-info">Detalhes</a>
-                    <a th:href="@{'/provas/editar/' + ${prova.id}}" class="btn btn-sm btn-warning">Editar</a>
-                    <a th:href="@{'/provas/excluir/' + ${prova.id}}" 
+                    <a th:href="@{'/teste/provas/detalhes/' + ${prova.id}}" class="btn btn-sm btn-info">Detalhes</a>
+                    <a th:href="@{'/teste/provas/editar/' + ${prova.id}}" class="btn btn-sm btn-warning">Editar</a>
+                    <a th:href="@{'/teste/provas/excluir/' + ${prova.id}}" 
                        class="btn btn-sm btn-danger"
                        onclick="return confirm('Tem certeza que deseja excluir esta prova?')">Excluir</a>
                 </td>

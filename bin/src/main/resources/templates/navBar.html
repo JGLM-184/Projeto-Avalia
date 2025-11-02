@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+<div th:fragment="navbar">
+	
+<header class="coordinator-navbar">
+    <h2 th:text="${pageTitle}">Página</h2>
+
+    <nav>
+    <ul class="nav-menu">
+		<!-- Navbar: Cadastro de Questão -->
+		<li class="nav-item" th:classappend="${paginaAtiva == 'cadastroQuestao'} ? ' active' : ''">
+		    <a th:href="@{/cadastroQuestao}"> <span class="material-icons">description</span> Cadastro de Questão </a>
+		</li>
+		
+		<!-- Navbar: Banco de Questões -->
+		<li class="nav-item" th:classappend="${paginaAtiva == 'bancoDeQuestoes'} ? ' active' : ''">
+			<a th:href="@{/bancoDeQuestoes}"> <span class="material-icons">search</span> Banco de Questões</a>
+		</li>
+		
+		<!-- Navbar: Montar Prova -->
+        <li class="nav-item" th:classappend="${paginaAtiva == 'montarProva'} ? ' active' : ''">
+		    <a th:href="@{/montarProva}"> <span class="material-icons">edit_note</span> Montar Prova </a>
+		</li>
+		
+		<!-- Navbar: Banco de provas -->
+        <li class="nav-item" th:classappend="${paginaAtiva == 'bancoProvas'} ? ' active' : ''">
+			<a th:href="@{/bancoProvas}"> <span class="material-icons">folder_open</span> Banco de Provas</a>
+		</li>
+		
+		<!-- Navbar: Gerenciar Usuários -->
+        <li class="nav-item"><a><span class="material-icons">group</span> Área do coordenador</a></li>
+    </ul>
+    </nav>
+
+	<div class="user-profile">
+        <!-- Logout -->
+		<button type="button" class="navbar-logout-btn" data-bs-toggle="modal" data-bs-target="#logoutModal">
+		  <span class="material-icons align-middle">logout</span> Sair
+		</button>
+		
+		<img th:src="@{/imagens/Avatar.png}" alt="Avatar">
+    </div>
+	
+</header>
+	 <div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
+	    <div class="modal-dialog modal-dialog-centered">
+	      <div class="modal-content">
+	
+	        <div class="modal-header">
+	          <h5 class="modal-title" id="logoutModalLabel">Deseja mesmo sair?</h5>
+	          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+	        </div>
+	
+	        <div class="modal-body">
+	          Ao confirmar, você será deslogado e redirecionado à tela de login.
+	        </div>
+	
+	        <div class="modal-footer">
+	          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+			  <form th:action="@{/logout}" method="post">
+	            <button type="submit" class="btn btn-danger">Confirmar</button>
+	          </form>
+	        </div>
+	
+	      </div>
+	    </div>
+	 </div>
+</div>
+</body>
+</html>

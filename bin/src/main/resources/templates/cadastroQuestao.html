@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro de Questão</title>
+    <link rel="stylesheet" th:href="@{/style.css}">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+
+<body class="coordinator-layout">
+
+<!-- Navbar -->
+<div th:replace="~{navbar :: navbar}"></div>
+
+<!-- Conteúdo Principal da tela -->
+<main class="main-content">
+
+	<div class="card question-form-card wide-form">
+		<form th:action="@{/cadastroQuestao}" method="post" enctype="multipart/form-data" th:object="${questaoDTO}">
+			
+	<!-- Toast para mensagem "Questão cadastrada com sucesso!" -->
+	<div class="toast-container position-fixed top-0 p-3">
+	  <div id="successToast" class="toast align-items-center text-bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
+	    <div class="d-flex">
+	      <div class="toast-body">
+	        Questão cadastrada com sucesso!
+	      </div>
+	      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Fechar"></button>
+	    </div>
+	  </div>
+	</div>
+	
+			
+	<div class="discipline-container">
+	
+<!-- Tag de usuário -->
+<div class="mb-3">
+	
+    <label class="form-label">Autor</label>
+    <input type="text" class="form-control" th:value="${autorLogado.nome}" disabled>
+</div>
+
+
+<!-- Botões e Disciplinas -->
+
+		<div class="col-md-4 mb-3">
+		    <label class="form-label">Curso</label>
+		    <select id="cursoSelect" class="form-select" th:field="*{curso.id}" required>
+		        <option value="0" disabled selected>Selecione um curso...</option>
+		        <option th:each="curso : ${autorLogado.cursos}"
+		                th:value="${curso.id}"
+		                th:text="${curso.nome}"></option>
+		    </select>
+		</div>
+		
+		<div class="col-md-4 mb-3">
+		    <label class="form-label">Disciplina</label>
+		    <select id="disciplinaSelect" class="form-select" th:field="*{disciplina.id}" required>
+		        <option value="0" disabled selected>Selecione uma disciplina...</option>
+		    </select>
+		</div>
+</div>
+	
+	<div class="custom-checkbox">
+		<input type="checkbox" th:field="*{simulado}" id="simulado">
+		<label for="simulado">Questão de Simulado</label>
+	</div>
+
+<!-- Campo para Enunciado da Questão e Imagem -->
+    <div class="enunciado-section">
+        <p style="margin-bottom: 10px;">Adicione o enunciado da questão:</p>
+        <div class="question-area">
+            <div class="enunciado-input">
+                <textarea th:field="*{enunciado}" rows="3" placeholder="Digite o enunciado da questão..." required></textarea>
+            </div>
+			<div class="image-placeholder">
+			    <input type="file" class="image-input" name="file" accept="image/*" onchange="previewImage(event)">
+			    <div class="image-content">
+			        <span class="material-icons">add</span>
+			        <p>Adicionar imagem</p>
+			    </div>
+			</div>
+        </div>
+    </div>
+	
+	<!-- Campo para Alternativas -->		
+	<ul class="alternatives-list">
+		<div class="mb-3">
+		    <label class="form-label">Quantidade de Alternativas</label>
+		    <select id="quantidadeAlternativas" class="form-check-label">
+		        <option value="2">2</option>
+		        <option value="4">4</option>
+		        <option value="5" selected>5</option>
+		    </select>
+		</div>
+	
+		<p style="margin-bottom: 10px; margin-top: 15px;">Alternativas:</p>
+		<div id="alternativasContainer"></div>
+	</ul>
+
+	<!-- Botões no final da tela -->
+    <div class="action-footer">
+        <button type="submit" class="btn btn-save" id="toastbtn"><span class="material-icons">save</span> Salvar</button>
+        <a th:href="@{/}" class="btn btn-cancel" ><span class="material-icons">close</span> Cancelar</a>
+    </div>
+			
+		</form>
+    </div>
+</main>
+
+<!-- Script para mostrar imagem dentro da area -->
+<script>
+function previewImage(event) {
+    const placeholder = event.target.closest('.image-placeholder');
+    const content = placeholder.querySelector('.image-content');
+
+    // cria um elemento <img> com a prévia
+    const file = event.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            // cria ou atualiza o preview
+            let img = placeholder.querySelector('.image-preview');
+            if (!img) {
+                img = document.createElement('img');
+                img.classList.add('image-preview');
+                placeholder.appendChild(img);
+            }
+            img.src = e.target.result;
+            content.style.display = 'none'; // esconde o texto/ícone
+        };
+        reader.readAsDataURL(file);
+    }
+}
+</script>
+
+
+<!-- Script para q quantidade de alternativas variarem no formulário de criação -->
+<script>
+    const container = document.getElementById("alternativasContainer");
+    const select = document.getElementById("quantidadeAlternativas");
+
+    // Função que cria os campos de alternativas dinamicamente
+	function gerarAlternativas(qtd) {
+	    container.innerHTML = ""; // limpa o container
+
+	    for (let i = 0; i < qtd; i++) {
+	        const div = document.createElement("div");
+	        div.classList.add("mb-3", "alternativa-item");
+
+	        const letra = String.fromCharCode(65 + i); // A, B, C...
+
+	        div.innerHTML = `
+	            <div class="input-group" style="display: flex; align-items: center; gap: 10px;">
+	                <input type="radio" name="alternativaCorretaIndex" value="${i}" required>
+	                <span>${letra})</span>
+	                <input type="text" class="alternative-item" 
+	                    name="alternativas[${i}].texto" 
+	                    placeholder="Digite o texto da alternativa..."
+	                    required>
+	            </div>
+	        `;
+	        container.appendChild(div);
+	    }
+	}
+
+    // Atualiza sempre que o select muda
+    select.addEventListener("change", function() {
+        gerarAlternativas(this.value);
+    });
+
+    // Gera inicialmente o padrão selecionado (5)
+    gerarAlternativas(select.value);
+</script>
+
+<!--  Script para as disciplinas mudarem de acordo com o curso selecionado -->
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const cursoSelect = document.getElementById("cursoSelect");
+    const disciplinaSelect = document.getElementById("disciplinaSelect");
+
+    cursoSelect.addEventListener("change", function() {
+        const cursoId = this.value;
+
+        if (!cursoId) return;
+
+        fetch(`/teste/api/disciplinas/por-curso/${cursoId}`)
+            .then(response => {
+                if (!response.ok) throw new Error("Erro ao buscar disciplinas");
+                return response.json();
+            })
+            .then(disciplinas => {
+                disciplinaSelect.innerHTML = '<option value="" disabled selected>Selecione...</option>';
+
+                disciplinas.forEach(d => {
+                    const option = document.createElement("option");
+                    option.value = d.id;
+                    option.textContent = d.nome;
+                    disciplinaSelect.appendChild(option);
+                });
+            })
+            .catch(err => {
+                console.error(err);
+                disciplinaSelect.innerHTML = '<option value="" disabled selected>Erro ao carregar disciplinas</option>';
+            });
+    });
+});
+</script>
+
+<!--  Script para pop-up do botão de salvar questão -->
+<script th:if="${sucesso}">
+  const toastEl = document.getElementById('successToast');
+  const toast = new bootstrap.Toast(toastEl, { delay: 4000 });
+  toast.show();
+</script>
+
+
+
+</body>
+</html>

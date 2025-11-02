@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Cadastro de Questões</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+</head>
+<body class="bg-light">
+
+<div class="container mt-5">
+
+    <h3 th:if="${isEdicaoQuestao != true}" class="mb-4">Cadastrar Questão</h3>
+    <h3 th:if="${isEdicaoQuestao == true}" class="mb-4">Editar Questão</h3>
+
+    <!-- FORMULÁRIO DE QUESTÃO -->
+    <form th:action="@{/teste/questoes/salvar}" method="post" enctype="multipart/form-data" th:object="${questaoDTO}">
+        <div class="card p-4 shadow-sm">
+            
+            <div class="mb-3">
+                <label class="form-label">Enunciado</label>
+                <textarea class="form-control" th:field="*{enunciado}" rows="3" placeholder="Digite o enunciado da questão..." required></textarea>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Imagem (opcional)</label>
+                <input type="file" class="form-control" name="file" accept="image/*">
+            </div>
+
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">Autor (Professor)</label>
+                    <select class="form-select" th:field="*{autor.id}" required>
+                        <option value="0" disabled>Selecione...</option>
+                        <option th:each="professor : ${professores}"
+                                th:value="${professor.id}"
+                                th:text="${professor.nome}"></option>
+                    </select>
+                </div>
+				
+				<div class="col-md-4 mb-3">
+				    <label class="form-label">Curso</label>
+				    <select id="cursoSelect" class="form-select" th:field="*{curso.id}" required>
+				        <option value="0" disabled selected>Selecione...</option>
+				        <option th:each="curso : ${cursos}"
+				                th:value="${curso.id}"
+				                th:text="${curso.nome}"></option>
+				    </select>
+				</div>
+				
+				<div class="col-md-4 mb-3">
+				    <label class="form-label">Disciplina</label>
+				    <select id="disciplinaSelect" class="form-select" th:field="*{disciplina.id}" required>
+				        <option value="0" disabled selected>Selecione Um Curso...</option>
+				    </select>
+				</div>
+			
+			</div>
+
+			<div class="custom-checkbox">
+			    <input type="checkbox" th:field="*{simulado}" id="simulado">
+			    <label for="simulado">Questão de Simulado?</label>
+			</div>
+
+            <hr>
+            
+            <div class="mb-3">
+			    <label class="form-label">Quantidade de Alternativas</label>
+			    <select id="quantidadeAlternativas" class="form-select">
+			        <option value="2">2</option>
+			        <option value="3">3</option>
+			        <option value="4">4</option>
+			        <option value="5" selected>5</option>
+			    </select>
+			</div>
+            
+            
+            <h5>Alternativas</h5>
+            
+			<!-- Os campos de alternativa são criados nesta div por meio da função JavaScript -->
+			<div id="alternativasContainer"></div>
+
+            <div class="text-end mt-4">
+                <button type="submit" class="btn btn-success">Salvar Questão</button>
+                <a th:href="@{/teste/questoes}" class="btn btn-secondary">Cancelar</a>
+            </div>
+        </div>
+    </form>
+
+    <!-- FORMULÁRIO DE EDIÇÃO -->
+    <form th:if="${isEdicaoQuestao == true}" th:action="@{'/teste/questoes/atualizar/' + ${questaoDTO.id}}" method="post" enctype="multipart/form-data" th:object="${questaoDTO}">
+        <div class="card p-4 shadow-sm">
+            
+            <div class="mb-3">
+                <label class="form-label">Enunciado</label>
+                <textarea class="form-control" th:field="*{enunciado}" rows="3" required></textarea>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Imagem (opcional)</label>
+                <input type="file" class="form-control" name="file" accept="image/*">
+                <div th:if="${questaoDTO.imagem != null}" class="mt-2">
+                    <img th:src="@{${questaoDTO.imagem}}" alt="Imagem da Questão" class="img-thumbnail" style="max-width: 200px;">
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">Autor (Professor)</label>
+                    <select class="form-select" th:field="*{autor.id}" required>
+                        <option th:each="professor : ${professores}"
+                                th:value="${professor.id}"
+                                th:text="${professor.nome}"></option>
+                    </select>
+                </div>
+
+				<div class="col-md-4 mb-3">
+				    <label class="form-label">Curso</label>
+				    <select id="cursoSelect" class="form-select" th:field="*{curso.id}" required>
+				        <option value="0" disabled selected>Selecione...</option>
+				        <option th:each="curso : ${cursos}"
+				                th:value="${curso.id}"
+				                th:text="${curso.nome}"></option>
+				    </select>
+				</div>
+				
+				<div class="col-md-4 mb-3">
+				    <label class="form-label">Disciplina</label>
+				    <select id="disciplinaSelect" class="form-select" th:field="*{disciplina.id}" required>
+				        <option value="0" disabled selected>Selecione...</option>
+				        <option th:each="disciplina : ${disciplinas}"
+				                th:value="${disciplina.id}"
+				                th:text="${disciplina.nome}"></option>
+				    </select>
+				</div>
+            </div>
+
+            <div class="form-check mb-3">
+                <input class="form-check-input" type="checkbox" th:field="*{simulado}" id="simuladoEdicao">
+                <label class="form-check-label" for="simuladoEdicao">Questão de Simulado</label>
+            </div>
+
+            <hr>
+            
+			<div class="mb-3">
+			    <label class="form-label">Quantidade de Alternativas</label>
+			    <select id="quantidadeAlternativasEditar" class="form-select">
+			        <option value="2" th:selected="${qntAlternativas == 2}">2</option>
+			        <option value="3" th:selected="${qntAlternativas == 3}">3</option>
+			        <option value="4" th:selected="${qntAlternativas == 4}">4</option>
+			        <option value="5" th:selected="${qntAlternativas == 5}">5</option>
+			    </select>
+			</div>
+			
+			<h5>Alternativas</h5>
+			
+			<div id="alternativasContainerEditar">
+			    <!-- Render inicial das alternativas vindas do servidor -->
+			    <div th:each="alt, iterStat : *{alternativas}" class="mb-3 alternativa-item">
+			        <div class="input-group">
+			            <span class="input-group-text">[[${(iterStat.index + 1) + ')'}]]</span>
+			            <input type="text" class="form-control"
+			                   th:field="*{alternativas[__${iterStat.index}__].texto}"
+			                   placeholder="Digite o texto da alternativa...">
+			            <input type="radio"
+			                   name="alternativaCorretaIndex"
+			                   th:value="${iterStat.index}"
+			                   th:checked="${alt.correto}" 
+			                   required/> Correta
+			        </div>
+			    </div>
+			</div>
+
+            <div class="text-end mt-4">
+                <button type="submit" class="btn btn-primary">Atualizar Questão</button>
+                <a th:href="@{/teste/questoes}" class="btn btn-secondary">Cancelar</a>
+            </div>
+        </div>
+    </form>
+
+    <!-- LISTAGEM DE QUESTÕES -->
+    <div class="card mt-5 shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">Questões Cadastradas</h5>
+        </div>
+        <div class="card-body">
+            <table class="table table-striped align-middle">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Enunciado</th>
+                    <th>Autor</th>
+                    <th>Curso</th>
+                    <th>Disciplina</th>
+                    <th>Simulado</th>
+                    <th>Ações</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="questao : ${questoes}">
+                    <td th:text="${questao.id}"></td>
+                    <td th:text="${questao.enunciado}"></td>
+                    <td th:text="${questao.autor.nome}"></td>
+                    <td th:text="${questao.curso.nome}"></td>
+                    <td th:text="${questao.disciplina.nome}"></td>
+                    <td>
+                        <span th:text="${questao.simulado} ? 'Sim' : 'Não'"></span>
+                    </td>
+                    <td>
+                        <a th:href="@{'/teste/questoes/editar/' + ${questao.id}}" class="btn btn-sm btn-warning">Editar</a>
+                        <a th:href="@{'/teste/questoes/excluir/' + ${questao.id}}" class="btn btn-sm btn-danger" 
+                           onclick="return confirm('Tem certeza que deseja excluir esta questão?')">Excluir</a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Script para q quantidade de alternativas variarem no formulário de criação -->
+<script>
+    const container = document.getElementById("alternativasContainer");
+    const select = document.getElementById("quantidadeAlternativas");
+
+    // Função que cria os campos de alternativas dinamicamente
+    function gerarAlternativas(qtd) {
+        container.innerHTML = ""; // limpa o container
+
+        for (let i = 0; i < qtd; i++) {
+            const div = document.createElement("div");
+            div.classList.add("mb-3", "alternativa-item");
+
+            div.innerHTML = `
+                <div class="input-group">
+                    <span class="input-group-text">${i+1})</span>
+                    <input type="text" class="form-control" 
+                        name="alternativas[${i}].texto" 
+                        placeholder="Digite o texto da alternativa..."
+                        required>
+                    <input type="radio" name="alternativaCorretaIndex" value="${i}" required> Correta
+                </div>
+            `;
+            container.appendChild(div);
+        }
+    }
+
+    // Atualiza sempre que o select muda
+    select.addEventListener("change", function() {
+        gerarAlternativas(this.value);
+    });
+
+    // Gera inicialmente o padrão selecionado (5)
+    gerarAlternativas(select.value);
+</script>
+
+<!-- Script para a quantidade de alternativas variarem no formulário de edição -->
+<script>
+    const containerEditar = document.getElementById("alternativasContainerEditar");
+    const selectEditar = document.getElementById("quantidadeAlternativasEditar");
+
+    function gerarAlternativasEditar(qtd) {
+        // Captura os valores já existentes (para não perder o que o usuário digitou)
+        const valoresExistentes = Array.from(containerEditar.querySelectorAll('input[type="text"]'))
+            .map(input => input.value);
+        const indexCorreta = containerEditar.querySelector('input[type="radio"]:checked')?.value;
+
+        containerEditar.innerHTML = ""; // limpa o container
+
+        for (let i = 0; i < qtd; i++) {
+            const div = document.createElement("div");
+            div.classList.add("mb-3", "alternativa-item");
+
+            const textoExistente = valoresExistentes[i] || "";
+            const checked = indexCorreta == i ? "checked" : "";
+
+            div.innerHTML = `
+                <div class="input-group">
+                    <span class="input-group-text">${i+1})</span>
+                    <input type="text" class="form-control"
+                        name="alternativas[${i}].texto"
+                        value="${textoExistente}"
+                        placeholder="Digite o texto da alternativa..."
+                        required>
+                    <input type="radio" name="alternativaCorretaIndex" value="${i}" ${checked} required> Correta
+                </div>
+            `;
+            containerEditar.appendChild(div);
+        }
+    }
+
+    selectEditar.addEventListener("change", function() {
+        gerarAlternativasEditar(this.value);
+    });
+</script>
+
+
+<!--  Script para as disciplinas mudarem de acordo com o curso selecionado -->
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const cursoSelect = document.getElementById("cursoSelect");
+    const disciplinaSelect = document.getElementById("disciplinaSelect");
+
+    cursoSelect.addEventListener("change", function() {
+        const cursoId = this.value;
+
+        if (!cursoId) return;
+
+        fetch(`/teste/api/disciplinas/por-curso/${cursoId}`)
+            .then(response => {
+                if (!response.ok) throw new Error("Erro ao buscar disciplinas");
+                return response.json();
+            })
+            .then(disciplinas => {
+                disciplinaSelect.innerHTML = '<option value="" disabled selected>Selecione...</option>';
+
+                disciplinas.forEach(d => {
+                    const option = document.createElement("option");
+                    option.value = d.id;
+                    option.textContent = d.nome;
+                    disciplinaSelect.appendChild(option);
+                });
+            })
+            .catch(err => {
+                console.error(err);
+                disciplinaSelect.innerHTML = '<option value="" disabled selected>Erro ao carregar disciplinas</option>';
+            });
+    });
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Prova Gerada</title>
+</head>
+<body>
+    <h2>Prova Gerada</h2>
+
+    <form>
+        <div th:each="questao, stat : ${questoes}">
+            <p><b th:text="'Q' + ${stat.count} + ': ' + ${questao.enunciado}"></b></p>
+            <div th:each="alt : ${questao.alternativas}">
+                <input type="radio" th:name="'resposta_' + ${questao.id}" />
+                <span th:text="${alt.texto}"></span>
+            </div>
+            <hr/>
+        </div>
+        <button type="submit">Enviar Respostas</button>
+    </form>
+</body>
+</html>

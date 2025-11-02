@@ -12,7 +12,7 @@
     <h2 class="mb-4">Edição da Prova</h2>
 
     <!-- ================= Formulário de Edição ================= -->
-    <form th:action="@{'/provas/atualizar/' + ${provaDTO.id}}"
+    <form th:action="@{'/teste/provas/atualizar/' + ${provaDTO.id}}"
           th:object="${provaDTO}" method="post" class="card p-4 shadow-sm mb-5">
 
         <div class="mb-3">
@@ -27,11 +27,11 @@
 
         <div class="d-flex justify-content-end">
             <button type="submit" class="btn btn-primary me-2">Salvar Alterações</button>
-            <a href="/provas/criar" class="btn btn-secondary">Voltar</a>
+            <a href="/teste/provas" class="btn btn-secondary">Voltar</a>
         </div>
     </form>
     
-    <form th:action="@{'/provas/editar/' + ${provaDTO.id} + '/adicionar-disciplina'}" 
+    <form th:action="@{'/teste/provas/editar/' + ${provaDTO.id} + '/adicionar-disciplina'}" 
     	  th:object="${provaDisciplinaDTO}" method="post">
     	<div class="row mb-3 align-items-end">
 		    <div class="col-md-8">
@@ -90,7 +90,7 @@
                             <strong th:text="${questao.enunciado}"></strong>
                             <small class="text-muted d-block" th:text="${questao.disciplina.nome}"></small>
                         </div>
-                        <form th:action="@{'/provas/editar/' + ${provaDTO.id} + '/adicionar-questao'}"
+                        <form th:action="@{'/teste/provas/editar/' + ${provaDTO.id} + '/adicionar-questao'}"
                               method="post" class="m-0">
                             <input type="hidden" name="prova.id" th:value="${provaDTO.id}">
                             <input type="hidden" name="questao.id" th:value="${questao.id}">
@@ -110,7 +110,7 @@
             Disciplinas da Prova
         </div>
         <div class="card-body">
-            <form th:action="@{'/provas/editar/' + ${provaDTO.id} + '/adicionar-disciplina'}"
+            <form th:action="@{'/teste/provas/editar/' + ${provaDTO.id} + '/adicionar-disciplina'}"
                   method="post" class="row g-3 align-items-end">
                 <input type="hidden" name="prova.id" th:value="${provaDTO.id}">
 
