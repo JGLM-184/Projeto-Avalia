@@ -32,7 +32,9 @@
 		</li>
 		
 		<!-- Navbar: Gerenciar Usuários -->
-        <li class="nav-item"><a><span class="material-icons">group</span> Área do coordenador</a></li>
+        <li class="nav-item" th:classappend="${paginaAtiva == 'painel'} ? ' active ' : ''">
+			 <a th:href="@{/painel}"> <span class="material-icons">group</span> Área do coordenador
+		</a></li>
     </ul>
     </nav>
 
