@@ -17,102 +17,197 @@
 <!-- Conteúdo Principal da tela -->
 <main class="main-content">
     <div class="bank-container">
-        <div class="card">
-            <h5 style="margin-bottom: 24px; color: var(--text-dark);">Pesquisar questão</h5>
+    <h5 style="margin-bottom: 24px; color: var(--text-dark);">Editar Questão</h5>
+    
+	<!-- FORMULÁRIO DE EDIÇÃO -->
+	    <form th:if="${isEdicaoQuestao == true}" th:action="@{'/gerenciarQuestao/atualizar/' + ${questaoDTO.id}}" method="post" enctype="multipart/form-data" th:object="${questaoDTO}">
+	        <div class="card p-4 shadow-sm">
+	            
+			<!-- Tag de usuário -->
+			<div class="mb-3">
+			    <label class="form-label">Autor</label>
+			    <input type="text" class="form-autor" th:value="${questaoDTO.autor.nome}" disabled>
+			</div>
+				
+	            <div class="row">
+					<div class="col-md-4 mb-3">
+					    <label class="form-label">Curso</label>
+					    <select id="cursoSelect" class="form-select" th:field="*{curso.id}" required>
+					        <option value="0" disabled selected>Selecione...</option>
+					        <option th:each="curso : ${cursos}"
+					                th:value="${curso.id}"
+					                th:text="${curso.nome}"></option>
+					    </select>
+					</div>
+					
+					<div class="col-md-4 mb-3">
+					    <label class="form-label">Disciplina</label>
+					    <select id="disciplinaSelect" class="form-select" th:field="*{disciplina.id}" required>
+					        <option value="0" disabled selected>Selecione uma disciplina...</option>
+					    </select>
+					</div>
+	            </div>
+
+	            <div class="form-check mb-3">
+					<input class="form-check-input" type="checkbox" th:field="*{simulado}" id="simuladoEdicao">
+					<label for="simuladoEdicao">Questão de Simulado</label>
+	            </div>
+				
+				<div class="mb-3">
+	                <label class="form-label">Enunciado</label>
+	                <textarea class="form-control quebraTexto" th:field="*{enunciado}" rows="3" required></textarea>
+	            </div>
+
+	            <div class="mb-3">
+	                <label class="form-label">Imagem (opcional)</label>
+					
+					<div class="image-placeholder-edicao">
+					    <input type="file" class="image-input" name="file" accept="image/*" onchange="previewImage(event)">
+					    <div class="image-content">
+					        <span class="material-icons">add</span>
+					        <p>Adicionar imagem</p>
+					    </div>
+					</div>
+	            </div>
+				
+				<div class="mb-3">
+				    <label class="form-label">Quantidade de Alternativas</label>
+				    <select id="quantidadeAlternativasEditar" class="form-check-label">
+				        <option value="2" th:selected="${qntAlternativas == 2}">2</option>
+				        <option value="4" th:selected="${qntAlternativas == 4}">4</option>
+				        <option value="5" th:selected="${qntAlternativas == 5}">5</option>
+				    </select>
+				</div>
+				
+				<h5>Alternativas</h5>
+				
+				<div id="alternativasContainerEditar">
+				    <!-- Render inicial das alternativas vindas do servidor -->
+				    <div th:each="alt, iterStat : *{alternativas}" class="mb-3 alternativa-item">
+				        <div class="input-group">
+				            <span class="input-group-text">[[${(iterStat.index + 1) + ')'}]]</span>
+				            <input type="text" class="form-control"
+				                   th:field="*{alternativas[__${iterStat.index}__].texto}"
+				                   placeholder="Digite o texto da alternativa...">
+				            <input type="radio"
+				                   name="alternativaCorretaIndex"
+				                   th:value="${iterStat.index}"
+				                   th:checked="${alt.correto}" 
+				                   required/> Correta
+				        </div>
+				    </div>
+				</div>
+
+	            <div class="text-end mt-4">
+	                <button type="submit" class="btn btn-primary">Atualizar Questão</button>
+	                <a th:href="@{/bancoDeQuestoes}" class="btn btn-secondary">Cancelar</a>
+	            </div>
+	        </div>
+	    </form>
             
-            <!-- Barra de Pesquisa -->
-            <div class="search-input-container">
-                <span class="material-icons search-icon">arrow_back</span>
-                <input type="text" class="form-input" placeholder="Pesquisar questão por enunciado">
-                <button class="clear-button">
-                    <span class="material-icons">close</span>
-                </button>
-            </div>
-
-            <!-- Lista de Provas -->
-            <div class="provas-list">
-                <div class="prova-item">
-                    <div class="prova-content">
-                        <div class="prova-meta">
-                            <span class="discipline-badge">Sistemas Operacionais</span>
-                        </div>
-                        <p class="prova-text">Como funciona o modelo de arquitetura...</p>
-                    </div>
-                    <div class="prova-actions">
-                        <button class="btn action-btn">
-                            <span class="material-icons">edit</span>
-                            Editar
-                        </button>
-                        <button class="btn action-btn">
-                            <span class="material-icons">delete</span>
-                            Excluir
-                        </button>
-                    </div>
-                </div>
-
-                <div class="prova-item">
-                    <div class="prova-content">
-                        <div class="prova-meta">
-                            <span class="discipline-badge">Disciplina</span>
-                        </div>
-                        <p class="prova-text">Teste teste teste...</p>
-                    </div>
-                    <div class="prova-actions">
-                        <button class="btn action-btn">
-                            <span class="material-icons">edit</span>
-                            Editar
-                        </button>
-                        <button class="btn action-btn">
-                            <span class="material-icons">delete</span>
-                            Excluir
-                        </button>
-                    </div>
-                </div>
-
-                <div class="prova-item">
-                    <div class="prova-content">
-                        <div class="prova-meta">
-                            <span class="discipline-badge">Engenharia de Software II</span>
-                        </div>
-                        <p class="prova-text">De acordo com a imagem a seguir, escolha...</p>
-                    </div>
-                    <div class="prova-actions">
-                        <button class="btn action-btn">
-                            <span class="material-icons">edit</span>
-                            Editar
-                        </button>
-                        <button class="btn action-btn">
-                            <span class="material-icons">delete</span>
-                            Excluir
-                        </button>
-                    </div>
-                </div>
-
-                <div class="prova-item">
-                    <div class="prova-content">
-                        <div class="prova-meta">
-                            <span class="discipline-badge">Banco de dados</span>
-                        </div>
-                        <p class="prova-text">Abluebabluelabuelaslvelu...</p>
-                        <div class="prova-image">
-                            <span class="material-icons">image</span>
-                        </div>
-                    </div>
-                    <div class="prova-actions">
-                        <button class="btn action-btn">
-                            <span class="material-icons">edit</span>
-                            Editar
-                        </button>
-                        <button class="btn action-btn">
-                            <span class="material-icons">delete</span>
-                            Excluir
-                        </button>
-                    </div>
-                </div>
-            </div>
         </div>
     </div>
 </main>
+
+<!-- Script para a quantidade de alternativas variarem no formulário de edição -->
+<script>
+    const containerEditar = document.getElementById("alternativasContainerEditar");
+    const selectEditar = document.getElementById("quantidadeAlternativasEditar");
+
+    function gerarAlternativasEditar(qtd) {
+        // Captura os valores já existentes (para não perder o que o usuário digitou)
+        const valoresExistentes = Array.from(containerEditar.querySelectorAll('input[type="text"]'))
+            .map(input => input.value);
+        const indexCorreta = containerEditar.querySelector('input[type="radio"]:checked')?.value;
+
+        containerEditar.innerHTML = ""; // limpa o container
+
+        for (let i = 0; i < qtd; i++) {
+            const div = document.createElement("div");
+            div.classList.add("mb-3", "alternativa-item");
+
+            const textoExistente = valoresExistentes[i] || "";
+            const checked = indexCorreta == i ? "checked" : "";
+
+            div.innerHTML = `
+                <div class="input-group">
+                    <span class="input-group-text">${i+1})</span>
+                    <input type="text" class="form-control"
+                        name="alternativas[${i}].texto"
+                        value="${textoExistente}"
+                        placeholder="Digite o texto da alternativa..."
+                        required>
+                    <input type="radio" name="alternativaCorretaIndex" value="${i}" ${checked} required> Correta
+                </div>
+            `;
+            containerEditar.appendChild(div);
+        }
+    }
+
+    selectEditar.addEventListener("change", function() {
+        gerarAlternativasEditar(this.value);
+    });
+</script>
+
+<!--  Script para as disciplinas mudarem de acordo com o curso selecionado -->
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const cursoSelect = document.getElementById("cursoSelect");
+    const disciplinaSelect = document.getElementById("disciplinaSelect");
+
+    cursoSelect.addEventListener("change", function() {
+        const cursoId = this.value;
+
+        if (!cursoId) return;
+
+        fetch(`/teste/api/disciplinas/por-curso/${cursoId}`)
+            .then(response => {
+                if (!response.ok) throw new Error("Erro ao buscar disciplinas");
+                return response.json();
+            })
+            .then(disciplinas => {
+                disciplinaSelect.innerHTML = '<option value="" disabled selected>Selecione...</option>';
+
+                disciplinas.forEach(d => {
+                    const option = document.createElement("option");
+                    option.value = d.id;
+                    option.textContent = d.nome;
+                    disciplinaSelect.appendChild(option);
+                });
+            })
+            .catch(err => {
+                console.error(err);
+                disciplinaSelect.innerHTML = '<option value="" disabled selected>Erro ao carregar disciplinas</option>';
+            });
+    });
+});
+</script>
+
+<!-- Script para mostrar imagem dentro da area -->
+<script>
+function previewImage(event) {
+    const placeholder = event.target.closest('.image-placeholder');
+    const content = placeholder.querySelector('.image-content');
+
+    // cria um elemento <img> com a prévia
+    const file = event.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            // cria ou atualiza o preview
+            let img = placeholder.querySelector('.image-preview');
+            if (!img) {
+                img = document.createElement('img');
+                img.classList.add('image-preview');
+                placeholder.appendChild(img);
+            }
+            img.src = e.target.result;
+            content.style.display = 'none'; // esconde o texto/ícone
+        };
+        reader.readAsDataURL(file);
+    }
+}
+</script>
 
 </body>
 </html>

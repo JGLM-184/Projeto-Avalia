@@ -176,9 +176,19 @@ public class QuestaoService {
 
     // Sobrecarga com imagem
     public Questao salvar(QuestaoDTO dto, MultipartFile file) {
-        dto.setImagem(salvarImagem(String.valueOf(dto.getId()), file));
-        return salvar(dto);
+        // Salva a questão sem imagem
+        Questao questaoSalva = salvar(dto);
+
+        // Salva a imagem com o ID gerado
+        if (file != null && !file.isEmpty()) {
+            String caminhoImagem = salvarImagem("questao_" + questaoSalva.getId(), file);
+            questaoSalva.setImagem(caminhoImagem);
+            questaoRepository.save(questaoSalva); // Atualiza o registro com o caminho correto
+        }
+
+        return questaoSalva;
     }
+
 
     //-------------------- MÉTODO DE SALVAR IMAGEM --------------------
 

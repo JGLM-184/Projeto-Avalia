@@ -32,19 +32,17 @@
 	    </div>
 	  </div>
 	</div>
-	
 			
 	<div class="discipline-container">
 	
 <!-- Tag de usuário -->
 <div class="mb-3">
-	
     <label class="form-label">Autor</label>
     <input type="text" class="form-control" th:value="${autorLogado.nome}" disabled>
 </div>
 
 
-<!-- Botões e Disciplinas -->
+<!-- Cursos e Disciplinas -->
 
 		<div class="col-md-4 mb-3">
 		    <label class="form-label">Curso</label>
@@ -138,7 +136,7 @@ function previewImage(event) {
 </script>
 
 
-<!-- Script para q quantidade de alternativas variarem no formulário de criação -->
+<!-- Script para a quantidade de alternativas variarem no formulário de criação -->
 <script>
     const container = document.getElementById("alternativasContainer");
     const select = document.getElementById("quantidadeAlternativas");
@@ -216,7 +214,6 @@ document.addEventListener("DOMContentLoaded", function() {
   const toast = new bootstrap.Toast(toastEl, { delay: 4000 });
   toast.show();
 </script>
-
 
 
 </body>

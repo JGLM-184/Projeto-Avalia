@@ -1,5 +1,6 @@
 package br.edu.fatecguarulhos.projetoavalia.model.entity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -14,6 +15,8 @@ public class Alternativa {
 
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY) //CHAVE PRIMÁRIA EM AUTOINCREMENTO
 	private int id;
+	
+	@Column (length = 1000)
 	private String texto;
 	private boolean correto;
 	

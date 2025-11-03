@@ -9,6 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -158,10 +159,15 @@ public class AmandaController {
 
         List<Questao> questoes = questaoService.pesquisar(termo);
 
-        // Restringir conforme os cursos do professor:
+      // Restringir conforme os cursos do professor:
         questoes = questoes.stream()
         .filter(q -> professorLogado.getCursos().contains(q.getCurso()))
         .toList();
+        
+     // ✅ Se a lista estiver vazia, adiciona um atributo de mensagem
+        if (questoes.isEmpty()) {
+            model.addAttribute("mensagem", "Nenhuma questão encontrada com este enunciado.");
+        }
 
         model.addAttribute("paginaAtiva", "bancoQuestoes");
         model.addAttribute("pageTitle", "Banco de Questões");
@@ -175,13 +181,52 @@ public class AmandaController {
         return "bancoDeQuestoes";
     }
     
-    // SUGESTÃO DE PESQUISA DE QUESTÃO POR ENUNCIADO, DISCIPLINA OU CURSO
+  // SUGESTÃO DE PESQUISA DE QUESTÃO POR ENUNCIADO, DISCIPLINA OU CURSO
     @GetMapping("/questao/sugestoes")
     @ResponseBody
     public List<String> obterSugestoes(@RequestParam("termo") String termo) {
         return questaoService.buscarSugestoes(termo);
     }
 
+  //TELA DE GERENCIAR QUESTÃO
+    @GetMapping("/gerenciarQuestao")
+    public String gerenciarQuestao(Model model) {
+        return "gerenciarQuestao";
+    }
+    
+    @GetMapping("/gerenciarQuestao/editar/{id}")
+    public String editarQuestao(@PathVariable int id, Model model) {   	
+        model.addAttribute("questaoDTO", new QuestaoDTO(questaoService.buscarPorId(id)));
+        model.addAttribute("professores", professorService.listarTodos());
+        model.addAttribute("cursos", cursoService.listarTodos());
+        model.addAttribute("qntAlternativas", questaoService.contarAlternativasPorId(id));
+
+        // Busca as disciplinas com base no curso da questão
+        model.addAttribute("disciplinas", disciplinaService.buscarPorCursoQuestaoId(id));
+        
+        model.addAttribute("isEdicaoQuestao", true);
+        
+        return "gerenciarQuestoes"; // ou outra view específica de edição
+    }
+
+    @PostMapping("/gerenciarQuestao/atualizar/{id}")
+    public String atualizarQuestao(@PathVariable int id,
+                                   @ModelAttribute QuestaoDTO dto,
+                                   @RequestParam(value = "file", required = false) MultipartFile file) {
+        if (file != null && !file.isEmpty()) {
+            questaoService.atualizar(id, dto, file);
+        } else {
+            questaoService.atualizar(id, dto);
+        }
+        return "redirect:/bancoDeQuestoes";
+    }
+
+    @GetMapping("/gerenciarQuestao/excluir/{id}")
+    public String excluirQuestao(@PathVariable int id) {
+        questaoService.excluir(id);
+        return "redirect:/bancoDeQuestoes";
+    }
+      
 
   //TELA DE MONTAR PROVA
     @GetMapping("/montarProva")
@@ -199,8 +244,7 @@ public class AmandaController {
         return "bancoProvas";
     }
     
-  
-	
+    
     
     @PostMapping("/alterar-senha")
     public String alterarSenha(@ModelAttribute TrocaSenhaDTO dto,
