@@ -23,12 +23,12 @@
 		
 		<!-- Navbar: Montar Prova -->
         <li class="nav-item" th:classappend="${paginaAtiva == 'montarProva'} ? ' active' : ''">
-		    <a th:href="@{/montarProva}"> <span class="material-icons">edit_note</span> Montar Prova </a>
+		    <a th:href="@{/provas/montar}"> <span class="material-icons">edit_note</span> Montar Prova </a>
 		</li>
 		
 		<!-- Navbar: Banco de provas -->
         <li class="nav-item" th:classappend="${paginaAtiva == 'bancoProvas'} ? ' active' : ''">
-			<a th:href="@{/bancoProvas}"> <span class="material-icons">folder_open</span> Banco de Provas</a>
+			<a th:href="@{/provas/banco}"> <span class="material-icons">folder_open</span> Banco de Provas</a>
 		</li>
 		
 		<!-- Navbar: Gerenciar Usuários -->

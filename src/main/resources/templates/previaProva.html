@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prévia da Prova</title>
+    <link rel="stylesheet" th:href="@{/style.css}">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <style>
+        .pdf-preview {
+            background: white;
+            min-height: 100vh;
+            padding: 40px;
+            font-family: 'Times New Roman', Times, serif;
+            line-height: 1.4;
+            max-width: 1000px;
+            margin: 0 auto;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+
+        .pdf-header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #000;
+            padding-bottom: 20px;
+        }
+
+        .pdf-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        .pdf-subtitle {
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .pdf-info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 25px 0;
+            font-size: 12px;
+        }
+
+        .pdf-info-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .pdf-info-label {
+            font-weight: bold;
+            margin-bottom: 2px;
+        }
+
+        .pdf-info-value {
+            border-bottom: 1px solid #000;
+            padding: 2px 0;
+            min-height: 18px;
+        }
+
+        .pdf-questions {
+            margin-top: 30px;
+        }
+
+        .pdf-question {
+            margin-bottom: 25px;
+            page-break-inside: avoid;
+        }
+
+        .pdf-question-number {
+            font-weight: bold;
+            margin-bottom: 8px;
+            font-size: 13px;
+        }
+
+        .pdf-question-text {
+            margin-bottom: 12px;
+            text-align: justify;
+        }
+
+        .pdf-alternatives {
+            margin-left: 20px;
+        }
+
+        .pdf-alternative {
+            margin-bottom: 5px;
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .pdf-alternative-letter {
+            font-weight: bold;
+            margin-right: 8px;
+            min-width: 20px;
+        }
+
+        .pdf-alternative-text {
+            flex: 1;
+        }
+
+        .pdf-question-image {
+            text-align: center;
+            margin: 10px 0;
+            font-style: italic;
+            color: #666;
+            border: 1px dashed #ccc;
+            padding: 10px;
+        }
+
+        .pdf-footer {
+            margin-top: 40px;
+            text-align: center;
+            font-size: 11px;
+            color: #666;
+            border-top: 1px solid #ccc;
+            padding-top: 10px;
+        }
+
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            .pdf-preview, .pdf-preview * {
+                visibility: visible;
+            }
+            .pdf-preview {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                padding: 20px;
+                margin: 0;
+                box-shadow: none;
+            }
+            .no-print {
+                display: none !important;
+            }
+        }
+
+        .preview-actions {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body class="coordinator-layout">
+
+    <!-- Navbar -->
+    <div th:replace="~{navbar :: navbar}"></div>
+
+    <main class="main-content">
+        <div class="container-fluid">
+            <!-- Botão Voltar -->
+            <div class="row mb-3 no-print">
+                <div class="col-12">
+                    <a href="#" class="btn btn-outline-secondary" onclick="voltarParaMontarProva()">
+                        <span class="material-icons">arrow_back</span>
+                        Voltar para edição
+                    </a>
+                </div>
+            </div>
+
+            <!-- Prévia no estilo PDF -->
+            <div class="pdf-preview" id="pdfPreview">
+                <!-- Cabeçalho da Prova -->
+                <div class="pdf-header">
+                    <div class="pdf-title">PROVA</div>
+                    <div class="pdf-subtitle">CENTRO PAULA SOUZA</div>
+                    <div class="pdf-subtitle">FACULDADE DE TECNOLOGIA</div>
+                    
+                    <div class="pdf-info-grid">
+                        <div class="pdf-info-item">
+                            <span class="pdf-info-label">Professor:</span>
+                            <div class="pdf-info-value" id="previewProfessor">Não definido</div>
+                        </div>
+                        <div class="pdf-info-item">
+                            <span class="pdf-info-label">Disciplina:</span>
+                            <div class="pdf-info-value" id="previewDisciplina">Não definida</div>
+                        </div>
+                        <div class="pdf-info-item">
+                            <span class="pdf-info-label">Nome do Aluno:</span>
+                            <div class="pdf-info-value" id="previewAluno">__________________________</div>
+                        </div>
+                        <div class="pdf-info-item">
+                            <span class="pdf-info-label">Data:</span>
+                            <div class="pdf-info-value" id="previewData">__/__/____</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Questões -->
+                <div class="pdf-questions" id="questoesPreview">
+                    <div class="text-center py-4" id="loadingQuestions">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Carregando questões...</span>
+                        </div>
+                        <p class="mt-2 text-muted">Carregando questões selecionadas...</p>
+                    </div>
+                </div>
+
+                <!-- Rodapé -->
+                <div class="pdf-footer">
+                    <p>Prova gerada automaticamente pelo Sistema de Avaliação</p>
+                    <p>Página 1 de 1</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ações Inferiores Flutuantes -->
+        <div class="preview-actions no-print">
+            <button class="btn btn-primary me-2" onclick="salvarProva()">
+                <span class="material-icons" style="font-size:16px;">save</span>
+                Salvar
+            </button>
+            <button class="btn btn-success me-2" onclick="window.print()">
+                <span class="material-icons" style="font-size:16px;">print</span>
+                Imprimir
+            </button>
+            <button class="btn btn-secondary" onclick="baixarPDF()">
+                <span class="material-icons" style="font-size:16px;">picture_as_pdf</span>
+                PDF
+            </button>
+        </div>
+    </main>
+
+<script>
+// Carregar dados quando a página carregar
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Inicializando prévia da prova...');
+    carregarCabecalho();
+    carregarQuestoesSelecionadas();
+});
+
+function carregarCabecalho() {
+    const cabecalhoSalvo = localStorage.getItem('cabecalhoProva');
+    console.log('Cabeçalho salvo:', cabecalhoSalvo);
+    
+    if (cabecalhoSalvo) {
+        const cabecalho = JSON.parse(cabecalhoSalvo);
+        document.getElementById('previewProfessor').textContent = cabecalho.professor || 'Não definido';
+        document.getElementById('previewDisciplina').textContent = cabecalho.disciplina || 'Não definida';
+        document.getElementById('previewAluno').textContent = cabecalho.aluno || '__________________________';
+        document.getElementById('previewData').textContent = cabecalho.data || '__/__/____';
+    }
+}
+
+function carregarQuestoesSelecionadas() {
+    console.log('Carregando questões selecionadas...');
+    
+    const questoesSelecionadas = obterQuestoesSelecionadas();
+    console.log('IDs das questões selecionadas:', questoesSelecionadas);
+    
+    if (questoesSelecionadas.length === 0) {
+        mostrarMensagemNenhumaQuestao();
+        return;
+    }
+    
+    // BUSCAR QUESTÕES REAIS DO BACKEND
+    buscarQuestoesReais(questoesSelecionadas);
+}
+
+function obterQuestoesSelecionadas() {
+    console.log('=== BUSCANDO QUESTÕES SELECIONADAS ===');
+    
+    // 1. Primeiro tentar buscar dos parâmetros da URL (mais confiável)
+    const urlParams = new URLSearchParams(window.location.search);
+    const todasQuestoesParams = urlParams.getAll('questoesSelecionadas');
+    
+    console.log('Parâmetros de questões da URL:', todasQuestoesParams);
+    
+    if (todasQuestoesParams.length > 0) {
+        const ids = todasQuestoesParams.map(id => parseInt(id.trim())).filter(id => !isNaN(id));
+        console.log('IDs parseados dos parâmetros:', ids);
+        return ids;
+    }
+    
+    // 2. Se não tiver nos parâmetros, tentar buscar do Thymeleaf
+    const questõesThymeleaf = /*[[${questoesSelecionadasParam}]]*/ null;
+    if (questõesThymeleaf && Array.isArray(questõesThymeleaf) && questõesThymeleaf.length > 0) {
+        console.log('Questões do Thymeleaf:', questõesThymeleaf);
+        return questõesThymeleaf;
+    }
+    
+    // 3. Se não tiver no Thymeleaf, buscar do localStorage
+    const estadoSalvo = localStorage.getItem('estadoMontarProva');
+    console.log('Estado completo do localStorage:', estadoSalvo);
+    
+    if (estadoSalvo) {
+        try {
+            const estado = JSON.parse(estadoSalvo);
+            const questaoIds = estado.questoesSelecionadas || [];
+            console.log('IDs das questões selecionadas no localStorage:', questaoIds);
+            return questaoIds;
+        } catch (error) {
+            console.error('Erro ao parsear estado:', error);
+        }
+    }
+    
+    console.log('Nenhuma questão selecionada encontrada');
+    return [];
+}
+
+// FUNÇÃO PRINCIPAL CORRIGIDA: Buscar questões reais do backend
+function buscarQuestoesReais(questaoIds) {
+    console.log('Buscando questões reais do backend para os IDs:', questaoIds);
+    
+    if (!questaoIds || questaoIds.length === 0) {
+        mostrarMensagemNenhumaQuestao();
+        return;
+    }
+    
+    // Fazer requisição AJAX para o backend
+    fetch(`/provas/api/questoes/por-ids?ids=${questaoIds.join(',')}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Erro na resposta do servidor: ' + response.status);
+            }
+            return response.json();
+        })
+        .then(questoes => {
+            console.log('Questões recebidas do backend:', questoes);
+            
+            const loading = document.getElementById('loadingQuestions');
+            if (loading) {
+                loading.remove();
+            }
+            
+            if (questoes.length === 0) {
+                mostrarMensagemNenhumaQuestao();
+                return;
+            }
+            
+            renderizarQuestoes(questoes);
+        })
+        .catch(error => {
+            console.error('Erro ao buscar questões:', error);
+            const loading = document.getElementById('loadingQuestions');
+            if (loading) {
+                loading.innerHTML = `
+                    <div class="alert alert-danger">
+                        <p>Erro ao carregar questões: ${error.message}</p>
+                        <button class="btn btn-sm btn-outline-secondary mt-2" onclick="carregarQuestoesSelecionadas()">
+                            Tentar Novamente
+                        </button>
+                    </div>
+                `;
+            }
+        });
+}
+
+function renderizarQuestoes(questoes) {
+    const container = document.getElementById('questoesPreview');
+    
+    container.innerHTML = questoes.map((questao, index) => {
+        // Verificar se a questão tem alternativas
+        const alternativas = questao.alternativas || [];
+        
+        return `
+            <div class="pdf-question">
+                <div class="pdf-question-number">${index + 1}. </div>
+                <div class="pdf-question-text">${questao.enunciado || 'Enunciado não disponível'}</div>
+                
+                ${questao.imagem ? `
+                <div class="pdf-question-image">
+                    <span class="material-icons">image</span>
+                    <small>Esta questão contém uma imagem</small>
+                </div>
+                ` : ''}
+                
+                ${alternativas.length > 0 ? `
+                <div class="pdf-alternatives">
+                    ${alternativas.map((alt, altIndex) => `
+                        <div class="pdf-alternative">
+                            <span class="pdf-alternative-letter">${String.fromCharCode(97 + altIndex)})</span>
+                            <span class="pdf-alternative-text">${alt.texto || alt}</span>
+                        </div>
+                    `).join('')}
+                </div>
+                ` : `
+                <div class="pdf-alternatives">
+                    <div class="pdf-alternative">
+                        <span class="text-muted">[Questão sem alternativas definidas]</span>
+                    </div>
+                </div>
+                `}
+                
+                <div style="margin-top: 10px; font-size: 11px; color: #666;">
+                    <small>
+                        <strong>Disciplina:</strong> ${questao.disciplina?.nome || 'Não definida'} | 
+                        <strong>Curso:</strong> ${questao.curso?.nome || 'Não definido'} |
+                        <strong>Autor:</strong> ${questao.autor?.nome || 'Não definido'}
+                    </small>
+                </div>
+            </div>
+        `;
+    }).join('');
+    
+    console.log(`Questões renderizadas com sucesso! Total: ${questoes.length}`);
+}
+
+function mostrarMensagemNenhumaQuestao() {
+    const loading = document.getElementById('loadingQuestions');
+    if (loading) {
+        loading.innerHTML = `
+            <div class="text-center py-4">
+                <span class="material-icons text-muted" style="font-size: 48px;">help_outline</span>
+                <p class="text-muted mt-2">Nenhuma questão selecionada.</p>
+                <p class="text-muted">Volte à tela de montar prova e selecione algumas questões.</p>
+                <button class="btn btn-outline-primary mt-2" onclick="voltarParaMontarProva()">
+                    Voltar para Montar Prova
+                </button>
+            </div>
+        `;
+    }
+}
+
+function voltarParaMontarProva() {
+    console.log('Voltando para montar prova...');
+    
+    const estadoSalvo = localStorage.getItem('estadoMontarProva');
+    if (estadoSalvo) {
+        const estado = JSON.parse(estadoSalvo);
+        
+        let urlRetorno = '/provas/montar';
+        const params = [];
+        
+        if (estado.questoesSelecionadas && estado.questoesSelecionadas.length > 0) {
+            // Adicionar cada questão como parâmetro separado
+            estado.questoesSelecionadas.forEach(id => {
+                params.push(`questoesSelecionadas=${id}`);
+            });
+        }
+        if (estado.tituloProva) params.push(`tituloProva=${encodeURIComponent(estado.tituloProva)}`);
+        if (estado.cursoId) params.push(`cursoId=${estado.cursoId}`);
+        if (estado.simulado) params.push(`simulado=${estado.simulado}`);
+        if (estado.disciplinaId) params.push(`disciplinaId=${estado.disciplinaId}`);
+        if (estado.pesquisa) params.push(`pesquisa=${encodeURIComponent(estado.pesquisa)}`);
+        
+        if (params.length > 0) {
+            urlRetorno += '?' + params.join('&');
+        }
+        
+        console.log('URL de retorno:', urlRetorno);
+        window.location.href = urlRetorno;
+    } else {
+        window.location.href = '/provas/montar';
+    }
+}
+
+function salvarProva() {
+    alert('Prova salva com sucesso!');
+}
+
+function baixarPDF() {
+    window.print();
+}
+
+// Debug: função para ver todo o localStorage
+function debugLocalStorage() {
+    console.log('=== DEBUG LOCALSTORAGE ===');
+    for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        const value = localStorage.getItem(key);
+        console.log(key + ':', value);
+    }
+    console.log('=== FIM DEBUG ===');
+}
+
+// Executar debug ao carregar
+debugLocalStorage();
+</script>
+</body>
+</html>

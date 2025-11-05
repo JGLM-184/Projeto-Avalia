@@ -97,6 +97,15 @@ public class QuestaoService {
         return questaoRepository.pesquisarPorTermo(termo);
     }
     
+ // No QuestaoService.java - adicione este método
+    public List<Questao> buscarQuestoesPorIds(List<Integer> ids) {
+        if (ids == null || ids.isEmpty()) {
+            return List.of();
+        }
+        return questaoRepository.findAllById(ids);
+    }
+//Adicionado por Leonardo para mostrar as questões marcadas na previa da prova
+    
     public List<String> buscarSugestoes(String termo) {
         termo = termo.toLowerCase();
 

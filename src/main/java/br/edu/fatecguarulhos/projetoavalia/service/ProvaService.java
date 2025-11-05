@@ -118,6 +118,13 @@ public class ProvaService {
             prova.setDataCriacao(provaDTO.getDataCriacao() != null ? provaDTO.getDataCriacao() : LocalDate.now());
             prova.setSimulado(provaDTO.isSimulado());
             
+            // Atualizar curso se fornecido
+            if (provaDTO.getCurso() != null) {
+                Curso curso = cursoRepository.findById(provaDTO.getCurso().getId())
+                        .orElseThrow(() -> new RuntimeException("Curso não encontrado com id: " + provaDTO.getCurso().getId()));
+                prova.setCurso(curso);
+            }
+            
             provaRepository.save(prova);
         }
         
@@ -156,7 +163,6 @@ public class ProvaService {
         else {
         	return provaDisciplinaRepository.save(provaDisciplina);        	
         }
-        
     }
 
     public List<Questao> listarQuestoesDisponiveisPorProva(int provaId) {
@@ -173,4 +179,89 @@ public class ProvaService {
                 .toList();
     }
 
+    // MÉTODOS ADICIONAIS NECESSÁRIOS PARA A EDIÇÃO DE PROVA
+
+    /**
+     * Remove uma questão específica de uma prova
+     */
+
+
+    /**
+     * Remove todas as questões de uma prova
+     */
+    public void removerTodasQuestoes(int provaId) {
+        Prova prova = buscarPorId(provaId);
+        provaQuestaoRepository.deleteByProva(prova);
+    }
+
+    /**
+     * Remove uma disciplina específica de uma prova
+     */
+    public void removerDisciplina(int provaId, int disciplinaId) {
+        Prova prova = buscarPorId(provaId);
+        // Aqui você precisaria injetar o DisciplinaService ou DisciplinaRepository
+        // Disciplina disciplina = disciplinaService.buscarPorId(disciplinaId);
+        // provaDisciplinaRepository.deleteByProvaAndDisciplina(prova, disciplina);
+    }
+
+    /**
+     * Atualiza uma prova com novas questões (substitui as antigas)
+     */
+    public Prova atualizarQuestoesDaProva(int provaId, List<Integer> questaoIds) {
+        Prova prova = buscarPorId(provaId);
+        
+        // Remove questões antigas
+        removerTodasQuestoes(provaId);
+        
+        // Adiciona novas questões
+        for (Integer questaoId : questaoIds) {
+            Questao questao = questaoService.buscarPorId(questaoId);
+            ProvaQuestaoDTO provaQuestaoDTO = new ProvaQuestaoDTO();
+            provaQuestaoDTO.setProva(prova);
+            provaQuestaoDTO.setQuestao(questao);
+            adicionarQuestao(provaQuestaoDTO);
+        }
+        
+        return prova;
+    }
+
+    /**
+     * Verifica se o usuário atual tem permissão para editar a prova
+     */
+    public boolean usuarioPodeEditarProva(int provaId) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null) return false;
+        
+        // Coordenador pode editar qualquer prova
+        if (auth.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_COORDENADOR"))) {
+            return true;
+        }
+        
+        // Professor só pode editar suas próprias provas
+        try {
+            Prova prova = buscarPorId(provaId);
+            String emailUsuario = auth.getName();
+            return prova.getProfessor().getEmail().equals(emailUsuario);
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    /**
+     * Busca questões por lista de IDs
+     */
+    public List<Questao> buscarQuestoesPorIds(List<Integer> ids) {
+        return questaoService.buscarQuestoesPorIds(ids);
+    }
+
+    /**
+     * Lista todas as questões de uma prova (entidades Questao, não ProvaQuestao)
+     */
+    public List<Questao> listarQuestoesDaProva(int provaId) {
+        List<ProvaQuestao> provaQuestoes = listarQuestoesPorProva(provaId);
+        return provaQuestoes.stream()
+                .map(ProvaQuestao::getQuestao)
+                .toList();
+    }
 }
