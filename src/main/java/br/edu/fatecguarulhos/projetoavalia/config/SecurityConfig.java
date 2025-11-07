@@ -16,26 +16,23 @@ public class SecurityConfig {
 		 http
 	        .authorizeHttpRequests(auth -> auth
 	        		//TORNA ESSAS ROTAS PÚBLICAS (NÃO PEDE LOGIN) PARA O DESENVOLVIMENTO
-	        	    .requestMatchers("/login**", "/css/**", "/js/**", "/**").permitAll()
+	        	    .requestMatchers("/login/**", "/imagens/**","/css/**", "/js/**", "/erro403").permitAll()
 	        	    
 	        	    //QUALQUER USUÁRIO AUTENTICADO PODE ACESSAR ESSAS ROTAS
-	        	    //.requestMatchers("/**").authenticated()
+	        	    .requestMatchers("/inicio/**", "/questao/**", "/provas/**").authenticated()
 	        	    
 	        	    //SOMENTE UM COORDENADOR PODE ACESSAS ESSAS ROTAS
-	        	    //.requestMatchers("/", "/", "/").hasRole("ADMIN")
-	        	    
-	        	    //SOMENTE COORDENADOR PODE FAZER CRUD
-	        	    //.requestMatchers("/").hasRole("ADMIN")
-	        	    //.anyRequest().authenticated()
+	        	    .requestMatchers("/coordenador/**", "/cursos/**", "/disciplinas/**", "/users/**").hasRole("ADMIN")
 	        	)
 	        
 	        //CUIDA DA PARTE DE LOGIN, CHAMA A API QUE TEM O LOGIN.HTML E LEVA AO INICIO.HTML
             .formLogin(form -> form
                 .loginPage("/login")
-                .defaultSuccessUrl("/", true)
+                .defaultSuccessUrl("/inicio", true)
                 .permitAll()
             )
-        //CUIDA DA PARTE DE LOGOU, CHAMA A API QUE TEM O INICIO.HTML AO SAIR
+            
+            //CUIDA DA PARTE DE LOGOU, CHAMA A API QUE TEM O INICIO.HTML AO SAIR
             .logout(logout -> logout
                 .logoutUrl("/logout")
                 .logoutSuccessUrl("/login")
@@ -43,6 +40,12 @@ public class SecurityConfig {
                 .deleteCookies("JSESSIONID")
                 .permitAll()
             )
+            
+            //MENSAGEM CASO O PROFESSOR VÁ PARA UMA PÁGINA DE COORDENADOR PELA URL
+            .exceptionHandling(ex -> ex
+                    .accessDeniedPage("/erro403")
+            )
+
             //CSRF: PROTEÇÃO CONTRA REQUISIÇÕES MALICIOSAS USANDO A SESSÃO DO USUÁRIO
             //PODE SER DESABILITADA EM TESTES PARA FACILITAR
             .csrf(csrf -> csrf.disable());
