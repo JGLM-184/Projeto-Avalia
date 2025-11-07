@@ -36,9 +36,7 @@ public class TentativaSimulado {
     )
 	private List<Questao> questoesErradas = new ArrayList<>();
 	
-	private LocalDateTime dataEnvio;
-	private boolean ativo;
-	
+	private LocalDateTime dataEnvio;	
 	
 	//CONSTRUTORES
 	public TentativaSimulado(){
@@ -47,14 +45,13 @@ public class TentativaSimulado {
 
 
 	public TentativaSimulado(int id, String aluno, Prova simulado, int totalAcertos, List<Questao> questoesErradas,
-			LocalDateTime dataEnvio, boolean ativo) {
+			LocalDateTime dataEnvio) {
 		this.id = id;
 		this.aluno = aluno;
 		this.simulado = simulado;
 		this.totalAcertos = totalAcertos;
 		this.questoesErradas = questoesErradas;
 		this.dataEnvio = dataEnvio;
-		this.ativo = ativo;
 	}
 
 	//GETTERS E SETTERS
@@ -116,15 +113,4 @@ public class TentativaSimulado {
 	public void setDataEnvio(LocalDateTime dataEnvio) {
 		this.dataEnvio = dataEnvio;
 	}
-
-
-	public boolean isAtivo() {
-		return ativo;
-	}
-
-
-	public void setAtivo(boolean ativo) {
-		this.ativo = ativo;
-	}
-	
 }
