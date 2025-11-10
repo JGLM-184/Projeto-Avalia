@@ -66,6 +66,30 @@ body {
     overflow-wrap: anywhere; /* garante quebra de palavras em casos extremos */
 }
 
+.usuarios-badge-status {
+    display: inline-block;
+    padding: 0.35rem 0.75rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-align: center;
+}
+
+/* SIM (verde) */
+.status-sim {
+    background-color: #d4f8df; /* verde clarinho */
+    color: #0f9d58;           /* verde mais escuro */
+    border: 1px solid #8fd79f;
+}
+
+/* NÃO (cinza) */
+.status-nao {
+    background-color: #eeeeee; /* cinza claro */
+    color: #616161;            /* cinza escuro */
+    border: 1px solid #cfcfcf;
+}
+
+
 
 /* Botões Modernos */
 .btn {

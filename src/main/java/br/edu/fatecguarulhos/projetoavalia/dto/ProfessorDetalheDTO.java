@@ -110,4 +110,32 @@ public class ProfessorDetalheDTO {
 	public void setAtivo(boolean ativo) {
 		this.ativo = ativo;
 	}
+	
+	public String getNomesDisciplinas() {
+	    if (disciplinas == null || disciplinas.isEmpty()) {
+	        return "Nenhuma";
+	    }
+	    return disciplinas.stream()
+	            .map(Disciplina::getNome)
+	            .reduce((a, b) -> a + ", " + b)
+	            .orElse("Nenhuma");
+	}
+
+	public String getNomesCursos() {
+	    if (cursos == null || cursos.isEmpty()) {
+	        return "Nenhum";
+	    }
+	    return cursos.stream()
+	            .map(Curso::getNome)
+	            .reduce((a, b) -> a + ", " + b)
+	            .orElse("Nenhum");
+	}
+	
+	public String getNomesCursosFormatado() {
+	    return getNomesCursos().replace(", ", "<br><br>");
+	}
+
+	public String getNomesDisciplinasFormatado() {
+	    return getNomesDisciplinas().replace(", ", "<br><br>");
+	}
 }

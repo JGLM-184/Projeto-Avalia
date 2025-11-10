@@ -21,6 +21,7 @@ public interface QuestaoRepository extends JpaRepository<Questao, Integer> {
 
 	List<Questao> findByAutor(Professor professor);
 	
+    boolean existsByAutor(Professor autor);
 	
 	/* adicionado por amanda */
 	

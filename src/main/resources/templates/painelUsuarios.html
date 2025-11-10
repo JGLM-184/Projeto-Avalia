@@ -25,7 +25,6 @@
 		</div>
 		
         <!-- Card com tabela de usuários -->
-		<!-- No botão de alterar você vai usar o caminho th:href={@'/alterar-usuario'}-->
         <div class="card shadow-sm">
             <div class="card-body">
                 <h5 class="card-title">Usuários Cadastrados</h5>
@@ -38,34 +37,65 @@
                                 <th>Email</th>
                                 <th>RA</th>
                                 <th>Coordenador</th>
+								<th>Cursos</th>
                                 <th>Disciplinas</th>
-                                <th>Cursos</th>
                                 <th>Ativo</th>
-                                <th>Primeiro Acesso</th>
+                                <th>1°Acesso</th>
                                 <th>Controles</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr>
-                                <td>João da Silva</td>
-                                <td>joao.silva@escola.edu.br</td>
-                                <td>123456</td>
-                                <td>NÃO</td>
-                                <td>REDES, SO</td>
-                                <td>ADS, SI</td>
-                                <td>SIM</td>
-                                <td>NÃO</td>
-                                <td>
-                                    <a href="alterar_usuario.html" class="btn action-btn" style="background: #f3f3f3;">
-                                        <span class="material-icons" style="font-size:16px;">edit</span> Editar
-                                    </a>
-                                    <a href="#" class="btn action-btn" style="background: #ffbcb9;" onclick="return confirm('Deseja excluir este usuário?')">
-                                        <span class="material-icons" style="font-size:16px;">delete</span> Excluir
-                                    </a>
-                                </td>
-                            </tr>
+						<tbody>
+						<tr th:each="professor : ${professores}">
+						    <td th:text="${professor.nome}"></td>
+						    <td th:text="${professor.email}"></td>
+						    <td th:text="${professor.re}"></td>
+							
+							<td>
+								<span class="usuarios-badge-status"
+									th:classappend="${professor.coordenador} ? ' status-sim' : ' status-nao'">
+									<span th:text="${professor.coordenador} ? 'Sim' : 'Não'"></span>
+								</span>
+							</td>
+							
+							<td class="quebraTexto" th:utext="${professor.nomesCursosFormatado}"></td>
+							<td class="quebraTexto" th:utext="${professor.nomesDisciplinasFormatado}"></td>
 
-                        </tbody>
+							<td>
+							    <span class="usuarios-badge-status" 
+							          th:classappend="${professor.ativo} ? ' status-sim' : ' status-nao'">
+							        <span th:text="${professor.ativo} ? 'Sim' : 'Não'"></span>
+							    </span>
+							</td>
+							
+							<td>
+								<span class="usuarios-badge-status"
+									th:classappend="${professor.primeiroAcesso} ? ' status-sim' : ' status-nao'">
+									<span th:text="${professor.primeiroAcesso} ? 'Sim' : 'Não'"></span>
+								</span>
+							</td>
+
+							
+						    <td>
+								<!--Botão de editar-->
+						        <a th:href="@{'/users/editar/' + ${professor.id}}" class="btn action-btn" style="background: #f3f3f3;">
+						            <span class="material-icons" style="font-size:16px;">edit</span> Editar
+						        </a>
+								
+								<!--Botão de excluir-->
+								<a th:if="${professor.id != usuarioLogado.id}"
+								   th:href="@{'/users/excluir/' + ${professor.id}}" 
+								   class="btn action-btn delete-btn">
+								    <span class="material-icons" style="font-size:16px;">delete</span> Excluir
+								</a>
+
+								<!-- Se for o usuário logado, só mostra desabilitado -->
+								<button th:if="${professor.id == usuarioLogado.id}"
+								        class="btn action-btn" style="background: #ccc; cursor:not-allowed;" disabled>
+								    <span class="material-icons" style="font-size:16px;">block</span> Você
+								</button>
+						    </td>
+						</tr>
+						</tbody>
                     </table>
                 </div>
                 
@@ -73,5 +103,70 @@
         </div>
     </div>
 </main>
+
+<!-- Modal de confirmação de exclusão -->
+<div class="modal fade" id="confirmDeleteModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header bg-danger text-white">
+        <h5 class="modal-title">Confirmar Exclusão</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        Tem certeza que deseja excluir este usuário?
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <a id="confirmDeleteBtn" class="btn btn-danger">Excluir</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+document.querySelectorAll('.delete-btn').forEach(btn => {
+  btn.addEventListener('click', function(e) {
+    e.preventDefault();
+    const link = this.getAttribute('href');
+    document.getElementById('confirmDeleteBtn').setAttribute('href', link);
+    new bootstrap.Modal(document.getElementById('confirmDeleteModal')).show();
+  });
+});
+</script>
+
+
+<!-- Modal de mensagem -->
+<div class="modal fade" id="messageModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-body text-center">
+        <p id="messageText"></p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" data-bs-dismiss="modal">Ok</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script th:inline="javascript">
+    window.addEventListener("DOMContentLoaded", () => {
+        /* Pegando mensagens de erro e sucesso (se existirem) */
+        const error = /*[[${errorMessage}]]*/ null;
+        const success = /*[[${successMessage}]]*/ null;
+
+        if (error !== null && error !== "") {
+            document.getElementById("messageText").innerText = error;
+            new bootstrap.Modal(document.getElementById("messageModal")).show();
+        } 
+        else if (success !== null && success !== "") {
+            document.getElementById("messageText").innerText = success;
+            new bootstrap.Modal(document.getElementById("messageModal")).show();
+        }
+    });
+</script>
+
+
+
 </body>
 </html>

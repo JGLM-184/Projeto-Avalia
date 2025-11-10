@@ -4,10 +4,12 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
-import java.util.Set;
+
+import java.util.List;
 
 public class ProfessorCadastroDTO {
 
+	private int id;
     @NotBlank(message = "O nome é obrigatório.")
     private String nome;
 
@@ -25,10 +27,10 @@ public class ProfessorCadastroDTO {
     private boolean coordenador;
 
     @NotEmpty(message = "É necessário informar pelo menos uma disciplina.")
-    private Set<Integer> idsDisciplinas;
+    private List<Integer> idsDisciplinas;
 
     @NotEmpty(message = "É necessário informar pelo menos um curso.")
-    private Set<Integer> idsCursos;
+    private List<Integer> idsCursos;
     
     private boolean ativo = true;
     
@@ -42,8 +44,8 @@ public class ProfessorCadastroDTO {
 			@NotBlank(message = "O RE é obrigatório.") String re,
 			@NotBlank(message = "A senha é obrigatória.") @Size(min = 6, message = "A senha deve ter no mínimo 6 caracteres.") String senha,
 			boolean coordenador,
-			@NotEmpty(message = "É necessário informar pelo menos uma disciplina.") Set<Integer> idsDisciplinas,
-			@NotEmpty(message = "É necessário informar pelo menos um curso.") Set<Integer> idsCursos) {
+			@NotEmpty(message = "É necessário informar pelo menos uma disciplina.") List<Integer> idsDisciplinas,
+			@NotEmpty(message = "É necessário informar pelo menos um curso.") List<Integer> idsCursos) {
 		this.nome = nome;
 		this.email = email;
 		this.re = re;
@@ -95,19 +97,19 @@ public class ProfessorCadastroDTO {
 		this.coordenador = coordenador;
 	}
 
-	public Set<Integer> getIdsDisciplinas() {
+	public List<Integer> getIdsDisciplinas() {
 		return idsDisciplinas;
 	}
 
-	public void setIdsDisciplinas(Set<Integer> idsDisciplinas) {
+	public void setIdsDisciplinas(List<Integer> idsDisciplinas) {
 		this.idsDisciplinas = idsDisciplinas;
 	}
 
-	public Set<Integer> getIdsCursos() {
+	public List<Integer> getIdsCursos() {
 		return idsCursos;
 	}
 
-	public void setIdsCursos(Set<Integer> idsCursos) {
+	public void setIdsCursos(List<Integer> idsCursos) {
 		this.idsCursos = idsCursos;
 	}
 
@@ -117,5 +119,15 @@ public class ProfessorCadastroDTO {
 
 	public void setAtivo(boolean ativo) {
 		this.ativo = ativo;
+	}
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
 	}    
+	
+	
 }

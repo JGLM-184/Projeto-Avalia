@@ -3,17 +3,13 @@ package br.edu.fatecguarulhos.projetoavalia.dto;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.Size;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-
-import br.edu.fatecguarulhos.projetoavalia.model.entity.Curso;
-import br.edu.fatecguarulhos.projetoavalia.model.entity.Disciplina;
 
 public class ProfessorAtualizarDTO {
 
+	private int id;
     @NotBlank(message = "O nome é obrigatório.")
     private String nome;
 
@@ -29,9 +25,6 @@ public class ProfessorAtualizarDTO {
 
     @NotEmpty(message = "É necessário informar pelo menos um curso.")
     private List<Integer> idsCursos = new ArrayList<>();
-
-    @Size(min = 6, message = "A senha deve ter no mínimo 6 caracteres.")
-    private String senha;    
     
     private boolean coordenador;
     private boolean ativo;
@@ -113,13 +106,13 @@ public class ProfessorAtualizarDTO {
 		this.ativo = ativo;
 	}
 
-	public String getSenha() {
-		return senha;
+	public int getId() {
+		return id;
 	}
 
-	public void setSenha(String senha) {
-		this.senha = senha;
-	}
+	public void setId(int id) {
+		this.id = id;
+	}	
 	
 	
 }

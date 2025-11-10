@@ -9,12 +9,14 @@ import org.springframework.stereotype.Service;
 
 import br.edu.fatecguarulhos.projetoavalia.dto.ProfessorAtualizarDTO;
 import br.edu.fatecguarulhos.projetoavalia.dto.ProfessorCadastroDTO;
+import br.edu.fatecguarulhos.projetoavalia.dto.ProfessorDetalheDTO;
 import br.edu.fatecguarulhos.projetoavalia.model.entity.Curso;
 import br.edu.fatecguarulhos.projetoavalia.model.entity.Disciplina;
 import br.edu.fatecguarulhos.projetoavalia.model.entity.Professor;
 import br.edu.fatecguarulhos.projetoavalia.repository.CursoRepository;
 import br.edu.fatecguarulhos.projetoavalia.repository.DisciplinaRepository;
 import br.edu.fatecguarulhos.projetoavalia.repository.ProfessorRepository;
+import br.edu.fatecguarulhos.projetoavalia.repository.QuestaoRepository;
 
 @Service
 public class ProfessorService {
@@ -29,6 +31,9 @@ public class ProfessorService {
     @Autowired
     private CursoRepository cursoRepository;
 
+    @Autowired
+    private QuestaoRepository questaoRepository;
+    
     @Autowired
     private PasswordEncoder passwordEncoder;
 
@@ -45,6 +50,23 @@ public class ProfessorService {
     public List<Professor> listarTodos() {
         return professorRepository.findAll();
     }
+    
+    
+    public List<ProfessorDetalheDTO> listarTodosDetalhado() {
+        return professorRepository.findAll().stream()
+                .map(prof -> new ProfessorDetalheDTO(
+                        prof.getId(),
+                        prof.getNome(),
+                        prof.getEmail(),
+                        prof.getRe(),
+                        prof.isCoordenador(),
+                        prof.isPrimeiroAcesso(),
+                        prof.isAtivo(),
+                        new ArrayList<>(prof.getDisciplinas()),
+                        new ArrayList<>(prof.getCursos())
+                )).toList();
+    }
+
     
     
         //----------------------------------- MÉTODOS DE CRUD -----------------------------------//
@@ -95,15 +117,6 @@ public class ProfessorService {
         professor.setRe(dto.getRe());
         professor.setCoordenador(dto.isCoordenador());
         professor.setAtivo(dto.isAtivo());
-        //ALTERA A SENHA SE ELA FOR INFORMADA
-        if (dto.getSenha() != null && !dto.getSenha().isBlank()) {
-            if (passwordEncoder.matches(dto.getSenha(), professor.getSenha())) {
-                throw new IllegalArgumentException("A nova senha não pode ser igual à senha antiga!");
-            }
-            professor.setSenha(passwordEncoder.encode(dto.getSenha()));
-        }
-
-
 
         //ATUALIZA DISCIPLINA 
         if (dto.getIdsDisciplinas() != null) {
@@ -131,15 +144,18 @@ public class ProfessorService {
     }
 
  
-    //EXCLUIR
-    public void excluirProfessor(int id) {
-        Professor professor = professorRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Professor não encontrado."));
+ //EXCLUIR
+   public void excluirProfessor(int id) {
+       Professor professor = professorRepository.findById(id)
+               .orElseThrow(() -> new RuntimeException("Professor não encontrado."));
 
-        professorRepository.delete(professor);
-    }
+       if (questaoRepository.existsByAutor(professor)) {
+           throw new IllegalStateException("Este professor possui questões cadastradas e não pode ser excluído.");
+       }
+
+       professorRepository.delete(professor);
+   }
     
-    //TROCAR SENHA PRIMEIRO ACESSO
     public void trocarSenha(Professor professor, String novaSenha, String confirmarSenha) {
         if (!novaSenha.equals(confirmarSenha)) {
             throw new IllegalArgumentException("As senhas não coincidem!");
