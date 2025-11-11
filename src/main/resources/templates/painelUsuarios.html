@@ -47,7 +47,7 @@
 						<tbody>
 						<tr th:each="professor : ${professores}">
 						    <td th:text="${professor.nome}"></td>
-						    <td th:text="${professor.email}"></td>
+						    <td th:text="${professor.email}" class="texto-reticencia"></td>
 						    <td th:text="${professor.re}"></td>
 							
 							<td>
