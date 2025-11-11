@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import br.edu.fatecguarulhos.projetoavalia.dto.DisciplinaDTO;
@@ -62,8 +63,11 @@ public class DisciplinaController {
     }
     
     @ResponseBody
-    @GetMapping("api/disciplinas/por-curso/{id}")
-    public List<Disciplina> listarDisciplinasPorCurso(@PathVariable int id) {
-    	return disciplinaService.buscarPorCursoId(id);
+    @GetMapping("/por-cursos")
+    public List<Disciplina> listarDisciplinasPorCursos(@RequestParam List<Integer> cursosIds) {
+        return disciplinaService.buscarPorCursosIds(cursosIds);
     }
+
+
+
 }

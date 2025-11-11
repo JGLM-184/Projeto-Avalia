@@ -54,19 +54,51 @@
 				<label>Ativo</label>
 			</div>
 
-			<div class="form-group">
-				<label>Disciplinas</label>
-				<select multiple th:field="*{idsDisciplinas}" class="form-input">
-					<option th:each="disc : ${listaDisciplinas}" th:value="${disc.id}" th:text="${disc.nome}"></option>
-				</select>
-			</div>
+			<hr class="my-4">
 
-			<div class="form-group">
-				<label>Cursos</label>
-				<select multiple th:field="*{idsCursos}" class="form-input">
-					<option th:each="curso : ${listaCursos}" th:value="${curso.id}" th:text="${curso.nome}"></option>
-				</select>
-			</div>
+			<h4>Cursos</h4>
+
+			<form id="formAddCurso" class="row g-3 align-items-end">
+			    <div class="col-md-6">
+			        <label class="form-label">Selecione um Curso</label>
+			        <select id="cursoSelect" class="form-select">
+						<option th:each="curso : ${listaCursos}"
+						        th:value="${curso.id}"
+						        th:text="${curso.nome}">
+						</option>
+			        </select>
+			    </div>
+
+			    <div class="col-md-3">
+			        <button type="button" id="btnAddCurso" class="btn btn-primary w-100">Adicionar Curso</button>
+			    </div>
+			</form>
+
+			<ul id="listaCursos" class="list-group mt-3"></ul>
+
+			<input type="hidden" name="cursosIds" id="cursosIds">
+
+
+			<hr class="my-4">
+
+			<h4>Disciplinas</h4>
+
+			<form id="formAddDisciplina" class="row g-3 align-items-end">
+			    <div class="col-md-6">
+			        <label class="form-label">Selecione uma Disciplina</label>
+			        <select id="disciplinaSelect" class="form-select">
+			            <!-- preenchido dinamicamente -->
+			        </select>
+			    </div>
+
+			    <div class="col-md-3">
+			        <button type="button" id="btnAddDisciplina" class="btn btn-success w-100">Adicionar Disciplina</button>
+			    </div>
+			</form>
+
+			<ul id="listaDisciplinas" class="list-group mt-3"></ul>
+
+			<input type="hidden" name="disciplinasIds" id="disciplinasIds">
 
 			<div class="form-actions">
 			    <a th:href="@{/users/painel}" class="btn btn-secondary">Cancelar</a>
@@ -78,5 +110,100 @@
 
 	</div>
 </main>
+
+<script>
+let cursosSelecionados = [];
+let disciplinasSelecionadas = [];
+
+document.getElementById("btnAddCurso").addEventListener("click", function() {
+    const select = document.getElementById("cursoSelect");
+    const id = select.value;
+    const nome = select.options[select.selectedIndex].text;
+
+    if (!cursosSelecionados.includes(id)) {
+        cursosSelecionados.push(id);
+        atualizarCursosUI();
+        carregarDisciplinas();
+    }
+});
+
+function atualizarCursosUI() {
+    const ul = document.getElementById("listaCursos");
+    ul.innerHTML = "";
+    cursosSelecionados.forEach(id => {
+        const nome = document.querySelector(`#cursoSelect option[value="${id}"]`).text;
+        ul.innerHTML += `<li class="list-group-item d-flex justify-content-between">
+            ${nome}
+            <button class="btn btn-sm btn-danger" onclick="removerCurso('${id}')">Remover</button>
+        </li>`;
+    });
+    document.getElementById("cursosIds").value = cursosSelecionados.join(",");
+}
+
+function removerCurso(id) {
+    cursosSelecionados = cursosSelecionados.filter(x => x !== id);
+    atualizarCursosUI();
+    carregarDisciplinas();
+}
+
+function carregarDisciplinas() {
+    const select = document.getElementById("disciplinaSelect");
+
+    if (cursosSelecionados.length === 0) {
+        select.innerHTML = "";
+        return;
+    }
+
+	fetch(`/disciplinas/por-cursos?cursosIds=${cursosSelecionados.join(",")}`)
+        .then(response => response.json())
+        .then(data => {
+            select.innerHTML = "";
+
+            if (data.length === 0) {
+                select.innerHTML = `<option value="">Nenhuma disciplina disponível</option>`;
+                return;
+            }
+
+            data.forEach(d => {
+                if (!disciplinasSelecionadas.includes(String(d.id))) {
+                    select.innerHTML += `<option value="${d.id}">${d.nome}</option>`;
+                }
+            });
+        })
+        .catch(err => console.error("Erro ao carregar disciplinas:", err));
+}
+
+
+
+document.getElementById("btnAddDisciplina").addEventListener("click", function() {
+    const select = document.getElementById("disciplinaSelect");
+    const id = select.value;
+    const nome = select.options[select.selectedIndex].text;
+
+    if (!disciplinasSelecionadas.includes(id)) {
+        disciplinasSelecionadas.push(id);
+        atualizarDisciplinasUI();
+    }
+});
+
+function atualizarDisciplinasUI() {
+    const ul = document.getElementById("listaDisciplinas");
+    ul.innerHTML = "";
+    disciplinasSelecionadas.forEach(id => {
+        const nome = document.querySelector(`#disciplinaSelect option[value="${id}"]`)?.text || "";
+        ul.innerHTML += `<li class="list-group-item d-flex justify-content-between">
+            ${nome}
+            <button class="btn btn-sm btn-danger" onclick="removerDisciplina('${id}')">Remover</button>
+        </li>`;
+    });
+    document.getElementById("disciplinasIds").value = disciplinasSelecionadas.join(",");
+}
+
+function removerDisciplina(id) {
+    disciplinasSelecionadas = disciplinasSelecionadas.filter(x => x !== id);
+    atualizarDisciplinasUI();
+}
+</script>
+
 </body>
 </html>

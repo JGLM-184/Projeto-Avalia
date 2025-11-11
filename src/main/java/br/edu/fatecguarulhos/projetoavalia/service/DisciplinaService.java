@@ -34,6 +34,12 @@ public class DisciplinaService {
         return disciplinaRepository.findByCursoId(cursoId);
     }
     
+    //PARA A TELA DE CRIAR USUÁRIO
+    public List<Disciplina> buscarPorCursosIds(List<Integer> cursosIds) {
+        return disciplinaRepository.findByCursoIdIn(cursosIds);
+    }
+
+    
 	public List<Disciplina> buscarPorCursoQuestaoId(int questaoId) {
 		Questao questao = questaoRepository.findById(questaoId)
 				.orElseThrow(() -> new RuntimeException("Questão não encontrada com id: " + questaoId));

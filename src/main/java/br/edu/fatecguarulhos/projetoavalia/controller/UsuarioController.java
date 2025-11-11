@@ -11,16 +11,20 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import br.edu.fatecguarulhos.projetoavalia.dto.ProfessorAtualizarDTO;
 import br.edu.fatecguarulhos.projetoavalia.dto.ProfessorCadastroDTO;
 import br.edu.fatecguarulhos.projetoavalia.dto.ProfessorDetalheDTO;
 import br.edu.fatecguarulhos.projetoavalia.dto.TrocaSenhaDTO;
+import br.edu.fatecguarulhos.projetoavalia.model.entity.Disciplina;
 import br.edu.fatecguarulhos.projetoavalia.model.entity.Professor;
 import br.edu.fatecguarulhos.projetoavalia.repository.CursoRepository;
 import br.edu.fatecguarulhos.projetoavalia.repository.DisciplinaRepository;
 import br.edu.fatecguarulhos.projetoavalia.repository.ProfessorRepository;
+import br.edu.fatecguarulhos.projetoavalia.service.DisciplinaService;
 import br.edu.fatecguarulhos.projetoavalia.service.ProfessorService;
 
 @Controller
@@ -38,6 +42,9 @@ public class UsuarioController {
 	
 	@Autowired
     private DisciplinaRepository disciplinaRepository;
+	
+	@Autowired
+    private DisciplinaService disciplinaService;
 	
 
 	@GetMapping("/painel")
@@ -60,17 +67,19 @@ public class UsuarioController {
 	 
 	@GetMapping("/cadastrar")
 	public String criarUsuario(Model model) {
-	    model.addAttribute("pageTitle", "Cadastrar usuário");
-	    
-	    // DTO vazio para criar
-	    model.addAttribute("professor", new ProfessorCadastroDTO());
-	    
-	    // Listas dinâmicas
-	    model.addAttribute("listaCursos", cursoRepository.findAll());
-	    model.addAttribute("listaDisciplinas", disciplinaRepository.findAll());
 
+	    var cursos = cursoRepository.findAll();
+	    var disciplinas = disciplinaRepository.findAll();
+
+	    System.out.println("Cursos carregados: " + cursos.size());
+	    System.out.println("Disciplinas carregadas: " + disciplinas.size());
+
+	    model.addAttribute("professor", new ProfessorCadastroDTO());
+	    model.addAttribute("listaCursos", cursos);
+	    model.addAttribute("listaDisciplinas", disciplinas);
 	    return "formularioUsuario";
 	}
+
 	
 	@PostMapping("/cadastrar")
 	public String salvarNovo(@ModelAttribute ProfessorCadastroDTO dto, RedirectAttributes redirectAttributes) {
@@ -156,5 +165,13 @@ public class UsuarioController {
 
 		 return "redirect:/";
 	 }
+	 
+	 @ResponseBody
+	 @GetMapping("/disciplinas/por-cursos")
+	 public List<Disciplina> listarDisciplinasPorCursos(@RequestParam List<Integer> cursosIds) {
+	     return disciplinaService.buscarPorCursosIds(cursosIds);
+	 }
+
+
 	
 }
