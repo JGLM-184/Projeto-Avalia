@@ -44,12 +44,12 @@
 			    <label>Senha</label>
 			</div>
 
-			<div class="form-group checkbox-wrapper">
+			<div class="custom-checkbox">
 				<input type="checkbox" th:field="*{coordenador}">
 				<label>Coordenador</label>
 			</div>
 
-			<div class="form-group checkbox-wrapper">
+			<div class="custom-checkbox">
 				<input type="checkbox" th:field="*{ativo}">
 				<label>Ativo</label>
 			</div>
@@ -69,8 +69,10 @@
 			        </select>
 			    </div>
 
-			    <div class="col-md-3">
-			        <button type="button" id="btnAddCurso" class="btn btn-primary w-100">Adicionar Curso</button>
+			    <div class="col-md-3 align-items-end">
+			        <button type="button" id="btnAddCurso" class="btn btn-geren">
+						<span class="material-icons">add</span>
+					</button>
 			    </div>
 			</div>
 
@@ -90,16 +92,18 @@
 			    </div>
 
 			    <div class="col-md-3">
-			        <button type="button" id="btnAddDisciplina" class="btn btn-success w-100">Adicionar Disciplina</button>
+			        <button type="button" id="btnAddDisciplina" class="btn btn-geren">
+						<span class="material-icons">add</span>
+					</button>
 			    </div>
 			</div>
 
 			<ul id="listaDisciplinas" class="list-group mt-3"></ul>
 			<input type="hidden" name="idsDisciplinas" id="disciplinasIds">
 
-			<div class="form-actions">
+			<div class="form-actions" style="margin-top: 1rem;">
 			    <a th:href="@{/users/painel}" class="btn btn-secondary">Cancelar</a>
-			    <button type="submit" class="btn btn-primary"
+			    <button type="submit" class="btn btn-geren"
 			            th:text="${idProfessor != null} ? 'Salvar Alterações' : 'Criar Usuário'"></button>
 			</div>
 

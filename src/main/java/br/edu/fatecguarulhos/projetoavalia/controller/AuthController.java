@@ -14,13 +14,14 @@ public class AuthController {
     public String login(Model model) {
         return "login";
     }
-    /*
+    
+    
     //PÁGINA QUE INDICA ACESSO NEGADO
     @GetMapping("/erro403")
     public String erro403() {
         return "erro403";
     }
-    */
+    
 
 
 }

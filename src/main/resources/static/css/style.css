@@ -4,6 +4,7 @@
     --primary-color: #6366f1; /* Índigo moderno */
     --primary-dark: #4f46e5; /* Índigo escuro */
     --secondary-color: #8b5cf6; /* Roxo vibrante */
+	--roxo-claro: rgb(202, 202, 247); /* Roxo para botão na tela de gerenciar adm */
 	--laranja-claro: rgb(251, 148, 55);
 	--laranja-escuro: rgb(225, 109, 4);
     --accent-color: #06b6d4; /* Ciano */
@@ -85,15 +86,15 @@ body {
 
 /* SIM (verde) */
 .status-sim {
-    background-color: #d4f8df; /* verde clarinho */
-    color: #0f9d58;           /* verde mais escuro */
-    border: 1px solid #8fd79f;
+    background-color: rgb(206, 175, 243); /* fundo */
+    color: rgb(83, 0, 166);               /* texto */
+    border: 1px solid rgb(202, 158, 254);
 }
 
 /* NÃO (cinza) */
 .status-nao {
-    background-color: #eeeeee; /* cinza claro */
-    color: #616161;            /* cinza escuro */
+    background-color: rgb(255, 241, 221); /* cinza claro */
+    color: rgb(114, 99, 80);            /* cinza escuro */
     border: 1px solid #cfcfcf;
 }
 
@@ -1939,12 +1940,54 @@ body {
 }
 
 /* ------------------------------------------- */
+/* PAGINA DE GERENCIAMENTO */
+/* ------------------------------------------- */
+
+.btn-gerenciar {
+    background: linear-gradient(var(--roxo-claro) 0%, var(--roxo-claro) 100%);
+    color: var(--text-light);
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+	align-content: center;
+	align-items: center;
+	text-align: center;
+	margin-left: 1rem;
+}
+
+.btn-adicionar-usuario {
+	margin-left: 1rem;
+}
+
+.btn-geren {
+	background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    color: var(--text-light);
+    border: none;
+    box-shadow: var(--shadow-md);
+	height: 2.5rem;
+}
+
+/* ------------------------------------------- */
 /* ESTILOS ESPECÍFICOS PARA FORMULÁRIO LARGO */
 /* ------------------------------------------- */
 
 .wide-form {
     max-width: 1000px !important;
     width: 100%;
+}
+
+/* ------------------------------------------- */
+/* MENSAGEM DE ERRO PARA ACESSO NEGADO */
+/* ------------------------------------------- */
+
+
+.mensagem-erro {
+	align-content: center; 
+	margin-top: 10rem; 
+	height: 15rem; 
+	width: 10rem; 
+	background-color: rgb(236, 233, 230);
+	border-radius: 1rem;
 }
 
 /* ------------------------------------------- */

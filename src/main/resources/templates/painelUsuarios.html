@@ -15,93 +15,93 @@
 <div th:replace="~{navbar :: navbar}"></div>
 
 <main class="main-content">
-    <div class="user-section container mt-4">
+<div class="user-section container mt-4">
 
-        <!-- Botão Novo Usuário -->
-		<div class="mb-3">
-		    <a th:href="@{'/users/cadastrar'}" class="btn btn-save">
-		        <span class="material-icons" style="font-size:16px;">person_add</span> Novo Usuário
-		    </a>
-		</div>
-		
-        <!-- Card com tabela de usuários -->
-        <div class="card shadow-sm">
-            <div class="card-body">
-                <h5 class="card-title">Usuários Cadastrados</h5>
-                
-                <div class="table-responsive">
-                    <table class="table align-middle">
-                        <thead>
-                            <tr>
-                                <th>Nome</th>
-                                <th>Email</th>
-                                <th>RA</th>
-                                <th>Coordenador</th>
-								<th>Cursos</th>
-                                <th>Disciplinas</th>
-                                <th>Ativo</th>
-                                <th>1°Acesso</th>
-                                <th>Controles</th>
-                            </tr>
-                        </thead>
-						<tbody>
-						<tr th:each="professor : ${professores}">
-						    <td th:text="${professor.nome}"></td>
-						    <td th:text="${professor.email}" class="texto-reticencia"></td>
-						    <td th:text="${professor.re}"></td>
-							
-							<td>
-								<span class="usuarios-badge-status"
-									th:classappend="${professor.coordenador} ? ' status-sim' : ' status-nao'">
-									<span th:text="${professor.coordenador} ? 'Sim' : 'Não'"></span>
-								</span>
-							</td>
-							
-							<td class="quebraTexto" th:utext="${professor.nomesCursosFormatado}"></td>
-							<td class="quebraTexto" th:utext="${professor.nomesDisciplinasFormatado}"></td>
+    <!-- Botão Novo Usuário -->
+	<div class="mb-2">
+	    <a th:href="@{'/users/cadastrar'}" class="btn btn-adicionar-usuario">
+	        <span class="material-icons" style="font-size:16px;">person_add</span> Novo Usuário
+	    </a>
+	</div>
+	
+  <!-- Card com tabela de usuários -->
+  <div class="card shadow-sm">
+        <div class="card-body">
+        <h5 class="card-title">Usuários Cadastrados</h5>
+        
+        <div class="table-responsive">
+            <table class="table align-middle">
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Email</th>
+                        <th>RA</th>
+                        <th>Coordenador</th>
+						<th>Cursos</th>
+                        <th>Disciplinas</th>
+                        <th>Ativo</th>
+                        <th>1°Acesso</th>
+                        <th>Controles</th>
+                    </tr>
+                </thead>
+				<tbody>
+				<tr th:each="professor : ${professores}">
+				    <td th:text="${professor.nome}"></td>
+				    <td th:text="${professor.email}" class="texto-reticencia"></td>
+				    <td th:text="${professor.re}"></td>
+					
+					<td>
+						<span class="usuarios-badge-status"
+							th:classappend="${professor.coordenador} ? ' status-sim' : ' status-nao'">
+							<span th:text="${professor.coordenador} ? 'Sim' : 'Não'"></span>
+						</span>
+					</td>
+					
+					<td class="quebraTexto" th:utext="${professor.nomesCursosFormatado}"></td>
+					<td class="quebraTexto" th:utext="${professor.nomesDisciplinasFormatado}"></td>
 
-							<td>
-							    <span class="usuarios-badge-status" 
-							          th:classappend="${professor.ativo} ? ' status-sim' : ' status-nao'">
-							        <span th:text="${professor.ativo} ? 'Sim' : 'Não'"></span>
-							    </span>
-							</td>
-							
-							<td>
-								<span class="usuarios-badge-status"
-									th:classappend="${professor.primeiroAcesso} ? ' status-sim' : ' status-nao'">
-									<span th:text="${professor.primeiroAcesso} ? 'Sim' : 'Não'"></span>
-								</span>
-							</td>
+					<td>
+					    <span class="usuarios-badge-status" 
+					          th:classappend="${professor.ativo} ? ' status-sim' : ' status-nao'">
+					        <span th:text="${professor.ativo} ? 'Sim' : 'Não'"></span>
+					    </span>
+					</td>
+					
+					<td>
+						<span class="usuarios-badge-status"
+							th:classappend="${professor.primeiroAcesso} ? ' status-sim' : ' status-nao'">
+							<span th:text="${professor.primeiroAcesso} ? 'Sim' : 'Não'"></span>
+						</span>
+					</td>
 
-							
-						    <td>
-								<!--Botão de editar-->
-						        <a th:href="@{'/users/editar/' + ${professor.id}}" class="btn action-btn" style="background: #f3f3f3;">
-						            <span class="material-icons" style="font-size:16px;">edit</span> Editar
-						        </a>
-								
-								<!--Botão de excluir-->
-								<a th:if="${professor.id != usuarioLogado.id}"
-								   th:href="@{'/users/excluir/' + ${professor.id}}" 
-								   class="btn action-btn delete-btn">
-								    <span class="material-icons" style="font-size:16px;">delete</span> Excluir
-								</a>
+					
+				    <td>
+						<!--Botão de editar-->
+				        <a th:href="@{'/users/editar/' + ${professor.id}}" class="btn action-btn" style="background: rgb(224, 221, 255); margin-bottom: 0.5rem; margin-left: 1rem">
+				            <span class="material-icons" style="font-size:16px;">edit</span> 
+				        </a>
+						
+						<!--Botão de excluir-->
+						<a th:if="${professor.id != usuarioLogado.id}"
+						   th:href="@{'/users/excluir/' + ${professor.id}}" 
+						   class="btn action-btn delete-btn" style="background: rgb(247, 202, 202); margin-left: 1rem">
+						    <span class="material-icons" style="font-size:16px;">delete</span> 
+						</a>
 
-								<!-- Se for o usuário logado, só mostra desabilitado -->
-								<button th:if="${professor.id == usuarioLogado.id}"
-								        class="btn action-btn" style="background: #ccc; cursor:not-allowed;" disabled>
-								    <span class="material-icons" style="font-size:16px;">block</span> Você
-								</button>
-						    </td>
-						</tr>
-						</tbody>
-                    </table>
-                </div>
-                
-            </div>
+						<!-- Se for o usuário logado, só mostra desabilitado -->
+						<button th:if="${professor.id == usuarioLogado.id}"
+						        class="btn action-btn" style="background: #ccc; margin-left: 1rem" disabled>
+						    <span class="material-icons" style="font-size:16px;">block</span> 
+						</button>
+				    </td>
+				</tr>
+				</tbody>
+            </table>
         </div>
+        
     </div>
+  </div>
+</div>
 </main>
 
 <!-- Modal de confirmação de exclusão -->
