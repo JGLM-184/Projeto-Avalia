@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import br.edu.fatecguarulhos.projetoavalia.model.entity.Disciplina;
 
@@ -13,5 +14,8 @@ public interface DisciplinaRepository extends JpaRepository<Disciplina, Integer>
 	
 	@Query("SELECT d FROM Disciplina d WHERE d.curso.id IN :cursosIds ORDER BY d.nome")
     List<Disciplina> findByCursoIdIn(List<Integer> cursosIds);
+	
+	@Query("SELECT d FROM Disciplina d JOIN d.professores p WHERE p.id = :professorId")
+	List<Disciplina> listarDisciplinasPorProfessor(@Param("professorId") int professorId);
 
 }

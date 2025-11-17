@@ -1,6 +1,7 @@
 package br.edu.fatecguarulhos.projetoavalia.service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -13,6 +14,7 @@ import br.edu.fatecguarulhos.projetoavalia.dto.ProvaDTO;
 import br.edu.fatecguarulhos.projetoavalia.dto.ProvaDisciplinaDTO;
 import br.edu.fatecguarulhos.projetoavalia.dto.ProvaQuestaoDTO;
 import br.edu.fatecguarulhos.projetoavalia.model.entity.Curso;
+import br.edu.fatecguarulhos.projetoavalia.model.entity.Disciplina;
 import br.edu.fatecguarulhos.projetoavalia.model.entity.Professor;
 import br.edu.fatecguarulhos.projetoavalia.model.entity.Prova;
 import br.edu.fatecguarulhos.projetoavalia.model.entity.ProvaDisciplina;
@@ -46,22 +48,52 @@ public class ProvaService {
     
     @Autowired
     private QuestaoService questaoService;
+    
+    @Autowired
+    private DisciplinaService disciplinaService;
 
     //-------------------- CONSULTAS --------------------
     
     public List<Prova> listarTodas() {
         return provaRepository.findAll();
     }
+    
+    public List<Prova> listarProvasVisiveis() {
+
+        Professor usuario = getUsuarioLogado();
+
+        // Caso seja professor comum → somente suas próprias provas
+        if (!usuario.isCoordenador()) {
+            return provaRepository.findByProfessorId(usuario.getId());
+        }
+        
+        List<Curso> cursosCoordenador = usuario.getCursos();
+
+        // Coordenador sem cursos → vê apenas suas próprias provas
+        if (cursosCoordenador.isEmpty()) {
+            return provaRepository.findByProfessorId(usuario.getId());
+        }
+
+        List<Prova> listaProvas = new ArrayList<>();
+
+        // Para cada curso do coordenador, adicionar as provas do curso
+        for (Curso curso : cursosCoordenador) {
+            List<Prova> provasDoCurso = provaRepository.findByCursoId(curso.getId());
+            listaProvas.addAll(provasDoCurso);
+        }
+
+        return listaProvas;
+    }
+
 
     public Prova buscarPorId(int id) {
         return provaRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Prova não encontrada com id: " + id));
     }
     
-	public Prova buscarPorTitulo(String titulo) {
-		return provaRepository.findByTitulo(titulo)
-				.orElseThrow(() -> new RuntimeException("Prova não encontrada com título: " + titulo));
-	}
+    public Optional<Prova> buscarPorTituloEProfessorOptional(String titulo, int professorId) {
+        return provaRepository.findByTituloAndProfessorId(titulo, professorId);
+    }
     
     public List<ProvaQuestao> listarQuestoesPorProva(int provaId) {
         Prova prova = buscarPorId(provaId);
@@ -78,17 +110,8 @@ public class ProvaService {
     public Prova criar(ProvaDTO provaDTO) {
         
         // Obtém o usuário logado
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-
-        if (auth == null || !auth.isAuthenticated()) {
-            throw new RuntimeException("Usuário não autenticado.");
-        }
-
-        // Verifica se o professor existe
-        String email = auth.getName(); 
-        Professor professor = professorRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("Professor não encontrado para o usuário autenticado: " + email));
-
+        Professor professor = this.getUsuarioLogado();
+    	
         // Verifica se o curso existe
         if (provaDTO.getCurso() == null || provaDTO.getCurso().getId() == 0) {
             throw new RuntimeException("Curso não informado.");
@@ -108,8 +131,23 @@ public class ProvaService {
         
         return provaRepository.save(prova);
     }
+    
+    public Professor getUsuarioLogado() {
+    	Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
-    public Optional<Prova> atualizar(int id, ProvaDTO provaDTO) {
+        if (auth == null || !auth.isAuthenticated()) {
+            throw new RuntimeException("Usuário não autenticado.");
+        }
+
+        // Verifica se o professor existe
+        String email = auth.getName(); 
+        Professor professor = professorRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Professor não encontrado para o usuário autenticado: " + email));
+
+        return professor;
+	}
+
+	public Optional<Prova> atualizar(int id, ProvaDTO provaDTO) {
         Optional<Prova> provaOpt = provaRepository.findById(id);
         if (provaOpt.isPresent()) {
             Prova prova = provaOpt.get();
@@ -149,6 +187,20 @@ public class ProvaService {
         
         return provaQuestaoRepository.save(provaQuestao);
     }
+    
+    public void removerQuestao(int provaId, int questaoId) {
+        Prova prova = buscarPorId(provaId);
+        Questao questao = questaoService.buscarPorId(questaoId);
+
+        Optional<ProvaQuestao> provaQuestao = provaQuestaoRepository.findByProvaAndQuestao(prova, questao);
+
+        if (provaQuestao.isEmpty()) {
+            throw new RuntimeException("Associação Prova-Questão não encontrada para provaId=" 
+                                       + provaId + " e questaoId=" + questaoId);
+        }
+
+        provaQuestaoRepository.delete(provaQuestao.get());   
+    }
 
     public ProvaDisciplina adicionarDisciplina(ProvaDisciplinaDTO provaDisciplinaDTO) {
         ProvaDisciplina provaDisciplina = new ProvaDisciplina();
@@ -164,104 +216,43 @@ public class ProvaService {
         	return provaDisciplinaRepository.save(provaDisciplina);        	
         }
     }
+    
+	public void removerDisciplina(int provaId, int disciplinaId) {
+		Prova prova = buscarPorId(provaId);
+        Disciplina disciplina = disciplinaService.buscarPorId(disciplinaId);
+
+        Optional<ProvaDisciplina> provaDisciplina = provaDisciplinaRepository.findByProvaAndDisciplina(prova, disciplina);
+
+        if (provaDisciplina.isEmpty()) {
+            throw new RuntimeException("Associação Prova-Questão não encontrada para provaId=" 
+                                       + provaId + " e questaoId=" + disciplinaId);
+        }
+
+        provaDisciplinaRepository.delete(provaDisciplina.get()); 
+		
+	}
 
     public List<Questao> listarQuestoesDisponiveisPorProva(int provaId) {
+
         List<ProvaDisciplina> disciplinasProva = listarDisciplinasPorProva(provaId);
-        
+
         if (disciplinasProva.isEmpty()) {
             return List.of();
         }
 
-        // Filtra questões cujas disciplinas estão na prova
+        List<ProvaQuestao> questoesDaProva = listarQuestoesPorProva(provaId);
+
         return questaoService.listarTodas().stream()
                 .filter(questao -> disciplinasProva.stream()
-                        .anyMatch(provaDisciplina -> questao.getDisciplina().getId() == provaDisciplina.getDisciplina().getId()))
+                        .anyMatch(pd -> 
+                            questao.getDisciplina().getId() == pd.getDisciplina().getId()
+                        )
+                )
+ 
+                .filter(questao -> questoesDaProva.stream()
+                        .noneMatch(q -> q.getQuestao().getId() == questao.getId())
+                )
                 .toList();
     }
-
-    // MÉTODOS ADICIONAIS NECESSÁRIOS PARA A EDIÇÃO DE PROVA
-
-    /**
-     * Remove uma questão específica de uma prova
-     */
-
-
-    /**
-     * Remove todas as questões de uma prova
-     */
-    public void removerTodasQuestoes(int provaId) {
-        Prova prova = buscarPorId(provaId);
-        provaQuestaoRepository.deleteByProva(prova);
-    }
-
-    /**
-     * Remove uma disciplina específica de uma prova
-     */
-    public void removerDisciplina(int provaId, int disciplinaId) {
-        Prova prova = buscarPorId(provaId);
-        // Aqui você precisaria injetar o DisciplinaService ou DisciplinaRepository
-        // Disciplina disciplina = disciplinaService.buscarPorId(disciplinaId);
-        // provaDisciplinaRepository.deleteByProvaAndDisciplina(prova, disciplina);
-    }
-
-    /**
-     * Atualiza uma prova com novas questões (substitui as antigas)
-     */
-    public Prova atualizarQuestoesDaProva(int provaId, List<Integer> questaoIds) {
-        Prova prova = buscarPorId(provaId);
-        
-        // Remove questões antigas
-        removerTodasQuestoes(provaId);
-        
-        // Adiciona novas questões
-        for (Integer questaoId : questaoIds) {
-            Questao questao = questaoService.buscarPorId(questaoId);
-            ProvaQuestaoDTO provaQuestaoDTO = new ProvaQuestaoDTO();
-            provaQuestaoDTO.setProva(prova);
-            provaQuestaoDTO.setQuestao(questao);
-            adicionarQuestao(provaQuestaoDTO);
-        }
-        
-        return prova;
-    }
-
-    /**
-     * Verifica se o usuário atual tem permissão para editar a prova
-     */
-    public boolean usuarioPodeEditarProva(int provaId) {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth == null) return false;
-        
-        // Coordenador pode editar qualquer prova
-        if (auth.getAuthorities().stream()
-                .anyMatch(a -> a.getAuthority().equals("ROLE_COORDENADOR"))) {
-            return true;
-        }
-        
-        // Professor só pode editar suas próprias provas
-        try {
-            Prova prova = buscarPorId(provaId);
-            String emailUsuario = auth.getName();
-            return prova.getProfessor().getEmail().equals(emailUsuario);
-        } catch (Exception e) {
-            return false;
-        }
-    }
-
-    /**
-     * Busca questões por lista de IDs
-     */
-    public List<Questao> buscarQuestoesPorIds(List<Integer> ids) {
-        return questaoService.buscarQuestoesPorIds(ids);
-    }
-
-    /**
-     * Lista todas as questões de uma prova (entidades Questao, não ProvaQuestao)
-     */
-    public List<Questao> listarQuestoesDaProva(int provaId) {
-        List<ProvaQuestao> provaQuestoes = listarQuestoesPorProva(provaId);
-        return provaQuestoes.stream()
-                .map(ProvaQuestao::getQuestao)
-                .toList();
-    }
+	
 }

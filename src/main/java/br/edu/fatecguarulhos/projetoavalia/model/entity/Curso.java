@@ -1,9 +1,12 @@
 package br.edu.fatecguarulhos.projetoavalia.model.entity;
 
+import java.util.List;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 
 @Entity
@@ -13,6 +16,9 @@ public class Curso {
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 	private String nome;
+	
+	@ManyToMany(mappedBy = "cursos")
+	private List<Professor> professores;
 	
 	//CONSTRUTORES
 	public Curso() {

@@ -2,7 +2,6 @@ package br.edu.fatecguarulhos.projetoavalia.model.entity;
 
 import java.time.LocalDate;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -10,15 +9,20 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 
 @Entity
-@Table(name="prova")
+@Table(
+    name = "prova",
+    uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"titulo", "professor_id"})
+    }
+)
 public class Prova {
 	
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 	
-	@Column(unique = true)
 	private String titulo;
 	private LocalDate dataCriacao;		
 	

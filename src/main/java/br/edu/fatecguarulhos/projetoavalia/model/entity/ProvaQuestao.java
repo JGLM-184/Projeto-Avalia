@@ -30,7 +30,6 @@ public class ProvaQuestao {
 	}
 	
 	public ProvaQuestao(int id, Questao questao, Prova prova) {
-		super();
 		this.id = id;
 		this.questao = questao;
 		this.prova = prova;

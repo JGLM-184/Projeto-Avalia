@@ -24,6 +24,10 @@ public class CursoService {
         return cursoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Curso não encontrado com id: " + id));
     }
+    
+    public List<Curso> listarCursosPorProfessor(int professorId) {
+        return cursoRepository.findCursosByProfessor(professorId);
+    }
 
     public Curso salvar(CursoDTO dto) {
         Curso curso = new Curso();

@@ -14,7 +14,6 @@ public class ProvaQuestaoDTO {
     }
     
     public ProvaQuestaoDTO(int id, Questao questao, Prova prova) {
-		super();
 		this.id = id;
 		this.questao = questao;
 		this.prova = prova;

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -43,7 +43,7 @@
                             <td>
                                 <div class="btn-group" role="group">
                                     <!-- Botão Editar - Direciona para editarProva -->
-                                    <a th:href="@{'/provas/editar-prova/' + ${prova.id}}" 
+                                    <a th:href="@{'/provas/editar/' + ${prova.id}}" 
                                        class="btn btn-warning btn-sm">
                                         <i class="material-icons">edit</i> Editar
                                     </a>

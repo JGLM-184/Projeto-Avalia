@@ -40,11 +40,11 @@ public class Professor {
 	// RELAÇÃO DE MUITOS PARA MUITOS (CURSO)
 	@ManyToMany
 	@JoinTable(
-        name = "professor_curso",
-        joinColumns = @JoinColumn(name = "professor_id"), 
-        inverseJoinColumns = @JoinColumn(name = "curso_id")
-    )
-	private List<Curso> cursos = new ArrayList<>();
+	    name = "professor_curso",
+	    joinColumns = @JoinColumn(name = "professor_id"),
+	    inverseJoinColumns = @JoinColumn(name = "curso_id")
+	)
+	private List<Curso> cursos;
 	
 	//CONSTRUTORES
 	public Professor() {

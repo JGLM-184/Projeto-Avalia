@@ -1,10 +1,14 @@
 package br.edu.fatecguarulhos.projetoavalia.model.entity;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
@@ -20,6 +24,9 @@ public class Disciplina {
     @ManyToOne
     @JoinColumn(name = "curso_id", nullable = false)
     private Curso curso;
+    
+    @ManyToMany(mappedBy = "disciplinas")
+    private List<Professor> professores = new ArrayList<>();
 
     //CONSTRUTORES
     public Disciplina() {

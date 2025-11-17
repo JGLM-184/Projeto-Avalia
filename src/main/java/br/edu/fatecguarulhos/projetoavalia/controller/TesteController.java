@@ -1,8 +1,10 @@
 package br.edu.fatecguarulhos.projetoavalia.controller;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,6 +23,7 @@ import br.edu.fatecguarulhos.projetoavalia.dto.ProvaDisciplinaDTO;
 import br.edu.fatecguarulhos.projetoavalia.dto.ProvaQuestaoDTO;
 import br.edu.fatecguarulhos.projetoavalia.dto.QuestaoDTO;
 import br.edu.fatecguarulhos.projetoavalia.model.entity.Disciplina;
+import br.edu.fatecguarulhos.projetoavalia.model.entity.Prova;
 import br.edu.fatecguarulhos.projetoavalia.service.CursoService;
 import br.edu.fatecguarulhos.projetoavalia.service.DisciplinaService;
 import br.edu.fatecguarulhos.projetoavalia.service.ProfessorService;
@@ -213,10 +216,31 @@ public class TesteController {
 
     @PostMapping("/provas/salvar")
     public String salvarProva(@ModelAttribute ProvaDTO provaDTO) {
-        provaService.criar(provaDTO);
-        int id = provaService.buscarPorTitulo(provaDTO.getTitulo()).getId();
-        return "redirect:/teste/provas/editar/" + id;
+
+        int professorId = provaService.getUsuarioLogado().getId();
+
+        Optional<Prova> existenteOpt = provaService.buscarPorTituloEProfessorOptional(
+                provaDTO.getTitulo(), professorId);
+
+        if (existenteOpt.isPresent()) {
+            return "redirect:/teste/provas/editar/" + existenteOpt.get().getId();
+        }
+
+        try {
+            Prova nova = provaService.criar(provaDTO);
+            return "redirect:/teste/provas/editar/" + nova.getId();
+        } catch (DataIntegrityViolationException ex) {
+            Optional<Prova> existenteAfterRace = provaService.buscarPorTituloEProfessorOptional(
+                    provaDTO.getTitulo(), professorId);
+
+            if (existenteAfterRace.isPresent()) {
+                return "redirect:/teste/provas/editar/" + existenteAfterRace.get().getId();
+            }
+
+            throw ex;
+        }
     }
+    
 
     @GetMapping("/provas/editar/{id}")
     public String editarProva(@PathVariable int id, Model model) {
@@ -244,14 +268,23 @@ public class TesteController {
     @PostMapping("/provas/editar/{id}/adicionar-questao")
     public String adicionarQuestao(@PathVariable int id, @ModelAttribute ProvaQuestaoDTO provaQuestaoDTO) {
     	provaService.adicionarQuestao(provaQuestaoDTO);
-    	return "redirect:/teste/provas/editar/{id}";
+    	return "redirect:/teste/provas/editar/" + id;
+    }
+    
+    @PostMapping("/provas/editar/{id}/remover-questao")
+    public String removerQuestao(@PathVariable("id") int provaId,
+                                 @RequestParam(name = "questao.id", required = true) int questaoId) {
+
+        provaService.removerQuestao(provaId, questaoId);
+
+        return "redirect:/teste/provas/editar/" + provaId;
     }
     
     @PostMapping("/provas/editar/{id}/adicionar-disciplina")
-    public String adicionarQuestao(@PathVariable int id, @ModelAttribute ProvaDisciplinaDTO provaDisciplinaDTO) {
+    public String adicionarDisciplina(@PathVariable int id, @ModelAttribute ProvaDisciplinaDTO provaDisciplinaDTO) {
     	provaDisciplinaDTO.setProva(provaService.buscarPorId(id));
     	provaService.adicionarDisciplina(provaDisciplinaDTO);
-    	return "redirect:/teste/provas/editar/{id}";
+    	return "redirect:/teste/provas/editar/" + id;
     }
 
     @PostMapping("/provas/atualizar/{id}")

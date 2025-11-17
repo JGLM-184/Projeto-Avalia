@@ -30,6 +30,10 @@ public class DisciplinaService {
                 .orElseThrow(() -> new RuntimeException("Disciplina não encontrada com id: " + id));
     }
     
+    public List<Disciplina> listarDisciplinasPorProfessor(int professorId) {
+        return disciplinaRepository.listarDisciplinasPorProfessor(professorId);
+    }
+    
     public List<Disciplina> buscarPorCursoId(int cursoId) {
         return disciplinaRepository.findByCursoId(cursoId);
     }

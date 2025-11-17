@@ -42,28 +42,28 @@ INSERT INTO alternativa (texto, correto, questao_id) VALUES ('Uma variável que 
 INSERT INTO alternativa (texto, correto, questao_id) VALUES ('Um comando de repetição', false, 1);
 INSERT INTO alternativa (texto, correto, questao_id) VALUES ('Um operador matemático', false, 1);
 
-INSERT INTO alternativa (texto, correto, questao_id) VALUES ('Armazenar valores temporários durante a execução do programa', true, 2);
 INSERT INTO alternativa (texto, correto, questao_id) VALUES ('Executar instruções repetidamente', false, 2);
 INSERT INTO alternativa (texto, correto, questao_id) VALUES ('Comparar dados lógicos', false, 2);
+INSERT INTO alternativa (texto, correto, questao_id) VALUES ('Armazenar valores temporários durante a execução do programa', true, 2);
 INSERT INTO alternativa (texto, correto, questao_id) VALUES ('Retornar um valor ao final do programa', false, 2);
 
-INSERT INTO alternativa (texto, correto, questao_id) VALUES ('Estrutura que repete instruções enquanto uma condição for verdadeira', true, 3);
 INSERT INTO alternativa (texto, correto, questao_id) VALUES ('Executa uma única instrução', false, 3);
+INSERT INTO alternativa (texto, correto, questao_id) VALUES ('Estrutura que repete instruções enquanto uma condição for verdadeira', true, 3);
 INSERT INTO alternativa (texto, correto, questao_id) VALUES ('Armazena valores', false, 3);
 INSERT INTO alternativa (texto, correto, questao_id) VALUES ('Realiza operações matemáticas', false, 3);
 
-INSERT INTO alternativa (texto, correto, questao_id) VALUES ('Permitir comparações lógicas entre valores', true, 4);
 INSERT INTO alternativa (texto, correto, questao_id) VALUES ('Armazenar números', false, 4);
 INSERT INTO alternativa (texto, correto, questao_id) VALUES ('Repetir comandos', false, 4);
 INSERT INTO alternativa (texto, correto, questao_id) VALUES ('Definir funções', false, 4);
+INSERT INTO alternativa (texto, correto, questao_id) VALUES ('Permitir comparações lógicas entre valores', true, 4);
 
-INSERT INTO alternativa (texto, correto, questao_id) VALUES ('Conjunto de instruções que realizam uma tarefa específica', true, 5);
 INSERT INTO alternativa (texto, correto, questao_id) VALUES ('Um valor fixo', false, 5);
 INSERT INTO alternativa (texto, correto, questao_id) VALUES ('Uma variável temporária', false, 5);
 INSERT INTO alternativa (texto, correto, questao_id) VALUES ('Uma condição lógica', false, 5);
+INSERT INTO alternativa (texto, correto, questao_id) VALUES ('Conjunto de instruções que realizam uma tarefa específica', true, 5);
 
-INSERT INTO alternativa (texto, correto, questao_id) VALUES ('Uma estrutura que armazena múltiplos valores do mesmo tipo', true, 6);
 INSERT INTO alternativa (texto, correto, questao_id) VALUES ('Uma variável que armazena apenas um valor', false, 6);
+INSERT INTO alternativa (texto, correto, questao_id) VALUES ('Uma estrutura que armazena múltiplos valores do mesmo tipo', true, 6);
 INSERT INTO alternativa (texto, correto, questao_id) VALUES ('Um operador lógico', false, 6);
 INSERT INTO alternativa (texto, correto, questao_id) VALUES ('Uma função que retorna valores', false, 6);
 
@@ -72,21 +72,20 @@ INSERT INTO alternativa (texto, correto, questao_id) VALUES ('Repetir blocos de 
 INSERT INTO alternativa (texto, correto, questao_id) VALUES ('Definir variáveis temporárias', false, 7);
 INSERT INTO alternativa (texto, correto, questao_id) VALUES ('Criar funções matemáticas', false, 7);
 
-INSERT INTO alternativa (texto, correto, questao_id) VALUES ('Modelo que define atributos e comportamentos de objetos', true, 8);
 INSERT INTO alternativa (texto, correto, questao_id) VALUES ('Uma variável global', false, 8);
 INSERT INTO alternativa (texto, correto, questao_id) VALUES ('Um operador lógico', false, 8);
+INSERT INTO alternativa (texto, correto, questao_id) VALUES ('Modelo que define atributos e comportamentos de objetos', true, 8);
 INSERT INTO alternativa (texto, correto, questao_id) VALUES ('Uma estrutura de repetição', false, 8);
 
-INSERT INTO alternativa (texto, correto, questao_id) VALUES ('Retornar um valor do interior de uma função para quem a chamou', true, 9);
 INSERT INTO alternativa (texto, correto, questao_id) VALUES ('Iniciar um loop', false, 9);
 INSERT INTO alternativa (texto, correto, questao_id) VALUES ('Armazenar valores em variáveis', false, 9);
 INSERT INTO alternativa (texto, correto, questao_id) VALUES ('Comparar valores lógicos', false, 9);
+INSERT INTO alternativa (texto, correto, questao_id) VALUES ('Retornar um valor do interior de uma função para quem a chamou', true, 9);
 
 INSERT INTO alternativa (texto, correto, questao_id) VALUES ('Processo de identificar e corrigir erros no código', true, 10);
 INSERT INTO alternativa (texto, correto, questao_id) VALUES ('Criar funções matemáticas', false, 10);
 INSERT INTO alternativa (texto, correto, questao_id) VALUES ('Declarar variáveis', false, 10);
 INSERT INTO alternativa (texto, correto, questao_id) VALUES ('Executar loops infinitos', false, 10);
-
 
 INSERT INTO alternativa (texto, correto, questao_id) VALUES ('logistica', true, 11);
 INSERT INTO alternativa (texto, correto, questao_id) VALUES ('logistica a', false, 11);

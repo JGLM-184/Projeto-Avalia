@@ -1,6 +1,7 @@
 package br.edu.fatecguarulhos.projetoavalia.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -13,5 +14,6 @@ public interface ProvaDisciplinaRepository extends JpaRepository<ProvaDisciplina
 	List<ProvaDisciplina> findByProva(Prova prova);
     void deleteByProva(Prova prova);
 	boolean existsByProvaAndDisciplina(Prova prova, Disciplina disciplina);
+	Optional<ProvaDisciplina> findByProvaAndDisciplina(Prova prova, Disciplina disciplina);
     
 }

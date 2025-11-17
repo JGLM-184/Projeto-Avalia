@@ -11,5 +11,10 @@ public interface ProvaRepository extends JpaRepository<Prova, Integer>{
 
 	List<Prova> findByCursoId(int cursoId);
 
-	Optional<Prova> findByTitulo(String titulo);
+	Optional<Prova> findByTituloAndProfessorId(String titulo, int professorId);
+	
+	List<Prova> findByProfessorId(int professorId);
+
+	List<Prova> findByProfessorIdIn(List<Integer> ids);
+
 }

@@ -22,35 +22,41 @@
                 <h4 style="margin-bottom: 24px; color: var(--text-dark);">Configurações da Prova</h4>
                 
                 <!-- Formulário de Configuração da Prova -->
-                <div class="mb-4">
-                    <div class="mb-3">
-                        <label class="form-label">Título da Prova</label>
-                        <input type="text" class="form-control" id="tituloProva" 
-                               th:value="${tituloProvaAtual}"
-                               placeholder="Digite o título da prova">
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label class="form-label">Curso</label>
-                        <select class="form-select" id="cursoId">
-                            <option value="">Selecione um curso...</option>
-                            <option th:each="curso : ${cursos}"
-                                    th:value="${curso.id}"
-                                    th:text="${curso.nome}"
-                                    th:selected="${cursoIdAtual != null && cursoIdAtual == curso.id}"></option>
-                        </select>
-                    </div>
-                    
-                    <div class="custom-checkbox mb-3">
-                        <input type="checkbox" id="simulado" th:checked="${simuladoAtual}">
-                        <label for="simulado">Prova de Simulado</label>
-                    </div>
-					<!-- Botão Próximo -->
-					              <div class="d-grid gap-2 mt-4">
-					                  <a th:href="@{/provas/editar-prova/{id}(id=${provaId})}" class="btn btn-primary btn-lg">
-					                      <i class="material-icons">arrow_forward</i> Próximo
-					                  </a>
-					              </div>
-                </div>
+                <form th:action="@{/provas/salvar}"
+			          th:object="${provaDTO}" method="post" class="card p-4 shadow-sm">
+			
+	                <div class="mb-4">
+	                    <div class="mb-3">
+	                        <label class="form-label">Título da Prova</label>
+	                        <input type="text" class="form-control" th:field="*{titulo}"
+	                               placeholder="Digite o título da prova" required>
+	                    </div>
+	                    
+	                    <div class="mb-3">
+	                        <label class="form-label">Curso</label>
+	                        <select class="form-select" th:field="*{curso.id}" required>
+	                            <option th:each="curso : ${cursos}"
+	                                    th:value="${curso.id}"
+	                                    th:text="${curso.nome}"
+	                                    th:selected="${cursoIdAtual != null && cursoIdAtual == curso.id}"></option>
+	                        </select>
+	                    </div>
+	                    
+	                    <div class="custom-checkbox mb-3">
+	                        <input type="checkbox" th:field="*{simulado}">
+	                        <label for="simulado">Prova de Simulado</label>
+	                    </div>
+						<!-- Botão Próximo -->
+						<div class="d-grid gap-2 mt-4">
+						    <button type="submit" class="btn btn-primary btn-lg">
+						        <i class="material-icons">arrow_forward</i> Próximo
+						    </button>
+						</div>
+	            	</div>
+            	</form>
+			</div>
+		</div>
+	</div>
+</main>
 </body>
 </html>
