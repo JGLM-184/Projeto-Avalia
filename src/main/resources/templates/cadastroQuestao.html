@@ -215,6 +215,33 @@ document.addEventListener("DOMContentLoaded", function() {
   toast.show();
 </script>
 
+<!--  Script para evitar de salvar questão sem selecionar curso ou disciplina -->
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const cursoSelect = document.getElementById("cursoSelect");
+
+    // Se o primeiro option tiver value="0", troca para ""
+    {
+	    const firstOption = cursoSelect.querySelector("option[value='0']");
+	    if (firstOption) {
+	        firstOption.value = "";
+	    }
+    }
+    
+    const disciplinaSelect = document.getElementById("disciplinaSelect");
+
+    // Se o primeiro option tiver value="0", troca para ""
+    {
+	    const firstOption = disciplinaSelect.querySelector("option[value='0']");
+	    if (firstOption) {
+	        firstOption.value = "";
+	    }
+    }
+});
+</script>
+
+
+
 
 </body>
 </html>
