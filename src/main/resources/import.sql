@@ -91,3 +91,115 @@ INSERT INTO alternativa (texto, correto, questao_id) VALUES ('logistica', true, 
 INSERT INTO alternativa (texto, correto, questao_id) VALUES ('logistica a', false, 11);
 INSERT INTO alternativa (texto, correto, questao_id) VALUES ('logistica b', false, 11);
 INSERT INTO alternativa (texto, correto, questao_id) VALUES ('logistica c', false, 11);
+
+INSERT INTO questao (enunciado, autor_id, curso_id, disciplina_id, simulado) VALUES ('O que é um SGBD?', 1, 1, 2, false);
+
+INSERT INTO alternativa (texto, correto, questao_id) VALUES ('Modelo conceitual de dados', false, 12);
+INSERT INTO alternativa (texto, correto, questao_id) VALUES ('Sistema usado para gerenciar bancos de dados', true, 12);
+INSERT INTO alternativa (texto, correto, questao_id) VALUES ('Tipo de linguagem de programação', false, 12);
+INSERT INTO alternativa (texto, correto, questao_id) VALUES ('Ferramenta para versionamento de código', false, 12);
+
+INSERT INTO questao (enunciado, autor_id, curso_id, disciplina_id, simulado) VALUES ('O que é uma chave primária?', 1, 1, 2, false);
+
+INSERT INTO alternativa (texto, correto, questao_id) VALUES ('Atributo que permite valores repetidos', false, 13);
+INSERT INTO alternativa (texto, correto, questao_id) VALUES ('Campo usado apenas para ordenação', false, 13);
+INSERT INTO alternativa (texto, correto, questao_id) VALUES ('Atributo que identifica unicamente um registro', true, 13);
+INSERT INTO alternativa (texto, correto, questao_id) VALUES ('Um tipo de tabela auxiliar', false, 13);
+
+INSERT INTO questao (enunciado, autor_id, curso_id, disciplina_id, simulado) VALUES ('O que é normalização de dados?', 1, 1, 2, false);
+
+INSERT INTO alternativa (texto, correto, questao_id) VALUES ('Processo de organizar dados para reduzir redundância', true, 14);
+INSERT INTO alternativa (texto, correto, questao_id) VALUES ('Processo de criptografar dados sensíveis', false, 14);
+INSERT INTO alternativa (texto, correto, questao_id) VALUES ('Backup periódico de tabelas', false, 14);
+INSERT INTO alternativa (texto, correto, questao_id) VALUES ('Método de indexação', false, 14);
+
+INSERT INTO questao (enunciado, autor_id, curso_id, disciplina_id, simulado) VALUES ('O que é Engenharia de Software?', 1, 1, 3, false);
+
+INSERT INTO alternativa (texto, correto, questao_id) VALUES ('Ato de programar em linguagens de baixo nível', false, 15);
+INSERT INTO alternativa (texto, correto, questao_id) VALUES ('Disciplina que estuda métodos para desenvolvimento de software', true, 15);
+INSERT INTO alternativa (texto, correto, questao_id) VALUES ('Processo de otimizar hardware', false, 15);
+INSERT INTO alternativa (texto, correto, questao_id) VALUES ('Criação de redes e servidores', false, 15);
+
+INSERT INTO questao (enunciado, autor_id, curso_id, disciplina_id, simulado) VALUES ('O que é um requisito funcional?', 1, 1, 3, false);
+
+INSERT INTO alternativa (texto, correto, questao_id) VALUES ('Restrição de desempenho', false, 16);
+INSERT INTO alternativa (texto, correto, questao_id) VALUES ('Característica estética da interface', false, 16);
+INSERT INTO alternativa (texto, correto, questao_id) VALUES ('Regra de arquitetura do servidor', false, 16);
+INSERT INTO alternativa (texto, correto, questao_id) VALUES ('Função ou comportamento que o sistema deve realizar', true, 16);
+
+INSERT INTO questao (enunciado, autor_id, curso_id, disciplina_id, simulado) VALUES ('No contexto de UML, o que é um diagrama de casos de uso?', 1, 1, 3, false);
+
+INSERT INTO alternativa (texto, correto, questao_id) VALUES ('Representação das interações do usuário com o sistema', true, 17);
+INSERT INTO alternativa (texto, correto, questao_id) VALUES ('Representação do fluxo de dados entre sistemas', false, 17);
+INSERT INTO alternativa (texto, correto, questao_id) VALUES ('Descrição do banco de dados lógico', false, 17);
+INSERT INTO alternativa (texto, correto, questao_id) VALUES ('Desenho da infraestrutura física', false, 17);
+
+INSERT INTO questao (enunciado, autor_id, curso_id, disciplina_id, simulado) VALUES ('O que é estoque de segurança?', 1, 2, 4, false);
+
+INSERT INTO alternativa (texto, correto, questao_id) VALUES ('Estoque guardado para descarte', false, 18);
+INSERT INTO alternativa (texto, correto, questao_id) VALUES ('Produtos que já foram vendidos', false, 18);
+INSERT INTO alternativa (texto, correto, questao_id) VALUES ('Itens devolvidos pelo cliente', false, 18);
+INSERT INTO alternativa (texto, correto, questao_id) VALUES ('Quantidade extra para evitar rupturas', true, 18);
+
+INSERT INTO questao (enunciado, autor_id, curso_id, disciplina_id, simulado) VALUES ('O que é giro de estoque?', 1, 2, 4, false);
+
+INSERT INTO alternativa (texto, correto, questao_id) VALUES ('Velocidade com que o estoque é renovado', true, 19);
+INSERT INTO alternativa (texto, correto, questao_id) VALUES ('Número de fornecedores ativos', false, 19);
+INSERT INTO alternativa (texto, correto, questao_id) VALUES ('Quantidade máxima armazenada', false, 19);
+INSERT INTO alternativa (texto, correto, questao_id) VALUES ('Tempo de transporte entre centros', false, 19);
+
+INSERT INTO questao (enunciado, autor_id, curso_id, disciplina_id, simulado) VALUES ('O que é inventário físico?', 1, 2, 4, false);
+
+INSERT INTO alternativa (texto, correto, questao_id) VALUES ('Registro automático feito pelo sistema', false, 20);
+INSERT INTO alternativa (texto, correto, questao_id) VALUES ('Processo de devolução de produtos', false, 20);
+INSERT INTO alternativa (texto, correto, questao_id) VALUES ('Contagem real dos itens armazenados', true, 20);
+INSERT INTO alternativa (texto, correto, questao_id) VALUES ('Auditoria financeira anual', false, 20);
+
+INSERT INTO questao (enunciado, autor_id, curso_id, disciplina_id, simulado) VALUES ('O que é lead time de transporte?', 1, 2, 5, false);
+
+INSERT INTO alternativa (texto, correto, questao_id) VALUES ('Capacidade de carga máxima', false, 21);
+INSERT INTO alternativa (texto, correto, questao_id) VALUES ('Tempo total entre pedido e entrega', true, 21);
+INSERT INTO alternativa (texto, correto, questao_id) VALUES ('Custo total do combustível', false, 21);
+INSERT INTO alternativa (texto, correto, questao_id) VALUES ('Velocidade média do motorista', false, 21);
+
+INSERT INTO questao (enunciado, autor_id, curso_id, disciplina_id, simulado) VALUES ('O que é lead time de transporte?', 1, 2, 5, false);
+
+INSERT INTO alternativa (texto, correto, questao_id) VALUES ('Capacidade de carga máxima', false, 21);
+INSERT INTO alternativa (texto, correto, questao_id) VALUES ('Custo total do combustível', false, 21);
+INSERT INTO alternativa (texto, correto, questao_id) VALUES ('Tempo total entre pedido e entrega', true, 21);
+INSERT INTO alternativa (texto, correto, questao_id) VALUES ('Velocidade média do motorista', false, 21);
+
+INSERT INTO questao (enunciado, autor_id, curso_id, disciplina_id, simulado) VALUES ('O que é roteirização?', 1, 2, 5, false);
+
+INSERT INTO alternativa (texto, correto, questao_id) VALUES ('Planejamento do melhor caminho para entregas', true, 22);
+INSERT INTO alternativa (texto, correto, questao_id) VALUES ('Organização de estoque no armazém', false, 22);
+INSERT INTO alternativa (texto, correto, questao_id) VALUES ('Seleção de fornecedores estratégicos', false, 22);
+INSERT INTO alternativa (texto, correto, questao_id) VALUES ('Cálculo de impostos de importação', false, 22);
+
+INSERT INTO questao (enunciado, autor_id, curso_id, disciplina_id, simulado) VALUES ('Qual a função do modal ferroviário?', 1, 2, 5, false);
+
+INSERT INTO alternativa (texto, correto, questao_id) VALUES ('Entregas rápidas de última milha', false, 23);
+INSERT INTO alternativa (texto, correto, questao_id) VALUES ('Transporte exclusivo de perecíveis', false, 23);
+INSERT INTO alternativa (texto, correto, questao_id) VALUES ('Serviço de transporte urbano', false, 23);
+INSERT INTO alternativa (texto, correto, questao_id) VALUES ('Transporte eficiente de grandes volumes a longas distâncias', true, 23);
+
+INSERT INTO questao (enunciado, autor_id, curso_id, disciplina_id, simulado) VALUES ('O que é logística reversa?', 1, 2, 6, false);
+
+INSERT INTO alternativa (texto, correto, questao_id) VALUES ('Distribuição de produtos para varejistas', false, 24);
+INSERT INTO alternativa (texto, correto, questao_id) VALUES ('Otimização de rotas de entrega', false, 24);
+INSERT INTO alternativa (texto, correto, questao_id) VALUES ('Processo de retorno de produtos após o consumo', true, 24);
+INSERT INTO alternativa (texto, correto, questao_id) VALUES ('Controle de estoque de produtos novos', false, 24);
+
+INSERT INTO questao (enunciado, autor_id, curso_id, disciplina_id, simulado) VALUES ('Qual é o principal objetivo da logística reversa?', 1, 2, 6, false);
+
+INSERT INTO alternativa (texto, correto, questao_id) VALUES ('Aumentar a velocidade de entregas', false, 25);
+INSERT INTO alternativa (texto, correto, questao_id) VALUES ('Reaproveitar, reparar ou reciclar produtos retornados', true, 25);
+INSERT INTO alternativa (texto, correto, questao_id) VALUES ('Reduzir custos de transporte externo', false, 25);
+INSERT INTO alternativa (texto, correto, questao_id) VALUES ('Criar novos pontos de venda', false, 25);
+
+INSERT INTO questao (enunciado, autor_id, curso_id, disciplina_id, simulado) VALUES ('O que caracteriza um produto retornável?', 1, 2, 6, false);
+
+INSERT INTO alternativa (texto, correto, questao_id) VALUES ('Produto descartado após o uso', false, 26);
+INSERT INTO alternativa (texto, correto, questao_id) VALUES ('Produto proibido por lei', false, 26);
+INSERT INTO alternativa (texto, correto, questao_id) VALUES ('Produto que pode voltar ao fabricante para novo uso', true, 26);
+INSERT INTO alternativa (texto, correto, questao_id) VALUES ('Produto sem possibilidade de reciclagem', false, 26);

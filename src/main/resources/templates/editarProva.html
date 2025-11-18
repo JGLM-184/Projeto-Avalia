@@ -125,26 +125,37 @@
 						            <small class="text-muted">Nenhuma disciplina adicionada ainda.</small>
 						        </div>
 						    </div>
-						
-						    <!-- Texto final, apenas para coordenador -->
-						    <small class="text-muted" th:if="${isCoordenador}">
-						        As questões serão filtradas pelas disciplinas selecionadas
-						    </small>
 						</div>
 
+                        <!-- Geração por Questões Aleatórias -->
+						<div class="mb-4">
+						    <label class="form-label fw-bold">Questões Aleatórias</label>
+						
+						    <form th:if="${disciplinasProva != null && !disciplinasProva.isEmpty()}"
+						          th:action="@{'/provas/editar/' + ${provaDTO.id} + '/gerar-aleatorias'}"
+						          method="post" class="border rounded p-3 bg-light">
+						
+						        <p class="text-muted">Defina quantas questões deseja usar aleatoriamente de cada disciplina:</p>
+						
+						        <div th:each="disciplina : ${disciplinasProva}" class="mb-3">
+						            <label class="form-label" th:text="${disciplina.disciplina.nome}"></label>
+						            <input type="number" min="0" value="0"
+						                   class="form-control"
+						                   th:name="${'quantidades[' + disciplina.disciplina.id + ']'}"
+						                   placeholder="Quantidade de questões dessa disciplina">
+						        </div>
+						
+						        <button type="submit" class="btn btn-outline-info w-100">
+						            <i class="material-icons">shuffle</i> Gerar Prova Aleatória
+						        </button>
+						    </form>
+						
+						    <p th:if="${disciplinasProva == null or disciplinasProva.isEmpty()}"
+						       class="text-muted fst-italic">
+						        Adicione disciplinas à prova para habilitar a geração automática.
+						    </p>
+						</div>
 
-                        <!-- Ações Rápidas -->
-                        <div class="mb-3">
-                            <label class="form-label">Ações Rápidas</label>
-                            <div class="d-grid gap-2">
-                                <button type="button" class="btn btn-outline-info" onclick="escolherAleatorias()">
-                                    <i class="material-icons">shuffle</i> Questões Aleatórias
-                                </button>
-                                <button type="button" class="btn btn-outline-warning" onclick="embaralharQuestoes()">
-                                    <i class="material-icons">swap_vert</i> Embaralhar Questões
-                                </button>
-                            </div>
-                        </div>
                     </div>
                 </div>
 
@@ -160,7 +171,7 @@
             </div>
 
             <!-- Painel Direito - Lista de Questões -->
-            <div class="col-md-8">
+            <div id="abas" class="col-md-8">
                 <div class="card">
                     <div class="card-header bg-success text-white">
                         <h5 class="card-title mb-0">
@@ -177,15 +188,15 @@
                             </li>
                             <li role="presentation">
                                 <button class="nav-link" id="incluidas-tab" data-bs-toggle="tab" 
-                                        data-bs-target="#incluidas" type="button" role="tab">
+                                        type="button" role="tab">
                                     Questões Incluídas na Prova
-                                    <span class="badge bg-primary ms-1" id="badgeIncluidas">0</span>
+                                    <span class="badge bg-primary ms-1" th:text="${totalQuestoes}">0</span>
                                 </button>
                             </li>
                         </ul>
 
                         <!-- BARRA DE PESQUISA E FILTROS -->
-                        <div id="abas" class="search-filter-container mb-4">
+                        <div class="search-filter-container mb-4">
                             <div class="row g-2 align-items-center">
                                 <!-- Barra de Pesquisa -->
                                 <div class="col-md-8">
@@ -385,11 +396,9 @@
     </div>
 </main>
 
-<script th:inline="javascript">
-/* <![CDATA[ */
-	
+<script>
 	// Alternar abas manualmente
-document.addEventListener("DOMContentLoaded", function () {
+	document.addEventListener("DOMContentLoaded", function () {
     const tabDisponiveis = document.getElementById("disponiveis-tab");
     const tabIncluidas = document.getElementById("incluidas-tab");
 
@@ -411,6 +420,17 @@ document.addEventListener("DOMContentLoaded", function () {
         paneIncluidas.classList.add("show", "active");
         paneDisponiveis.classList.remove("show", "active");
     }
+    
+ 	// --- Selecionar aba inicial com base no parâmetro da URL ---
+    const urlParams = new URLSearchParams(window.location.search);
+    const aba = urlParams.get("aba");
+
+    if (aba === "incluidas") {
+        mostrarAbaIncluidas();
+    } else {
+        // padrão: aba de disponíveis
+        mostrarAbaDisponiveis();
+    }
 
     // Eventos de clique
     tabDisponiveis.addEventListener("click", function () {
@@ -421,134 +441,6 @@ document.addEventListener("DOMContentLoaded", function () {
         mostrarAbaIncluidas();
     });
 });
-
-
-// Converte a lista Thymeleaf em um array JS e cria um Set
-var inicial = /*[[${questoesSelecionadas}]]*/ [];
-var questoesSelecionadasSet = new Set(Array.isArray(inicial) ? inicial.map(function(v){return parseInt(v);}) : []);
-
-// Variável para disciplinas selecionadas (vazia inicialmente)
-var disciplinasProva = new Set();
-
-// Inicializar ao carregar DOM
-document.addEventListener('DOMContentLoaded', function() {
-    atualizarContadores();
-    atualizarCheckboxes();
-    atualizarBadgeIncluidas();
-});
-
-// Atualizar checkboxes na página conforme o Set
-function atualizarCheckboxes() {
-    document.querySelectorAll('.questao-checkbox').forEach(function(checkbox) {
-        checkbox.checked = questoesSelecionadasSet.has(parseInt(checkbox.value));
-    });
-}
-
-// Atualizar contadores (selecionadas e disciplinas)
-function atualizarContadores() {
-    var contadorSelecionadasEl = document.getElementById('contadorSelecionadas');
-    if (contadorSelecionadasEl) contadorSelecionadasEl.textContent = questoesSelecionadasSet.size;
-    atualizarBadgeIncluidas();
-
-    var disciplinas = new Set();
-    document.querySelectorAll('.questao-checkbox:checked').forEach(function(checkbox) {
-        var questaoItem = checkbox.closest('.question-item');
-        var disciplinaBadge = questaoItem ? questaoItem.querySelector('.discipline-badge') : null;
-        if (disciplinaBadge) {
-            disciplinas.add(disciplinaBadge.textContent.trim());
-        }
-    });
-    var contadorDisciplinasEl = document.getElementById('contadorDisciplinas');
-    if (contadorDisciplinasEl) contadorDisciplinasEl.textContent = disciplinas.size;
-}
-
-// Atualizar badge da aba "Incluídas"
-function atualizarBadgeIncluidas() {
-    var badge = document.getElementById('badgeIncluidas');
-    if (badge) badge.textContent = questoesSelecionadasSet.size;
-}
-
-// Atualizar seleção individual (chamado pelo onchange dos checkboxes)
-function atualizarSelecao(element) {
-    var questaoId = parseInt(element.value);
-    if (element.checked) {
-        questoesSelecionadasSet.add(questaoId);
-    } else {
-        questoesSelecionadasSet.delete(questaoId);
-    }
-    atualizarContadores();
-}
-
-// Submeter filtro por disciplina
-function submeterFiltroDisciplina() {
-    var form = document.getElementById('filtroDisciplina');
-    var inputPesquisa = document.getElementById('inputPesquisa');
-    var hiddenPesquisa = document.getElementById('hiddenPesquisa');
-    if (hiddenPesquisa && inputPesquisa) hiddenPesquisa.value = inputPesquisa.value;
-    if (form) form.submit();
-}
-
-// Preparar formulário de pesquisa antes do submit
-function prepararFormPesquisa() {
-    var form = document.getElementById('formPesquisa');
-    var hiddenDisciplina = document.getElementById('hiddenDisciplinaIdPesquisa');
-    var select = document.getElementById('selectDisciplina');
-    if (hiddenDisciplina && select) hiddenDisciplina.value = select.value;
-    // não chamar submit aqui - deixa o submit normal do form fazer o envio
-}
-
-// Limpar pesquisa e recarregar página
-function limparPesquisa() {
-    var input = document.getElementById('inputPesquisa');
-    if (input) input.value = '';
-    var disciplinaId = document.getElementById('selectDisciplina') ? document.getElementById('selectDisciplina').value : 0;
-    var provaId = /*[[${provaId}]]*/ 0;
-    window.location.href = '/provas/editar-prova/' + provaId + '?disciplinaId=' + disciplinaId;
-}
-
-// Ações rápidas
-function escolherAleatorias() {
-    var todasQuestoes = Array.from(document.querySelectorAll('.questao-checkbox'));
-    var questoesDisponiveis = todasQuestoes.filter(function(cb) { return cb.offsetParent !== null; });
-
-    if (questoesDisponiveis.length === 0) return;
-
-    questoesSelecionadasSet.clear();
-
-    var embaralhadas = questoesDisponiveis.sort(function() { return Math.random() - 0.5; });
-    var quantidade = Math.min(5, embaralhadas.length);
-
-    for (var i = 0; i < quantidade; i++) {
-        questoesSelecionadasSet.add(parseInt(embaralhadas[i].value));
-    }
-
-    atualizarCheckboxes();
-    atualizarContadores();
-}
-
-function embaralharQuestoes() {
-    alert('Funcionalidade de embaralhar questões será implementada');
-}
-
-function abrirPrevia() {
-    if (questoesSelecionadasSet.size === 0) {
-        alert('Selecione pelo menos uma questão para visualizar a prévia!');
-        return;
-    }
-    var questaoIds = Array.from(questoesSelecionadasSet);
-    var url = '/provas/previa?questoesSelecionadas=' + questaoIds.join(',');
-    window.open(url, '_blank');
-}
-
-// Atualizar checkboxes quando a aba for mostrada (Bootstrap 5)
-var questoesTabs = document.getElementById('questoesTabs');
-if (questoesTabs) {
-    questoesTabs.addEventListener('shown.bs.tab', function (e) {
-        atualizarCheckboxes();
-    });
-}
-
-/* ]]> */
 </script>
 
 </body>

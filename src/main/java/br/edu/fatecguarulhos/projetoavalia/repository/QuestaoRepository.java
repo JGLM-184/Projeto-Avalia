@@ -45,4 +45,6 @@ public interface QuestaoRepository extends JpaRepository<Questao, Integer> {
 	 List<Questao> findByCursoNomeContainingIgnoreCase(String termo);
 	 
 	/* adicionado por amanda */
+	 
+	 List<Questao> findByDisciplinaId(int disciplinaId);
 }

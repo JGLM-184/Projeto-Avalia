@@ -2,7 +2,9 @@ package br.edu.fatecguarulhos.projetoavalia.service;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +27,7 @@ import br.edu.fatecguarulhos.projetoavalia.repository.ProfessorRepository;
 import br.edu.fatecguarulhos.projetoavalia.repository.ProvaDisciplinaRepository;
 import br.edu.fatecguarulhos.projetoavalia.repository.ProvaQuestaoRepository;
 import br.edu.fatecguarulhos.projetoavalia.repository.ProvaRepository;
+import br.edu.fatecguarulhos.projetoavalia.repository.QuestaoRepository;
 import jakarta.transaction.Transactional;
 
 @Service
@@ -45,6 +48,9 @@ public class ProvaService {
     
     @Autowired
     private CursoRepository cursoRepository;
+    
+    @Autowired
+    private QuestaoRepository questaoRepository;
     
     @Autowired
     private QuestaoService questaoService;
@@ -200,6 +206,69 @@ public class ProvaService {
         }
 
         provaQuestaoRepository.delete(provaQuestao.get());   
+    }
+    
+    public void removerTodasQuestoes(int provaId) {
+        List<ProvaQuestao> lista = provaQuestaoRepository.findByProvaId(provaId);
+        provaQuestaoRepository.deleteAll(lista);
+    }
+    
+    public void gerarQuestoesAleatorias(int provaId, Map<String, String> quantidades) {
+
+        Prova prova = provaRepository.findById(provaId).orElseThrow();
+
+        // Exemplo de chave: "quantidades[12]"
+        for (String chave : quantidades.keySet()) {
+            String valor = quantidades.get(chave);
+
+            // Ignorar valores inválidos
+            if (valor == null || valor.isBlank()) continue;
+
+            int quantidadeSolicitada;
+
+            try {
+                quantidadeSolicitada = Integer.parseInt(valor);
+            } catch (NumberFormatException e) {
+                continue;
+            }
+
+            if (quantidadeSolicitada <= 0) continue;
+
+            // Extrair ID da disciplina da string "quantidades[ID]"
+            int disciplinaId = extrairIdDisciplina(chave);
+
+            List<Questao> questoesDaDisciplina = 
+                    questaoRepository.findByDisciplinaId(disciplinaId);
+
+            if (questoesDaDisciplina.isEmpty())
+                continue;
+
+            // Limitar à quantidade existente
+            int limite = Math.min(quantidadeSolicitada, questoesDaDisciplina.size());
+
+            // Embaralhar para pegar aleatórias
+            Collections.shuffle(questoesDaDisciplina);
+
+            // Selecionar as primeiras N
+            List<Questao> selecionadas = questoesDaDisciplina.subList(0, limite);
+
+            // Criar links ProvaQuestao
+            for (Questao q : selecionadas) {
+                ProvaQuestao pq = new ProvaQuestao();
+                pq.setProva(prova);
+                pq.setQuestao(q);
+                provaQuestaoRepository.save(pq);
+            }
+        }
+    }
+
+    private int extrairIdDisciplina(String chave) {
+        // chave vem no formato: quantidades[10]
+        try {
+            return Integer.parseInt(chave.replace("quantidades[", "").replace("]", ""));
+        } catch (Exception e) {
+            return 0;
+        }
     }
 
     public ProvaDisciplina adicionarDisciplina(ProvaDisciplinaDTO provaDisciplinaDTO) {

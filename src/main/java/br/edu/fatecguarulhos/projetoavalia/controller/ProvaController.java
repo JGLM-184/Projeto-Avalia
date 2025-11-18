@@ -1,9 +1,13 @@
 package br.edu.fatecguarulhos.projetoavalia.controller;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,31 +16,19 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import br.edu.fatecguarulhos.projetoavalia.dto.ProvaDTO;
 import br.edu.fatecguarulhos.projetoavalia.dto.ProvaDisciplinaDTO;
 import br.edu.fatecguarulhos.projetoavalia.dto.ProvaQuestaoDTO;
 import br.edu.fatecguarulhos.projetoavalia.model.entity.Curso;
-import br.edu.fatecguarulhos.projetoavalia.model.entity.Disciplina;
 import br.edu.fatecguarulhos.projetoavalia.model.entity.Professor;
 import br.edu.fatecguarulhos.projetoavalia.model.entity.Prova;
 import br.edu.fatecguarulhos.projetoavalia.model.entity.ProvaQuestao;
-import br.edu.fatecguarulhos.projetoavalia.model.entity.Questao;
 import br.edu.fatecguarulhos.projetoavalia.repository.ProfessorRepository;
 import br.edu.fatecguarulhos.projetoavalia.service.CursoService;
 import br.edu.fatecguarulhos.projetoavalia.service.DisciplinaService;
 import br.edu.fatecguarulhos.projetoavalia.service.ProvaService;
 import br.edu.fatecguarulhos.projetoavalia.service.QuestaoService;
-
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/provas")
@@ -127,7 +119,14 @@ public class ProvaController {
 	    model.addAttribute("provaId", id);
 	    
         model.addAttribute("cursos", cursoService.listarCursosPorProfessor(professorLogado.getId()));
-        model.addAttribute("disciplinas", disciplinaService.listarDisciplinasPorProfessor(professorLogado.getId()));
+        
+        if (professorLogado.isCoordenador()) {
+        	model.addAttribute("disciplinas", disciplinaService.buscarPorCursoId(provaExistente.getCurso().getId()));
+        }
+        else {
+        	model.addAttribute("disciplinas", disciplinaService.listarDisciplinasPorProfessor(professorLogado.getId()));
+        }
+        
         model.addAttribute("disciplinasProva", provaService.listarDisciplinasPorProva(id));
 
 	
@@ -187,6 +186,26 @@ public class ProvaController {
     public String atualizarProva(@PathVariable int id, @ModelAttribute ProvaDTO provaDTO) {
         provaService.atualizar(id, provaDTO);
         return "redirect:/provas/banco";
+    }
+    
+    @PostMapping("/editar/{provaId}/gerar-aleatorias")
+    public String gerarQuestoesAleatorias(
+            @PathVariable int provaId,
+            @RequestParam(required = false) Map<String, String> quantidades) {
+
+        // Segurança: ignora se nada foi enviado
+        if (quantidades == null || quantidades.isEmpty()) {
+            return "redirect:/provas/editar/" + provaId + "?aba=incluidas#abas";
+        }
+
+        // 1) Remover todas as questões já associadas à prova
+        provaService.removerTodasQuestoes(provaId);
+
+        // 2) Gerar questões aleatórias conforme quantidades
+        provaService.gerarQuestoesAleatorias(provaId, quantidades);
+
+        // 3) Retornar para aba de questões incluídas
+        return "redirect:/provas/editar/" + provaId + "?aba=incluidas#abas";
     }
 
     @GetMapping("/excluir/{id}")

@@ -15,5 +15,6 @@ public interface ProvaQuestaoRepository extends JpaRepository<ProvaQuestao, Inte
     void deleteByProva(Prova prova);
     
     Optional<ProvaQuestao> findByProvaAndQuestao(Prova prova, Questao questao);
+	List<ProvaQuestao> findByProvaId(int provaId);
     
 }
