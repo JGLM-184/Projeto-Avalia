@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Detalhes da Prova</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+<div class="container py-4">
+
+    <h2 class="mb-4">Detalhes da Prova</h2>
+
+    <!-- Informações da Prova -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-primary text-white">
+            Informações da Prova
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <p><strong>Título:</strong> <span th:text="${provaDTO.titulo}"></span></p>
+                    <p><strong>Curso:</strong> <span th:text="${provaDTO.curso.nome}"></span></p>
+                    <p><strong>Professor:</strong> <span th:text="${provaDTO.professor.nome}"></span></p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>Data de Criação:</strong> <span th:text="${#temporals.format(provaDTO.dataCriacao, 'dd/MM/yyyy')}"></span></p>
+                    <p><strong>Tipo:</strong> <span th:if="${provaDTO.simulado}" class="badge bg-warning">Simulado</span>
+                                       <span th:unless="${provaDTO.simulado}" class="badge bg-info">Regular</span></p>
+                    <p><strong>Status:</strong> <span th:if="${provaDTO.ativo}" class="badge bg-success">Ativa</span>
+                                       <span th:unless="${provaDTO.ativo}" class="badge bg-secondary">Inativa</span></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Disciplinas da Prova -->
+    <div class="card shadow-sm mb-4" th:if="${not #lists.isEmpty(disciplinas)}">
+        <div class="card-header bg-info text-white">
+            Disciplinas da Prova
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Disciplina</th>
+                            <th>Quantidade de Questões</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="disciplina : ${disciplinas}">
+                            <td th:text="${disciplina.disciplina.nome}"></td>
+                            <td th:text="${disciplina.qntQuestoes}"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Questões da Prova -->
+    <div class="card shadow-sm mb-4" th:if="${not #lists.isEmpty(questoes)}">
+        <div class="card-header bg-success text-white">
+            Questões da Prova
+        </div>
+        <div class="card-body">
+            <div th:each="questaoProva : ${questoes}" class="mb-4 p-3 border rounded">
+                <h6>Questão <span th:text="${questaoProvaStat.count}"></span></h6>
+                <p><strong>Enunciado:</strong> <span th:text="${questaoProva.questao.enunciado}"></span></p>
+                <p><strong>Disciplina:</strong> <span th:text="${questaoProva.questao.disciplina.nome}"></span></p>
+                <p><strong>Curso:</strong> <span th:text="${questaoProva.questao.curso.nome}"></span></p>
+                <p><strong>Autor:</strong> <span th:text="${questaoProva.questao.autor.nome}"></span></p>
+                
+                <!-- Imagem da questão se existir -->
+                <div th:if="${questaoProva.questao.imagem}">
+                    <p><strong>Imagem:</strong></p>
+                    <img th:src="@{${questaoProva.questao.imagem}}" alt="Imagem da questão" class="img-fluid" style="max-width: 300px;">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mensagem quando não há questões -->
+    <div th:if="${#lists.isEmpty(questoes)}" class="alert alert-info">
+        <p class="mb-0">Nenhuma questão foi adicionada a esta prova ainda.</p>
+    </div>
+
+    <!-- Botão Voltar -->
+    <div class="d-flex justify-content-end">
+        <a th:href="@{/provas/criar}" class="btn btn-secondary">Voltar</a>
+    </div>
+
+</div>
+
+</body>
+</html>

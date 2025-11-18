@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import br.edu.fatecguarulhos.projetoavalia.dto.DisciplinaDTO;
@@ -19,20 +18,21 @@ import br.edu.fatecguarulhos.projetoavalia.service.CursoService;
 import br.edu.fatecguarulhos.projetoavalia.service.DisciplinaService;
 
 @Controller
-@RequestMapping("disciplinas")
+@RequestMapping("/disciplinas")
 public class DisciplinaController {
 
-	@Autowired
+    @Autowired
     private CursoService cursoService;
 
-	@Autowired
+    @Autowired
     private DisciplinaService disciplinaService;
-	
-	@GetMapping("/painel")
+
+    @GetMapping("/painel")
     public String listarDisciplinas(Model model) {
         model.addAttribute("disciplinas", disciplinaService.listarTodas());
         model.addAttribute("disciplinaDTO", new DisciplinaDTO());
         model.addAttribute("cursos", cursoService.listarTodos());
+        model.addAttribute("isEdicaoDisciplina", false);
         return "gerenciarDisciplinas";
     }
 
@@ -45,6 +45,7 @@ public class DisciplinaController {
     @GetMapping("/editar/{id}")
     public String editarDisciplina(@PathVariable int id, Model model) {
         model.addAttribute("disciplinaDTO", new DisciplinaDTO(disciplinaService.buscarPorId(id)));
+        model.addAttribute("disciplinas", disciplinaService.listarTodas());
         model.addAttribute("cursos", cursoService.listarTodos());
         model.addAttribute("isEdicaoDisciplina", true);
         return "gerenciarDisciplinas";
@@ -61,13 +62,10 @@ public class DisciplinaController {
         disciplinaService.excluir(id);
         return "redirect:/disciplinas/painel";
     }
-    
+
     @ResponseBody
-    @GetMapping("/por-cursos")
-    public List<Disciplina> listarDisciplinasPorCursos(@RequestParam List<Integer> cursosIds) {
-        return disciplinaService.buscarPorCursosIds(cursosIds);
+    @GetMapping("/api/disciplinas/por-curso/{id}")
+    public List<Disciplina> listarDisciplinasPorCurso(@PathVariable int id) {
+        return disciplinaService.buscarPorCursoId(id);
     }
-
-
-
 }

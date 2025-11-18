@@ -1,4 +1,4 @@
-package br.edu.fatecguarulhos.projetoavalia.config;
+ package br.edu.fatecguarulhos.projetoavalia.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

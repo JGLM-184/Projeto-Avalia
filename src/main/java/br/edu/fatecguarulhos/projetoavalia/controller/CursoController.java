@@ -16,39 +16,44 @@ import br.edu.fatecguarulhos.projetoavalia.service.CursoService;
 @RequestMapping("/cursos")
 public class CursoController {
 	
-	  @Autowired
-	    private CursoService cursoService;
-	
-	
-	 @GetMapping("/painel")
-	    public String listarCursos(Model model) {
-	        model.addAttribute("cursos", cursoService.listarTodos());
-	        model.addAttribute("cursoDTO", new CursoDTO());
-	        return "gerenciarCursos";
-	    }
+    @Autowired
+    private CursoService cursoService;
 
-	    @PostMapping("/salvar")
-	    public String salvarCurso(@ModelAttribute CursoDTO dto) {
-	        cursoService.salvar(dto);
-	        return "redirect:/painel-cursos";
-	    }
+    // PAINEL PRINCIPAL
+    @GetMapping("/painel")
+    public String listarCursos(Model model) {
+        model.addAttribute("cursos", cursoService.listarTodos());
+        model.addAttribute("cursoDTO", new CursoDTO());
+        return "gerenciarCursos";
+    }
 
-	    @GetMapping("/editar/{id}")
-	    public String editarCurso(@PathVariable int id, Model model) {
-	        model.addAttribute("cursoDTO", new CursoDTO(cursoService.buscarPorId(id)));
-	        model.addAttribute("isEdicaoCurso", true);
-	        return "gerenciarCursos";
-	    }
+    // SALVAR NOVO
+    @PostMapping("/salvar")
+    public String salvarCurso(@ModelAttribute CursoDTO dto) {
+        cursoService.salvar(dto);
+        return "redirect:/cursos/painel";
+    }
 
-	    @PostMapping("/atualizar/{id}")
-	    public String atualizarCurso(@PathVariable int id, @ModelAttribute CursoDTO dto) {
-	        cursoService.atualizar(id, dto);
-	        return "redirect:/painel-cursos";
-	    }
+    // CARREGAR PARA EDIÇÃO
+    @GetMapping("/editar/{id}")
+    public String editarCurso(@PathVariable int id, Model model) {
+        model.addAttribute("cursoDTO", new CursoDTO(cursoService.buscarPorId(id)));
+        model.addAttribute("isEdicaoCurso", true);
+        model.addAttribute("cursos", cursoService.listarTodos()); // mantém lista
+        return "gerenciarCursos";
+    }
 
-	    @GetMapping("/excluir/{id}")
-	    public String excluirCurso(@PathVariable int id) {
-	        cursoService.excluir(id);
-	        return "redirect:/painel-cursos";
-	    }
+    // ATUALIZAR
+    @PostMapping("/atualizar/{id}")
+    public String atualizarCurso(@PathVariable int id, @ModelAttribute CursoDTO dto) {
+        cursoService.atualizar(id, dto);
+        return "redirect:/cursos/painel";
+    }
+
+    // EXCLUIR
+    @GetMapping("/excluir/{id}")
+    public String excluirCurso(@PathVariable int id) {
+        cursoService.excluir(id);
+        return "redirect:/cursos/painel";
+    }
 }
