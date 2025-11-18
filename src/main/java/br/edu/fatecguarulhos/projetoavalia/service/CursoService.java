@@ -9,12 +9,16 @@ import org.springframework.stereotype.Service;
 import br.edu.fatecguarulhos.projetoavalia.dto.CursoDTO;
 import br.edu.fatecguarulhos.projetoavalia.model.entity.Curso;
 import br.edu.fatecguarulhos.projetoavalia.repository.CursoRepository;
+import br.edu.fatecguarulhos.projetoavalia.repository.DisciplinaRepository;
 
 @Service
 public class CursoService {
 
     @Autowired
     private CursoRepository cursoRepository;
+
+    @Autowired
+    private DisciplinaRepository disciplinaRepository;
 
     public List<Curso> listarTodos() {
         return cursoRepository.findAll();
@@ -45,8 +49,17 @@ public class CursoService {
         return cursoOpt;
     }
 
+    // ALTERAÇÃO: Bloqueando exclusão se existir disciplina associada
     public void excluir(int id) {
         Optional<Curso> cursoOpt = cursoRepository.findById(id);
-        cursoOpt.ifPresent(curso -> cursoRepository.deleteById(id));
+        if (cursoOpt.isPresent()) {
+            Curso curso = cursoOpt.get();
+            boolean temDisciplinas = !disciplinaRepository.findByCursoId(curso.getId()).isEmpty();
+            if (temDisciplinas) {
+                throw new IllegalStateException(
+                        "Não é possível excluir este curso pois existem disciplinas associadas a ele");
+            }
+            cursoRepository.deleteById(id);
+        }
     }
 }

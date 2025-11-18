@@ -3,97 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Banco de Questões</title>
+    <title>Gerenciar Disciplinas</title>
     <link rel="stylesheet" th:href="@{/css/style.css}">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </head>
-
 <body class="coordinator-layout bg-light">
-
 <div th:replace="~{navbar :: navbar}"></div>
 
 <div class="container py-5">
     <h1 class="text-center mb-4">Gerenciar Disciplinas</h1>
 
-    <!-- Modal de Edição -->
-    <div class="modal fade" id="editModal" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Editar Disciplina</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-
-                <form th:action="@{'/disciplinas/atualizar/' + ${disciplinaDTO.id}}" method="post">
-                    <div class="modal-body">
-
-                        <div class="mb-3">
-                            <label class="form-label">Nome</label>
-                            <input type="text" class="form-control" name="nome"
-                                   th:value="${disciplinaDTO.nome}" required>
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label">Curso</label>
-                            <select class="form-select" name="curso" required>
-                                <option value="" disabled>Selecione um curso</option>
-                                <option th:each="curso : ${cursos}"
-                                        th:value="${curso.id}"
-                                        th:text="${curso.nome}"
-                                        th:selected="${disciplinaDTO.curso != null} ?
-                                             ${curso.id} == ${disciplinaDTO.curso.id} : false">
-                                </option>
-                            </select>
-                        </div>
-
-                    </div>
-
-                    <div class="modal-footer">
-                        <button type="submit" class="btn btn-primary">Atualizar</button>
-                        <a th:href="@{/disciplinas/painel}" class="btn btn-secondary">Cancelar</a>
-                    </div>
-                </form>
-
-            </div>
-        </div>
-    </div>
-
     <!-- Formulário de criação -->
     <div class="card shadow-sm mb-4" th:if="${!isEdicaoDisciplina}">
         <div class="card-body">
             <h5 class="card-title mb-3">Cadastrar Nova Disciplina</h5>
-
             <form th:action="@{/disciplinas/salvar}" method="post">
-
                 <div class="mb-3">
                     <label class="form-label">Nome da Disciplina</label>
-                    <input type="text" name="nome" th:value="${disciplinaDTO.nome}"
-                           class="form-control" required>
+                    <input type="text" name="nome" th:value="${disciplinaDTO.nome}" class="form-control" required>
                 </div>
-
                 <div class="mb-3">
                     <label class="form-label">Curso</label>
                     <select name="curso" class="form-select" required>
                         <option value="" disabled selected>Selecione um curso</option>
-                        <option th:each="curso : ${cursos}"
-                                th:value="${curso.id}"
-                                th:text="${curso.nome}">
-                        </option>
+                        <option th:each="curso : ${cursos}" th:value="${curso.id}" th:text="${curso.nome}"></option>
                     </select>
                 </div>
-
                 <button class="btn btn-success">Salvar</button>
             </form>
         </div>
     </div>
 
-    <!-- Lista -->
+    <!-- Lista de Disciplinas -->
     <div class="card shadow-sm">
         <div class="card-body">
             <h5 class="card-title mb-3">Lista de Disciplinas</h5>
-
             <table class="table table-bordered table-hover align-middle">
                 <thead>
                 <tr>
@@ -103,38 +48,136 @@
                     <th class="text-center">Ações</th>
                 </tr>
                 </thead>
-
                 <tbody>
                 <tr th:each="disciplina : ${disciplinas}">
                     <td th:text="${disciplina.id}"></td>
                     <td th:text="${disciplina.nome}"></td>
                     <td th:text="${disciplina.curso.nome}"></td>
-
                     <td class="text-center">
-                        <a th:href="@{'/disciplinas/editar/' + ${disciplina.id}}"
-                           class="btn btn-warning btn-sm">Editar</a>
-
-                        <a th:href="@{'/disciplinas/excluir/' + ${disciplina.id}}"
-                           onclick="return confirm('Excluir disciplina?')"
-                           class="btn btn-danger btn-sm ms-1">Excluir</a>
+                        <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editModal"
+                                th:attr="data-id=${disciplina.id}, data-nome=${disciplina.nome}, data-curso=${disciplina.curso.id}">
+                            Editar
+                        </button>
+                        <a th:href="@{'/disciplinas/excluir/' + ${disciplina.id}}" class="btn btn-danger btn-sm ms-1 delete-btn"
+                           th:attr="data-id=${disciplina.id}, data-nome=${disciplina.nome}">Excluir</a>
                     </td>
                 </tr>
-
                 <tr th:if="${#lists.isEmpty(disciplinas)}">
                     <td colspan="4" class="text-center text-muted">Nenhuma disciplina cadastrada.</td>
                 </tr>
                 </tbody>
             </table>
-
         </div>
     </div>
 
+    <div class="text-center mt-4">
+        <a th:href="@{/teste}" class="btn btn-outline-secondary">Voltar à Página de Testes</a>
+    </div>
 </div>
 
-<!-- Script para abrir modal automaticamente -->
-<script th:if="${isEdicaoDisciplina}">
-    let modal = new bootstrap.Modal(document.getElementById('editModal'));
-    modal.show();
+<!-- Modal de edição -->
+<div class="modal fade" id="editModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form id="formEditarDisciplina" method="post">
+                <div class="modal-header">
+                    <h5 class="modal-title">Editar Disciplina</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Nome</label>
+                        <input type="text" id="editarDisciplinaNome" class="form-control" name="nome" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Curso</label>
+                        <select id="editarDisciplinaCurso" class="form-select" name="curso" required>
+                            <option value="" disabled>Selecione um curso</option>
+                            <option th:each="curso : ${cursos}" th:value="${curso.id}" th:text="${curso.nome}"></option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Atualizar</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de confirmação de exclusão -->
+<div class="modal fade" id="confirmDeleteModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title">Confirmar Exclusão</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                Tem certeza que deseja excluir esta disciplina?
+                <div class="mt-2 text-muted small" id="disciplinaToDeleteInfo"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <a id="confirmDeleteBtn" class="btn btn-danger">Excluir</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de mensagem -->
+<div class="modal fade" id="messageModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body text-center">
+                <p id="messageText"></p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" data-bs-dismiss="modal">Ok</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script th:inline="javascript">
+document.addEventListener("click", function(e) {
+    if (e.target.matches("[data-bs-target='#editModal']")) {
+        const id = e.target.getAttribute("data-id");
+        const nome = e.target.getAttribute("data-nome");
+        const cursoId = e.target.getAttribute("data-curso");
+
+        document.getElementById("editarDisciplinaNome").value = nome;
+        document.getElementById("editarDisciplinaCurso").value = cursoId;
+        document.getElementById("formEditarDisciplina").action = "/disciplinas/atualizar/" + id;
+    }
+});
+
+document.querySelectorAll('.delete-btn').forEach(btn => {
+    btn.addEventListener('click', function(e) {
+        e.preventDefault();
+        const link = this.getAttribute('href');
+        const nome = this.getAttribute('data-nome');
+        document.getElementById('confirmDeleteBtn').setAttribute('href', link);
+        document.getElementById('disciplinaToDeleteInfo').innerText = "Disciplina: " + nome;
+        new bootstrap.Modal(document.getElementById('confirmDeleteModal')).show();
+    });
+});
+
+window.addEventListener("DOMContentLoaded", () => {
+    const error = /*[[${errorMessage}]]*/ null;
+    const success = /*[[${successMessage}]]*/ null;
+
+    if (error !== null && error !== "") {
+        document.getElementById("messageText").innerText = error;
+        new bootstrap.Modal(document.getElementById("messageModal")).show();
+    } else if (success !== null && success !== "") {
+        document.getElementById("messageText").innerText = success;
+        new bootstrap.Modal(document.getElementById("messageModal")).show();
+    }
+});
 </script>
 
 </body>

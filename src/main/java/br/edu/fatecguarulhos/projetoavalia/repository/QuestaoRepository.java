@@ -23,6 +23,8 @@ public interface QuestaoRepository extends JpaRepository<Questao, Integer> {
 	
     boolean existsByAutor(Professor autor);
 	
+    // Verifica existência de questões por disciplina
+    boolean existsByDisciplina(Disciplina disciplina);
 	/* adicionado por amanda */
 	
 	@Query("SELECT q FROM Questao q WHERE q.curso IN :cursos OR q.disciplina IN :disciplinas")
