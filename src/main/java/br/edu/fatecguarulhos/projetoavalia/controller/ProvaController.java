@@ -1,5 +1,7 @@
 package br.edu.fatecguarulhos.projetoavalia.controller;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -217,7 +219,7 @@ public class ProvaController {
     @PostMapping("/atualizar/{id}")
     public String atualizarProva(@PathVariable int id, @ModelAttribute ProvaDTO provaDTO) {
         provaService.atualizar(id, provaDTO);
-        return "redirect:/provas/banco";
+        return "redirect:/provas/editar/" + id;
     }
     
     @PostMapping("/editar/{provaId}/gerar-aleatorias")
@@ -247,12 +249,45 @@ public class ProvaController {
     }
 
     @GetMapping("/detalhes/{id}")
-    public String detalhesProva(@PathVariable int id, Model model) {
-        model.addAttribute("provaDTO", new ProvaDTO(provaService.buscarPorId(id)));
-        model.addAttribute("questoes", provaService.listarQuestoesPorProva(id));
-        model.addAttribute("disciplinas", provaService.listarDisciplinasPorProva(id));
+    public String detalhesProva(
+            @PathVariable int id,
+            @RequestParam(name = "embaralhar", required = false, defaultValue = "false") boolean embaralhar,
+            Model model) {
+
+        Prova prova = provaService.buscarPorId(id);
+
+        if (prova == null) {
+            return "redirect:/provas/banco";
+        }
+
+        model.addAttribute("titulo", prova.getTitulo());
+        model.addAttribute("curso", prova.getCurso());
+        model.addAttribute("professor", prova.getProfessor());
+
+        List<ProvaDisciplina> disciplinasProva = provaService.listarDisciplinasPorProva(id);
+
+        List<Disciplina> disciplinas = disciplinasProva.stream()
+                .map(ProvaDisciplina::getDisciplina)
+                .filter(d -> d != null)
+                .toList();
+
+        model.addAttribute("disciplinas", disciplinas);
+
+        List<ProvaQuestao> provaQuestoes = new ArrayList<>(provaService.listarQuestoesPorProva(id));
+
+        if (embaralhar) {
+            Collections.shuffle(provaQuestoes);
+        }
+
+        model.addAttribute("questoes", provaQuestoes);
+        model.addAttribute("totalQuestoes", provaQuestoes.size());
+
+        model.addAttribute("provaId", prova.getId());
+
         return "previaProva";
     }
+
+
 }
 
 

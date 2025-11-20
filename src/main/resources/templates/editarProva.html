@@ -23,11 +23,8 @@
                 <div class="d-flex justify-content-between align-items-center">
                     <h1 class="page-title">Montar Prova</h1>
                     <div class="btn-group">
-                        <a th:href="@{/provas/editar-cabecalho}" class="btn btn-outline-primary">
-                            <i class="material-icons">edit_note</i> Editar Cabeçalho
-                        </a>
-                    	<a href="#" class="btn btn-outline-primary">
-			                <i class="material-icons">visibility</i> Visualizar Prévia
+                    	<a th:href="@{'/provas/detalhes/' + ${provaDTO.id}}" class="btn btn-outline-primary">
+			                <i class="material-icons">visibility</i> Exibir Prova
 	                    </a>
                         <a th:href="@{/provas/banco}" class="btn btn-secondary">
                             <i class="material-icons">arrow_back</i> Voltar ao Banco
@@ -225,8 +222,7 @@
 								
 								                <!-- Imagem -->
 								                <div th:if="${questao.imagem != null}" class="question-image">
-								                    <span class="material-icons">image</span>
-								                    <small class="text-muted">Contém imagem</small>
+								                    <img th:src="${questao.imagem}" width="100px"/>
 								                </div>
 
 								                <!-- Alternativas -->
@@ -309,8 +305,7 @@
 								
 								                <!-- Imagem -->
 								                <div th:if="${questao.questao.imagem != null}" class="question-image">
-								                    <span class="material-icons">image</span>
-								                    <small class="text-muted">Contém imagem</small>
+								                    <img th:src="${questao.questao.imagem}" width="100px"/>
 								                </div>
 
 								                <!-- Alternativas -->

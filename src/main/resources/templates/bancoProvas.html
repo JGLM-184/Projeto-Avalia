@@ -42,17 +42,18 @@
                             <td th:text="${#temporals.format(prova.dataCriacao, 'dd/MM/yyyy')}"></td>
                             <td>
                                 <div class="btn-group" role="group">
+                                    <!-- Botão Detalhes - Mantém como está -->
+                                    <a th:href="@{'/provas/detalhes/' + ${prova.id}}" 
+                                       class="btn btn-info btn-sm">
+                                        <i class="material-icons">info</i> Exibir
+                                    </a>
+                                    
                                     <!-- Botão Editar - Direciona para editarProva -->
                                     <a th:href="@{'/provas/editar/' + ${prova.id}}" 
                                        class="btn btn-warning btn-sm">
                                         <i class="material-icons">edit</i> Editar
                                     </a>
                                     
-                                    <!-- Botão Detalhes - Mantém como está -->
-                                    <a th:href="@{'/provas/detalhes/' + ${prova.id}}" 
-                                       class="btn btn-info btn-sm">
-                                        <i class="material-icons">info</i> Detalhes
-                                    </a>
                                     
                                     <!-- Botão Excluir - Mantém como está -->
                                     <a th:href="@{'/provas/excluir/' + ${prova.id}}" 
