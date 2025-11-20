@@ -27,61 +27,67 @@
         </div>
     </main>
 
-	<!-- Popup de primeiro acesso -->
-	<div class="modal fade" id="popupPrimeiroAcesso" tabindex="-1" aria-labelledby="popupLabel" aria-hidden="true"> 
-	  <div class="modal-dialog">
-	    <div class="modal-content">
-	      <div class="modal-header">
-	        <h5 class="modal-title" id="popupLabel">Troca de senha</h5>
-	      </div>
-	      <div class="modal-body">
-	        <p>Boas vindas ao Sistema Avalia!</p>
-			<p>Sua conta foi criada por um coordenador e possui uma senha provisória.
-				Por segurança solicitamos que você a altere o quanto antes.
-			</p>
-	        <form id="formTrocaSenha" th:action="@{/alterar-senha}" method="post">
-	          <div class="mb-3">
-				<label for="novaSenha" class="label-popup">Nova senha</label>
-	            <input type="password" class="form-control" id="novaSenha" name="novaSenha" required>
-	          </div>
+	<!-- Modal Troca de Senha -->
+	<div class="modal fade" id="popupPrimeiroAcesso" tabindex="-1">
+	    <div class="modal-dialog">
+	        <div class="modal-content">
 
-	          <div class="mb-3">
-				<label for="confirmarSenha" class="label-popup">Confirmar senha</label>
-	            <input type="password" class="form-control" id="confirmarSenha" name="confirmarSenha" required>
-	          </div>
-			  
-			  <!-- Mensagem de erro -->
-			  <div th:if="${erro}" class="text-danger mb-2" id="erroSenha" th:text="${erro}"></div>
-			  
-	          <button type="submit" class="btn btn-primary">Salvar nova senha</button>
-	        </form>
-	      </div>
+	            <div class="modal-header">
+	                <h5 class="modal-title">Troca de senha</h5>
+	            </div>
+
+	            <div class="modal-body">
+	                <p>Boas-vindas ao Sistema Avalia!</p>
+	                <p>Sua senha é provisória. Altere-a agora para continuar.</p>
+
+					<form id="formTrocaSenha" th:action="@{/primeira-senha}" method="post">
+
+					    <div class="mb-3">
+					        <label for="novaSenha">Nova senha</label>
+					        <input type="password" class="form-control" id="novaSenha" name="novaSenha" required>
+					    </div>
+
+					    <div class="mb-3">
+					        <label for="confirmarSenha">Confirmar senha</label>
+					        <input type="password" class="form-control" id="confirmarSenha" name="confirmarSenha" required>
+					    </div>
+
+					    <div id="erroSenhas" class="alert alert-danger d-none"></div>
+
+					    <button type="submit" class="btn btn-primary">Salvar nova senha</button>
+					</form>
+	            </div>
+
+	        </div>
 	    </div>
-	  </div>
 	</div>
+	
+	<script th:inline="javascript">
+	document.addEventListener("DOMContentLoaded", function () {
 
-    <!-- Script que exibe o popup -->
-	<script th:if="${professor?.primeiroAcesso or mostrarPopup}">
-	    document.addEventListener("DOMContentLoaded", function() {
-	        var modal = new bootstrap.Modal(document.getElementById('popupPrimeiroAcesso'));
-	        modal.show();
+	    const mostrar = /*[[${mostrarPopupTrocaSenha}]]*/ false;
+	    const erro = /*[[${erroTrocaSenha}]]*/ false;
 
-	        // Se houver erro, limpa os campos de senha
-	        var erro = document.getElementById('erroSenha');
-	        if (erro && erro.innerText.trim() !== '') {
-	            document.getElementById('novaSenha').value = '';
-	            document.getElementById('confirmarSenha').value = '';
+	    if (mostrar || erro) {
+	        new bootstrap.Modal(document.getElementById("popupPrimeiroAcesso")).show();
+	    }
+
+	    // Validação frontend
+	    document.getElementById("formTrocaSenha").addEventListener("submit", function(e){
+	        const s1 = document.getElementById("novaSenha").value;
+	        const s2 = document.getElementById("confirmarSenha").value;
+
+	        if (s1 !== s2) {
+	            e.preventDefault();
+	            const div = document.getElementById("erroSenhas");
+	            div.textContent = "As senhas não coincidem!";
+	            div.classList.remove("d-none");
 	        }
 	    });
+	});
 	</script>
 
 
-    <!-- Funções auxiliares -->
-    <script>
-    function irParaTrocaSenha() {
-        window.location.href = '/alterar-senha'; // depois você cria essa rota
-    }
-    </script>
 
 </body>
 </html>

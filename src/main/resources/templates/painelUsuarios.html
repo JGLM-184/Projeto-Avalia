@@ -93,7 +93,15 @@
 						        class="btn action-btn" style="background: #ccc; margin-left: 1rem" disabled>
 						    <span class="material-icons" style="font-size:16px;">block</span> 
 						</button>
-				    </td>
+						<!-- Botão Alterar Senha -->
+						<button 
+								class="btn action-btn alterar-senha-btn" 
+								style="background: rgb(221, 240, 255); margin-left: 1rem"
+								th:data-id-professor="${professor.id}">
+							<span class="material-icons" style="font-size:16px;">lock</span>
+						</button>
+					</td>
+
 				</tr>
 				</tbody>
             </table>
@@ -166,6 +174,67 @@ document.querySelectorAll('.delete-btn').forEach(btn => {
     });
 </script>
 
+
+<script>
+document.querySelectorAll('.alterar-senha-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+        const id = this.getAttribute("data-id-professor");
+        document.getElementById("idProfessorTrocaSenha").value = id;
+
+        new bootstrap.Modal(document.getElementById('modalTrocaSenha')).show();
+    });
+});
+</script>
+
+
+
+<!-- Modal Troça de Senha -->
+<div class="modal fade" id="modalTrocaSenha" tabindex="-1" aria-labelledby="trocaSenhaLabel" aria-hidden="true"> 
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h5 class="modal-title" id="trocaSenhaLabel">Troca de senha</h5>
+      </div>
+
+      <div class="modal-body">
+        <p>Alterar senha do usuário selecionado.</p>
+
+        <form id="formTrocaSenhaModal" th:action="@{/coordenador/alterar-senha}" method="post">
+
+          <!-- ID do professor (preenchido via JS) -->
+          <input type="hidden" id="idProfessorTrocaSenha" name="idProfessor">
+
+          <div class="mb-3">
+            <label for="novaSenhaModal" class="label-popup">Nova senha</label>
+            <input type="password" class="form-control" id="novaSenhaModal" name="novaSenha" required>
+          </div>
+
+          <div class="mb-3">
+            <label for="confirmarSenhaModal" class="label-popup">Confirmar senha</label>
+            <input type="password" class="form-control" id="confirmarSenhaModal" name="confirmarSenha" required>
+          </div>
+
+          <!-- Mensagem de erro -->
+          <div th:if="${erro}" class="text-danger mb-2" id="erroSenhaModal" th:text="${erro}"></div>
+
+          <!-- Botões -->
+          <div class="d-flex justify-content-between mt-4">
+            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+              Cancelar
+            </button>
+
+            <button type="submit" class="btn btn-primary">
+              Salvar nova senha
+            </button>
+          </div>
+
+        </form>
+      </div>
+
+    </div>
+  </div>
+</div>
 
 
 </body>

@@ -19,7 +19,7 @@ public class SecurityConfig {
 	        	    .requestMatchers("/login/**", "/imagens/**","/css/**", "/js/**", "/erro403", "/teste/**").permitAll()
 	        	    
 	        	    //QUALQUER USUÁRIO AUTENTICADO PODE ACESSAR ESSAS ROTAS
-	        	    .requestMatchers("/inicio/**", "/questao/**", "/provas/**").authenticated()
+	        	    .requestMatchers("/inicio/**", "/questao/**", "/provas/**", "/primeira-senha").authenticated()
 	        	    
 	        	    //SOMENTE UM COORDENADOR PODE ACESSAS ESSAS ROTAS
 	        	    .requestMatchers("/coordenador/**", "/cursos/**", "/disciplinas/**", "/users/**").hasRole("ADMIN")

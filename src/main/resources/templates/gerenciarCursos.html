@@ -58,7 +58,7 @@
                                 Editar
                             </button>
 
-                            <!-- BOTÃO EXCLUIR: vamos interceptar e abrir o modal de confirmação -->
+                            <!-- BOTÃO EXCLUIR:-->
                             <a th:href="@{'/cursos/excluir/' + ${curso.id}}"
                                class="btn btn-sm btn-danger ms-1 delete-btn"
                                th:attr="data-id=${curso.id}, data-nome=${curso.nome}">
@@ -76,7 +76,7 @@
     </div>
 
     <div class="text-center mt-4">
-        <a th:href="@{/teste}" class="btn btn-outline-secondary">Voltar à Página de Testes</a>
+        <a th:href="@{'/coordenador/painel'}" class="btn btn-outline-secondary">Voltar ao painel</a>
     </div>
 </div>
 

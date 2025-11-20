@@ -145,27 +145,6 @@ public class UsuarioController {
 	     return "redirect:/users/painel";
 	 }
 
-	    
-	    
-	 @PostMapping("/alterar-senha")
-	 public String alterarSenha(@ModelAttribute TrocaSenhaDTO dto,
-			 Authentication authentication,
-			 Model model) {
-
-		 Professor professor = professorRepository.findByEmail(authentication.getName())
-				 .orElseThrow(() -> new RuntimeException("Professor não encontrado"));
-
-		 try {
-			 professorService.trocarSenha(professor, dto.getNovaSenha(), dto.getConfirmarSenha());
-		 } catch (IllegalArgumentException e) {
-			 model.addAttribute("erro", e.getMessage());
-			 model.addAttribute("professor", professor);
-			 return "index";
-		 }
-
-		 return "redirect:/";
-	 }
-	 
 	 @ResponseBody
 	 @GetMapping("/disciplinas/por-cursos")
 	 public List<Disciplina> listarDisciplinasPorCursos(@RequestParam List<Integer> cursosIds) {

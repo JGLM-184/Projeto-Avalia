@@ -155,19 +155,24 @@ public class ProfessorService {
 
        professorRepository.delete(professor);
    }
-    
-    public void trocarSenha(Professor professor, String novaSenha, String confirmarSenha) {
-        if (!novaSenha.equals(confirmarSenha)) {
-            throw new IllegalArgumentException("As senhas não coincidem!");
-        }
+   
+  //TROCAR SENHAR
+   public String trocarSenha(Professor professor, String novaSenha, String confirmarSenha) {
 
-        if (passwordEncoder.matches(novaSenha, professor.getSenha())) {
-            throw new IllegalArgumentException("A nova senha não pode ser igual à senha antiga!");
-        }
+	    if (!novaSenha.equals(confirmarSenha)) {
+	        return "As senhas não coincidem!";
+	    }
 
-        professor.setSenha(passwordEncoder.encode(novaSenha));
-        professor.setPrimeiroAcesso(false);
-        professorRepository.save(professor);
-    }
+	    if (passwordEncoder.matches(novaSenha, professor.getSenha())) {
+	        return "A nova senha não pode ser igual à antiga!";
+	    }
+
+	    professor.setSenha(passwordEncoder.encode(novaSenha));
+	    professor.setPrimeiroAcesso(false);
+	    professorRepository.save(professor);
+
+	    return null;
+	}
+
 
 }
