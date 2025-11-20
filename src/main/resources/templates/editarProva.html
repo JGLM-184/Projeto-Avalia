@@ -90,8 +90,8 @@
 						<div class="mb-4">
 						    <label class="form-label fw-bold">Disciplina da Prova</label>
 						
-						    <!-- Formulário de adicionar disciplina (somente coordenador) -->
-						    <form th:if="${(isCoordenador and isProvaCoordenador) || (disciplinasProva == null or disciplinasProva.isEmpty())}"
+						    <!-- Formulário de adicionar disciplina -->
+						    <form th:if="${!(disciplinas.isEmpty() || disciplinas == null) and ((isCoordenador and isProvaCoordenador) || (disciplinasProva == null or disciplinasProva.isEmpty()))}"
 						          th:action="@{'/provas/editar/' + ${provaDTO.id} + '/adicionar-disciplina'}"
 						          th:object="${provaDisciplinaDTO}" method="post">
 						

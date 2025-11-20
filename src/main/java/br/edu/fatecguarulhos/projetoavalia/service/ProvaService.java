@@ -297,20 +297,27 @@ public class ProvaService {
         }
     }
     
-	public void removerDisciplina(int provaId, int disciplinaId) {
-		Prova prova = buscarPorId(provaId);
-        Disciplina disciplina = disciplinaService.buscarPorId(disciplinaId);
+    public void removerDisciplina(int provaId, int disciplinaId) {
 
-        Optional<ProvaDisciplina> provaDisciplina = provaDisciplinaRepository.findByProvaAndDisciplina(prova, disciplina);
+        ProvaDisciplina provaDisciplina = provaDisciplinaRepository
+                .findByProvaIdAndDisciplinaId(provaId, disciplinaId)
+                .orElseThrow(() -> new RuntimeException(
+                        "A disciplina não está vinculada a esta prova."
+                ));
 
-        if (provaDisciplina.isEmpty()) {
-            throw new RuntimeException("Associação Prova-Questão não encontrada para provaId=" 
-                                       + provaId + " e questaoId=" + disciplinaId);
+        provaDisciplinaRepository.delete(provaDisciplina);
+
+        List<ProvaQuestao> questoesDaProva = listarQuestoesPorProva(provaId);
+
+        List<ProvaQuestao> questoesParaRemover = questoesDaProva.stream()
+                .filter(pq -> pq.getQuestao().getDisciplina().getId() == disciplinaId)
+                .toList();
+
+        if (!questoesParaRemover.isEmpty()) {
+            provaQuestaoRepository.deleteAll(questoesParaRemover);
         }
+    }
 
-        provaDisciplinaRepository.delete(provaDisciplina.get()); 
-		
-	}
 
 	public List<Questao> listarQuestoesDisponiveisSimulado(int provaId) {
 

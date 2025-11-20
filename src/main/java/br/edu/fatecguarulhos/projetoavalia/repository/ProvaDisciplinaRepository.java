@@ -15,5 +15,6 @@ public interface ProvaDisciplinaRepository extends JpaRepository<ProvaDisciplina
     void deleteByProva(Prova prova);
 	boolean existsByProvaAndDisciplina(Prova prova, Disciplina disciplina);
 	Optional<ProvaDisciplina> findByProvaAndDisciplina(Prova prova, Disciplina disciplina);
+	Optional<ProvaDisciplina> findByProvaIdAndDisciplinaId(int provaId, int disciplinaId);
     
 }

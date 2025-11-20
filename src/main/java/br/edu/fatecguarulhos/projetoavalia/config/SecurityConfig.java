@@ -1,4 +1,4 @@
- package br.edu.fatecguarulhos.projetoavalia.config;
+package br.edu.fatecguarulhos.projetoavalia.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,7 +16,7 @@ public class SecurityConfig {
 		 http
 	        .authorizeHttpRequests(auth -> auth
 	        		//TORNA ESSAS ROTAS PÚBLICAS (NÃO PEDE LOGIN) PARA O DESENVOLVIMENTO
-	        	    .requestMatchers("/login/**", "/imagens/**","/css/**", "/js/**", "/erro403", "/teste/**").permitAll()
+	        	    .requestMatchers("/login/**", "/imagens/**","/css/**", "/js/**", "/erro403", "/error", "/teste/**").permitAll()
 	        	    
 	        	    //QUALQUER USUÁRIO AUTENTICADO PODE ACESSAR ESSAS ROTAS
 	        	    .requestMatchers("/inicio/**", "/questao/**", "/provas/**", "/primeira-senha").authenticated()

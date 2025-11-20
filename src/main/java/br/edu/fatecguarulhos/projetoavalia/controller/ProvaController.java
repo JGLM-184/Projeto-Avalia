@@ -21,8 +21,10 @@ import br.edu.fatecguarulhos.projetoavalia.dto.ProvaDTO;
 import br.edu.fatecguarulhos.projetoavalia.dto.ProvaDisciplinaDTO;
 import br.edu.fatecguarulhos.projetoavalia.dto.ProvaQuestaoDTO;
 import br.edu.fatecguarulhos.projetoavalia.model.entity.Curso;
+import br.edu.fatecguarulhos.projetoavalia.model.entity.Disciplina;
 import br.edu.fatecguarulhos.projetoavalia.model.entity.Professor;
 import br.edu.fatecguarulhos.projetoavalia.model.entity.Prova;
+import br.edu.fatecguarulhos.projetoavalia.model.entity.ProvaDisciplina;
 import br.edu.fatecguarulhos.projetoavalia.model.entity.ProvaQuestao;
 import br.edu.fatecguarulhos.projetoavalia.repository.ProfessorRepository;
 import br.edu.fatecguarulhos.projetoavalia.service.CursoService;
@@ -120,14 +122,38 @@ public class ProvaController {
 	    
         model.addAttribute("cursos", cursoService.listarCursosPorProfessor(professorLogado.getId()));
         
+        // Disciplinas já vinculadas à prova
+        List<ProvaDisciplina> disciplinasProva = provaService.listarDisciplinasPorProva(id);
+        model.addAttribute("disciplinasProva", disciplinasProva);
+
+        List<Integer> idsDisciplinasProva = disciplinasProva.stream()
+                .map(pd -> pd.getDisciplina().getId())
+                .toList();
+
+        List<Disciplina> disciplinasDisponiveis;
+
+        // Coordenador: disciplinas do curso
         if (professorLogado.isCoordenador()) {
-        	model.addAttribute("disciplinas", disciplinaService.buscarPorCursoId(provaExistente.getCurso().getId()));
+            disciplinasDisponiveis =
+                disciplinaService.buscarPorCursoId(provaExistente.getCurso().getId());
+        }
+        // Professor comum: disciplinas do professor
+        else {
+            disciplinasDisponiveis =
+                disciplinaService.listarDisciplinasPorProfessor(professorLogado.getId());
+        }
+
+        // Remover disciplinas que já estão na prova
+        disciplinasDisponiveis = disciplinasDisponiveis.stream()
+                .filter(d -> !idsDisciplinasProva.contains(d.getId()))
+                .toList();
+        
+        if (!disciplinasDisponiveis.isEmpty()) {
+        	model.addAttribute("disciplinas", disciplinasDisponiveis);
         }
         else {
-        	model.addAttribute("disciplinas", disciplinaService.listarDisciplinasPorProfessor(professorLogado.getId()));
+        	model.addAttribute("disciplinas", List.of());
         }
-        
-        model.addAttribute("disciplinasProva", provaService.listarDisciplinasPorProva(id));
 
 	
 	    // Carregar todas as questões disponíveis
@@ -217,7 +243,7 @@ public class ProvaController {
     @GetMapping("/excluir/{id}")
     public String excluirProva(@PathVariable int id) {
         provaService.excluir(id);
-        return "redirect:/provas";
+        return "redirect:/provas/banco";
     }
 
     @GetMapping("/detalhes/{id}")
@@ -225,7 +251,7 @@ public class ProvaController {
         model.addAttribute("provaDTO", new ProvaDTO(provaService.buscarPorId(id)));
         model.addAttribute("questoes", provaService.listarQuestoesPorProva(id));
         model.addAttribute("disciplinas", provaService.listarDisciplinasPorProva(id));
-        return "testeProvaDetalhes";
+        return "previaProva";
     }
 }
 
