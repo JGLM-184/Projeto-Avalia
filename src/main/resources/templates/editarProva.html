@@ -26,6 +26,9 @@
                         <a th:href="@{/provas/editar-cabecalho}" class="btn btn-outline-primary">
                             <i class="material-icons">edit_note</i> Editar Cabeçalho
                         </a>
+                    	<a href="#" class="btn btn-outline-primary">
+			                <i class="material-icons">visibility</i> Visualizar Prévia
+	                    </a>
                         <a th:href="@{/provas/banco}" class="btn btn-secondary">
                             <i class="material-icons">arrow_back</i> Voltar ao Banco
                         </a>
@@ -46,33 +49,42 @@
                         </h5>
                     </div>
                     <div class="card-body">
-                        <!-- Informações da Prova -->
-                        <div class="mb-3">
-                            <label class="form-label">Título da Prova</label>
-                            <input type="text" class="form-control" id="tituloProva" 
-                                   th:value="${tituloProvaAtual}"
-                                   placeholder="Digite o título da prova">
-                        </div>
-                        
-                        <!-- Apenas exibir curso (não editar) -->
-                        <div class="mb-3">
-                            <label class="form-label">Curso</label>
-                            <p class="form-control-static" style="padding: 8px; background-color: #f8f9fa; border-radius: 4px;">
-                                <span th:each="curso : ${cursos}" 
-                                      th:if="${cursoIdAtual == curso.id}"
-                                      th:text="${curso.nome}">Curso</span>
-                            </p>
-                        </div>
-                        
-                        <div class="mb-3">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="simulado" 
-                                       th:checked="${simuladoAtual}">
-                                <label class="form-check-label" for="simulado">
-                                    Prova de Simulado
-                                </label>
-                            </div>
-                        </div>
+	                    <form th:action="@{'/provas/atualizar/' + ${provaDTO.id}}"
+	          				  th:object="${provaDTO}" method="post" class="">  
+	                        <!-- Informações da Prova -->
+	                        <div class="mb-3">
+	                            <label class="form-label">Título da Prova</label>
+	                            <input type="text" class="form-control" id="titulo" th:field="*{titulo}"
+	                                   placeholder="Digite o título da prova">
+	                        </div>
+	                        
+	                        <!-- Apenas exibir curso (não editar) -->
+	                        <div class="mb-3">
+	                            <label class="form-label">Curso</label>
+	                            <p class="form-control-static" style="padding: 8px; background-color: #f8f9fa; border-radius: 4px;">
+	                                <span th:each="curso : ${cursos}" 
+	                                      th:if="${cursoIdAtual == curso.id}"
+	                                      th:text="${curso.nome}">Curso</span>
+	                            </p>
+	                        </div>
+	                        
+	                        <div class="mb-3">
+	                            <div class="form-check">
+	                                <input class="form-check-input" type="checkbox" id="simulado" th:field="*{simulado}" 
+	                                       th:checked="${simuladoAtual}">
+	                                <label class="form-check-label text-nowrap" for="simulado">
+	                                    Prova de Simulado
+	                                </label>
+	                            </div>
+	                        </div>
+	                        
+	                        <!-- Botões de Ação -->	
+			                <div class="mb-4">
+			                    <button type="submit" class="btn btn-success btn-lg w-100">
+			                        <i class="material-icons">save</i> Salvar Alterações
+			                    </button>
+			                </div>
+	                   	</form>
 
                         <!-- NOVA SEÇÃO: Disciplinas da Prova -->
 						<div class="mb-4">
@@ -126,47 +138,7 @@
 						        </div>
 						    </div>
 						</div>
-
-                        <!-- Geração por Questões Aleatórias -->
-						<div class="mb-4">
-						    <label class="form-label fw-bold">Questões Aleatórias</label>
-						
-						    <form th:if="${disciplinasProva != null && !disciplinasProva.isEmpty()}"
-						          th:action="@{'/provas/editar/' + ${provaDTO.id} + '/gerar-aleatorias'}"
-						          method="post" class="border rounded p-3 bg-light">
-						
-						        <p class="text-muted">Defina quantas questões deseja usar aleatoriamente de cada disciplina:</p>
-						
-						        <div th:each="disciplina : ${disciplinasProva}" class="mb-3">
-						            <label class="form-label" th:text="${disciplina.disciplina.nome}"></label>
-						            <input type="number" min="0" value="0"
-						                   class="form-control"
-						                   th:name="${'quantidades[' + disciplina.disciplina.id + ']'}"
-						                   placeholder="Quantidade de questões dessa disciplina">
-						        </div>
-						
-						        <button type="submit" class="btn btn-outline-info w-100">
-						            <i class="material-icons">shuffle</i> Gerar Prova Aleatória
-						        </button>
-						    </form>
-						
-						    <p th:if="${disciplinasProva == null or disciplinasProva.isEmpty()}"
-						       class="text-muted fst-italic">
-						        Adicione disciplinas à prova para habilitar a geração automática.
-						    </p>
-						</div>
-
                     </div>
-                </div>
-
-                <!-- Botões de Ação -->
-                <div class="d-grid gap-2">
-                    <button type="button" class="btn btn-success btn-lg" onclick="salvarProva()">
-                        <i class="material-icons">save</i> Salvar Prova
-                    </button>
-                    <button type="button" class="btn btn-primary" onclick="abrirPrevia()">
-                        <i class="material-icons">visibility</i> Visualizar Prévia
-                    </button>
                 </div>
             </div>
 
@@ -193,6 +165,12 @@
                                     <span class="badge bg-primary ms-1" th:text="${totalQuestoes}">0</span>
                                 </button>
                             </li>
+                            <li role="presentation">
+                                <button class="nav-link" id="aleatoria-tab" data-bs-toggle="tab" 
+                                        type="button" role="tab">
+                                    Questões Aleatórias
+                                </button>
+                            </li>
                         </ul>
 
                         <!-- BARRA DE PESQUISA E FILTROS -->
@@ -201,38 +179,29 @@
                                 <!-- Barra de Pesquisa -->
                                 <div class="col-md-8">
                                     <div class="search-input-container">
-                                        <form th:action="@{/provas/editar-prova/{id}(id=${provaId})}" method="get" class="d-flex w-100" id="formPesquisa">
                                             <input type="text" 
                                                    class="form-input" 
                                                    name="pesquisa" 
-                                                   id="inputPesquisa"
+                                                   id="filtroPesquisa"
                                                    th:value="${pesquisaAtual}"
-                                                   placeholder="Pesquisar questão por enunciado, disciplina, curso ou autor..."
+                                                   placeholder="Pesquisar questão por enunciado ou autor..."
                                                    style="border: none; outline: none; flex: 1;">
-                                            <input type="hidden" name="disciplinaId" id="hiddenDisciplinaIdPesquisa">
-                                            <button type="submit" class="btn btn-link p-0" style="border: none; background: none;" onclick="prepararFormPesquisa()">
-                                                <span class="material-icons" style="color: #666;">search</span>
-                                            </button>
+                                            <!-- <span class="material-icons" style="color: #666;">search</ span> -->
                                             <button type="button" class="clear-button" onclick="limparPesquisa()">
                                                 <span class="material-icons">close</span>
                                             </button>
-                                        </form>
                                     </div>
                                 </div>
                                 
                                 <!-- Filtro por Disciplina -->
                                 <div class="col-md-4">
                                     <div class="dropdown">
-                                        <form th:action="@{/provas/editar-prova/{id}(id=${provaId})}" method="get" id="filtroDisciplina">
-                                            <select class="form-select" name="disciplinaId" id="selectDisciplina" onchange="submeterFiltroDisciplina()" style="font-size: 0.9rem;">
-                                                <option value="0">Todas as disciplinas</option>
+                                            <select class="form-select" id="filtroDisciplina" style="font-size: 0.9rem;">
+                                                <option value="todas">Todas as disciplinas</option>
                                                 <option th:each="disciplina : ${disciplinas}"
                                                         th:value="${disciplina.id}"
-                                                        th:text="${disciplina.nome}"
-                                                        th:selected="${disciplinaIdAtual != null && disciplinaIdAtual == disciplina.id}"></option>
+                                                        th:text="${disciplina.nome}"></option>
                                             </select>
-                                            <input type="hidden" name="pesquisa" id="hiddenPesquisa">
-                                        </form>
                                     </div>
                                 </div>
                             </div>
@@ -246,13 +215,13 @@
 								<div class="questions-list">
 								    <div th:if="${questoesDisponiveis != null && !questoesDisponiveis.empty}">
 								        <div class="question-item" th:each="questao : ${questoesDisponiveis}">       
-								            <div class="question-content">
+								            <div class="question-content" th:data-disciplina="${questao.disciplina.id}">
 								                <div class="question-meta">
-								                    <span class="discipline-badge" th:text="${questao.disciplina.nome}"></span><br/>
+								                    <span class="discipline-badge fs-6" th:text="${questao.disciplina.nome}"></span><br/>
 								                </div>
 								
 								                <!-- Enunciado -->
-								                <p class="question-text fs-4" th:text="${questao.enunciado}"></p>
+								                <p class="enunciado question-text fs-5" th:text="${questao.enunciado}"></p>
 								
 								                <!-- Imagem -->
 								                <div th:if="${questao.imagem != null}" class="question-image">
@@ -274,7 +243,7 @@
 								                <div class="question-info">
 								                    <small class="text-muted">
 								                        <strong>Autor:</strong> 
-								                        <span th:text="${questao.autor.nome}"></span> |
+								                        <span class="autor" th:text="${questao.autor.nome}"></span> |
 								
 								                        <strong>Tipo:</strong> 
 								                        <span th:if="${questao.simulado}">Simulado</span>
@@ -330,13 +299,13 @@
                                 <div class="questions-list">
 								    <div th:if="${provaQuestoes != null && !provaQuestoes.empty}">
 								        <div class="question-item" th:each="questao : ${provaQuestoes}">       
-								            <div class="question-content">
+								            <div class="question-content" th:data-disciplina="${questao.questao.disciplina.id}">
 								                <div class="question-meta">
-								                    <span class="discipline-badge" th:text="${questao.questao.disciplina.nome}"></span><br/>
+								                    <span class="discipline-badge fs-6" th:text="${questao.questao.disciplina.nome}"></span><br/>
 								                </div>
 								
 								                <!-- Enunciado -->
-								                <p class="question-text fs-4" th:text="${questao.questao.enunciado}"></p>
+								                <p class="enunciado question-text fs-5" th:text="${questao.questao.enunciado}"></p>
 								
 								                <!-- Imagem -->
 								                <div th:if="${questao.questao.imagem != null}" class="question-image">
@@ -358,7 +327,7 @@
 								                <div class="question-info">
 								                    <small class="text-muted">
 								                        <strong>Autor:</strong> 
-								                        <span th:text="${questao.questao.autor.nome}"></span> |
+								                        <span class="autor" th:text="${questao.questao.autor.nome}"></span> |
 								
 								                        <strong>Tipo:</strong> 
 								                        <span th:if="${questao.questao.simulado}">Simulado</span>
@@ -388,60 +357,165 @@
                                     </div>
                                 </div>
                             </div>
+                            
+                            <!-- ABA 3 – Gerar Prova Aleatória -->
+							<div class="tab-pane fade" id="aleatoria" role="tabpanel">
+							    <!-- Geração por Questões Aleatórias -->
+								<div class="mb-4">
+								    <label class="form-label fw-bold">Questões Aleatórias</label>
+								
+								    <form th:if="${disciplinasProva != null && !disciplinasProva.isEmpty()}"
+								          th:action="@{'/provas/editar/' + ${provaDTO.id} + '/gerar-aleatorias'}"
+								          method="post" class="border rounded p-3 bg-light">
+								
+								        <p class="text-muted">Defina quantas questões deseja usar aleatoriamente de cada disciplina:</p>
+								
+								        <div th:each="disciplina : ${disciplinasProva}" class="mb-3">
+								            <label class="form-label" th:text="${disciplina.disciplina.nome}"></label>
+								            <input type="number" min="0" value="0"
+								                   class="form-control"
+								                   th:name="${'quantidades[' + disciplina.disciplina.id + ']'}"
+								                   placeholder="Quantidade de questões dessa disciplina">
+								        </div>
+								
+								        <button type="submit" class="btn btn-outline-info w-100">
+								            <i class="material-icons">shuffle</i> Gerar Prova Aleatória
+								        </button>
+								    </form>
+								
+								    <p th:if="${disciplinasProva == null or disciplinasProva.isEmpty()}"
+								       class="text-muted fst-italic">
+								        Adicione disciplinas à prova para habilitar a geração automática.
+								    </p>
+								</div>
+							</div>
+							                            
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+	</div>
 </main>
 
 <script>
-	// Alternar abas manualmente
-	document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", function () {
+
     const tabDisponiveis = document.getElementById("disponiveis-tab");
     const tabIncluidas = document.getElementById("incluidas-tab");
+    const tabAleatoria = document.getElementById("aleatoria-tab");
 
     const paneDisponiveis = document.getElementById("disponiveis");
     const paneIncluidas = document.getElementById("incluidas");
+    const paneAleatoria = document.getElementById("aleatoria");
+
+    const barraPesquisa = document.querySelector(".search-filter-container");
+
+    function esconderBarraPesquisa() {
+        if (barraPesquisa) barraPesquisa.style.display = "none";
+    }
+
+    function mostrarBarraPesquisa() {
+        if (barraPesquisa) barraPesquisa.style.display = "block";
+    }
+
+    function ativarAba(tab, pane) {
+        // remove active de todas as abas
+        [tabDisponiveis, tabIncluidas, tabAleatoria].forEach(t => t.classList.remove("active"));
+
+        // remove active de todos os paineis
+        [paneDisponiveis, paneIncluidas, paneAleatoria].forEach(p => p.classList.remove("show", "active"));
+
+        // ativa aba e painel selecionado
+        tab.classList.add("active");
+        pane.classList.add("show", "active");
+    }
 
     function mostrarAbaDisponiveis() {
-        tabDisponiveis.classList.add("active");
-        tabIncluidas.classList.remove("active");
-
-        paneDisponiveis.classList.add("show", "active");
-        paneIncluidas.classList.remove("show", "active");
+        ativarAba(tabDisponiveis, paneDisponiveis);
+        mostrarBarraPesquisa();
     }
 
     function mostrarAbaIncluidas() {
-        tabIncluidas.classList.add("active");
-        tabDisponiveis.classList.remove("active");
-
-        paneIncluidas.classList.add("show", "active");
-        paneDisponiveis.classList.remove("show", "active");
+        ativarAba(tabIncluidas, paneIncluidas);
+        mostrarBarraPesquisa();
     }
-    
- 	// --- Selecionar aba inicial com base no parâmetro da URL ---
+
+    function mostrarAbaAleatoria() {
+        ativarAba(tabAleatoria, paneAleatoria);
+        esconderBarraPesquisa();
+    }
+
+    // Seleção pela URL
     const urlParams = new URLSearchParams(window.location.search);
     const aba = urlParams.get("aba");
 
     if (aba === "incluidas") {
         mostrarAbaIncluidas();
+    } else if (aba === "aleatoria") {
+        mostrarAbaAleatoria();
     } else {
-        // padrão: aba de disponíveis
         mostrarAbaDisponiveis();
     }
 
-    // Eventos de clique
-    tabDisponiveis.addEventListener("click", function () {
-        mostrarAbaDisponiveis();
-    });
+    // Eventos
+    tabDisponiveis.addEventListener("click", mostrarAbaDisponiveis);
+    tabIncluidas.addEventListener("click", mostrarAbaIncluidas);
+    tabAleatoria.addEventListener("click", mostrarAbaAleatoria);
 
-    tabIncluidas.addEventListener("click", function () {
-        mostrarAbaIncluidas();
-    });
 });
 </script>
+
+
+
+<script>
+//Filtro de pesquisa
+document.addEventListener("DOMContentLoaded", function () {
+
+    const searchInput = document.getElementById("filtroPesquisa");
+    const disciplinaSelect = document.getElementById("filtroDisciplina");
+
+    // Cada questão deve ter a classe .questao-item
+    const questoes = document.querySelectorAll(".question-item");
+
+    function filtrarQuestoes() {
+        const textoBusca = (searchInput?.value || "").trim().toLowerCase();
+        const disciplinaFiltro = disciplinaSelect?.value || "todas";
+
+        questoes.forEach(q => {
+
+            const enunciado = q.querySelector(".enunciado")?.textContent.toLowerCase() || "";
+            const autor = q.querySelector(".autor")?.textContent.toLowerCase() || "";
+            const disciplinaQuestao = q.querySelector(".question-content")?.getAttribute("data-disciplina") || "";
+
+            // Busca em enunciado OU autor
+            const matchPesquisa = enunciado.includes(textoBusca) || autor.includes(textoBusca);
+
+            const matchDisciplina =
+                disciplinaFiltro == "todas" ||
+                disciplinaFiltro == disciplinaQuestao;
+
+            if (matchPesquisa && matchDisciplina) {
+                q.style.display = "block";
+            } else {
+                q.style.display = "none";
+            }
+        });
+    }
+    
+    window.limparPesquisa = function () {
+        if (searchInput) searchInput.value = "";
+        filtrarQuestoes(); // Refiltra mostrando tudo
+    };
+
+    // Eventos
+    if (searchInput) searchInput.addEventListener("input", filtrarQuestoes);
+    if (disciplinaSelect) disciplinaSelect.addEventListener("change", filtrarQuestoes);
+
+});
+</script>
+
+
 
 </body>
 </html>

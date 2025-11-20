@@ -158,6 +158,8 @@ public class ProvaService {
         if (provaOpt.isPresent()) {
             Prova prova = provaOpt.get();
 
+            boolean virouSimulado = !prova.isSimulado() && provaDTO.isSimulado();
+
             prova.setTitulo(provaDTO.getTitulo());
             prova.setDataCriacao(provaDTO.getDataCriacao() != null ? provaDTO.getDataCriacao() : LocalDate.now());
             prova.setSimulado(provaDTO.isSimulado());
@@ -167,6 +169,15 @@ public class ProvaService {
                 Curso curso = cursoRepository.findById(provaDTO.getCurso().getId())
                         .orElseThrow(() -> new RuntimeException("Curso não encontrado com id: " + provaDTO.getCurso().getId()));
                 prova.setCurso(curso);
+            }
+            
+            if (virouSimulado) {
+
+                List<ProvaQuestao> questoesDaProva = listarQuestoesPorProva(id);
+
+                questoesDaProva.removeIf(questao -> questao.getQuestao().isSimulado());
+
+                provaQuestaoRepository.deleteAll(questoesDaProva);
             }
             
             provaRepository.save(prova);
@@ -301,6 +312,33 @@ public class ProvaService {
 		
 	}
 
+	public List<Questao> listarQuestoesDisponiveisSimulado(int provaId) {
+
+	    List<ProvaDisciplina> disciplinasProva = listarDisciplinasPorProva(provaId);
+
+	    if (disciplinasProva.isEmpty()) {
+	        return List.of();
+	    }
+
+	    List<ProvaQuestao> questoesDaProva = listarQuestoesPorProva(provaId);
+
+	    return questaoService.listarTodas().stream()
+	            .filter(questao -> disciplinasProva.stream()
+	                    .anyMatch(pd ->
+	                        questao.getDisciplina().getId() == pd.getDisciplina().getId()
+	                    )
+	            )
+
+	            .filter(questao -> questoesDaProva.stream()
+	                    .noneMatch(q -> q.getQuestao().getId() == questao.getId())
+	            )
+
+	            .filter(Questao::isSimulado)
+
+	            .toList();
+	}
+
+    
     public List<Questao> listarQuestoesDisponiveisPorProva(int provaId) {
 
         List<ProvaDisciplina> disciplinasProva = listarDisciplinasPorProva(provaId);
@@ -323,5 +361,5 @@ public class ProvaService {
                 )
                 .toList();
     }
-	
+
 }

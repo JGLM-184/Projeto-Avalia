@@ -131,7 +131,13 @@ public class ProvaController {
 
 	
 	    // Carregar todas as questões disponíveis
-        model.addAttribute("questoesDisponiveis", provaService.listarQuestoesDisponiveisPorProva(id));
+        if (provaExistente.isSimulado()) {
+            model.addAttribute("questoesDisponiveis", 
+                    provaService.listarQuestoesDisponiveisSimulado(id));
+        } else {
+            model.addAttribute("questoesDisponiveis", 
+                    provaService.listarQuestoesDisponiveisPorProva(id));
+        }
 
         model.addAttribute("provaQuestoes", provaQuestoes);
         model.addAttribute("totalQuestoes", provaQuestoes.size());
