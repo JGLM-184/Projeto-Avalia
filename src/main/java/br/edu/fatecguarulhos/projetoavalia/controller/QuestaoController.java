@@ -1,5 +1,8 @@
 package br.edu.fatecguarulhos.projetoavalia.controller;
 
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -14,18 +17,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-
 import br.edu.fatecguarulhos.projetoavalia.dto.QuestaoDTO;
+import br.edu.fatecguarulhos.projetoavalia.model.entity.Disciplina;
 import br.edu.fatecguarulhos.projetoavalia.model.entity.Professor;
 import br.edu.fatecguarulhos.projetoavalia.model.entity.Questao;
 import br.edu.fatecguarulhos.projetoavalia.repository.ProfessorRepository;
-import br.edu.fatecguarulhos.projetoavalia.service.ProfessorService;
-
 import br.edu.fatecguarulhos.projetoavalia.service.CursoService;
 import br.edu.fatecguarulhos.projetoavalia.service.DisciplinaService;
+import br.edu.fatecguarulhos.projetoavalia.service.ProfessorService;
 import br.edu.fatecguarulhos.projetoavalia.service.QuestaoService;
 
 @Controller
@@ -203,5 +202,25 @@ public class QuestaoController {
     public String excluirQuestao(@PathVariable int id) {
         questaoService.excluir(id);
         return "redirect:/questao/banco";
+    }
+    
+    @ResponseBody
+    @GetMapping("/disciplinas/api/por-curso/{id}")
+    public List<Disciplina> listarDisciplinasPorCurso(@PathVariable int id) {
+    	Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        Professor professorLogado = professorService.buscarPorEmail(auth.getName());
+
+        List<Disciplina> disciplinasDisponiveis; 
+        
+        if (professorLogado.isCoordenador()) {
+            disciplinasDisponiveis =
+                disciplinaService.buscarPorCursoId(id);
+        }
+        // Professor comum: disciplinas do professor
+        else {
+            disciplinasDisponiveis =
+                disciplinaService.listarDisciplinasPorCursoProfessor(id, professorLogado.getId());
+        }
+    	return disciplinasDisponiveis;
     }
 }

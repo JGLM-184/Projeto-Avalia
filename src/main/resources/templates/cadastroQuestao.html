@@ -185,7 +185,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
         if (!cursoId) return;
 
-        fetch(`/teste/api/disciplinas/por-curso/${cursoId}`)
+        fetch(`/questao/disciplinas/api/por-curso/${cursoId}`)
             .then(response => {
                 if (!response.ok) throw new Error("Erro ao buscar disciplinas");
                 return response.json();

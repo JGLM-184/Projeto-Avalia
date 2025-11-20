@@ -34,6 +34,10 @@ public class DisciplinaService {
     public List<Disciplina> listarDisciplinasPorProfessor(int professorId) {
         return disciplinaRepository.listarDisciplinasPorProfessor(professorId);
     }
+    
+	public List<Disciplina> listarDisciplinasPorCursoProfessor(int cursoId, int professorId) {
+		return disciplinaRepository.listarDisciplinasPorCursoProfessor(cursoId, professorId);
+	}
 
     public List<Disciplina> buscarPorCursoId(int cursoId) {
         return disciplinaRepository.findByCursoId(cursoId);

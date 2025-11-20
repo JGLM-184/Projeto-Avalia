@@ -18,4 +18,9 @@ public interface DisciplinaRepository extends JpaRepository<Disciplina, Integer>
 	@Query("SELECT d FROM Disciplina d JOIN d.professores p WHERE p.id = :professorId")
 	List<Disciplina> listarDisciplinasPorProfessor(@Param("professorId") int professorId);
 
+	@Query("SELECT d FROM Disciplina d JOIN d.professores p WHERE d.curso.id = :cursoId AND p.id = :professorId")
+	List<Disciplina> listarDisciplinasPorCursoProfessor(@Param("cursoId") int cursoId, 
+	                                                    @Param("professorId") int professorId);
+
+
 }
