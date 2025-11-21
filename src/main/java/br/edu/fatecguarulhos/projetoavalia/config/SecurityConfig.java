@@ -16,7 +16,7 @@ public class SecurityConfig {
 		 http
 	        .authorizeHttpRequests(auth -> auth
 	        		//TORNA ESSAS ROTAS PÚBLICAS (NÃO PEDE LOGIN) PARA O DESENVOLVIMENTO
-	        	    .requestMatchers("/login/**", "/imagens/**","/css/**", "/js/**", "/erro403", "/error", "/teste/**").permitAll()
+	        	    .requestMatchers("/login/**", "/imagens/**","/css/**", "/js/**", "/erro403", "/error", "/teste/**", "/aluno/**").permitAll()
 	        	    
 	        	    //QUALQUER USUÁRIO AUTENTICADO PODE ACESSAR ESSAS ROTAS
 	        	    .requestMatchers("/inicio/**", "/questao/**", "/provas/**", "/primeira-senha").authenticated()

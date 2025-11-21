@@ -612,6 +612,78 @@ body {
     transition: transform 0.3s ease;
 }
 
+/*==================================*/
+/* STYLES PARA A PÁGINA DE SIMULADO */
+/*==================================*/
+
+.simulado-page {
+    background: var(--background-dark); 
+    min-height: 100vh;
+    padding: 40px 0;
+
+
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    overflow-y: auto; 
+}
+
+.simulado-page::before {
+    content: '';
+    position: fixed;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(98, 0, 234, 0.5) 0%, transparent 70%);
+    animation: float 20s ease-in-out infinite;
+}
+
+.simulado-page .login-card {
+    margin-top: 20px;
+    margin-bottom: 40px;
+}
+
+.questao {
+    text-align: left !important;
+}
+
+.questao label {
+    display: block;
+    text-align: left;
+    margin-left: 0;
+}
+
+.questao input[type="radio"] {
+    margin-right: 6px;
+}
+
+.imagem-questao {
+    display: flex;
+    justify-content: center;
+    margin: 15px 0;
+}
+
+.imagem-questao img {
+    /* Tamanho mínimo padrão */
+    min-width: 250px;
+    min-height: 180px;
+
+    /* Tamanho máximo permitido dentro do card */
+    max-width: 100%;
+    max-height: 350px;
+
+    object-fit: contain; /* Aumenta sem deformar */
+    object-position: center;
+
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.12);
+    background-color: #f2f2f2; /* caso a imagem seja menor */
+    padding: 5px;
+}
+
+
+
 /* ------------------------------------------- */
 /* COMPONENTES ESPECÍFICOS DO COORDENADOR */
 /* ------------------------------------------- */

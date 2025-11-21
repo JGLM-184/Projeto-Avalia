@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulado</title>
+
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+
+<body class="simulado-page">
+
+    <div class="card login-card" style="max-width: 60rem; padding: 30px;">
+
+        <h3><b>[Nome do Professor] - Simulado [Código do Simulado]</b></h3>
+
+        <p class="instrucao">Preencha seus dados e responda todas as questões.</p>
+
+		<!-- DADOS DO ALUNO -->
+		<div class="form-group">
+		    <input type="text" id="nome" class="form-input" placeholder=" " required>
+		    <label for="nome">Nome</label>
+		</div>
+
+		<div class="form-group">
+		    <input type="text" id="curso" class="form-input" placeholder=" ">
+		    <label for="curso">Curso</label>
+		</div>
+
+		<div class="form-group">
+		    <input type="text" id="semestre" class="form-input" placeholder=" ">
+		    <label for="semestre">Semestre</label>
+		</div>
+
+		<hr><br>
+
+		<!-- Questões -->
+		<div class="questao">
+		    <p><b>1) Qual das alternativas abaixo é um exemplo de software?</b></p>
+
+		    <div class="imagem-questao">
+		        <img src="/imagens/flor.png" alt="Imagem da questão">
+		    </div>
+
+		    <label><input type="radio" name="q1" value="a"> (A) Impressora</label>
+		    <label><input type="radio" name="q1" value="b"> (B) Planilha Excel</label>
+		    <label><input type="radio" name="q1" value="c"> (C) Cabo HDMI</label>
+		    <label><input type="radio" name="q1" value="d"> (D) Mouse</label>
+		</div>
+
+		<!-- Botão -->
+		<a class="btn btn-primary" href="/aluno/envio-simulado" style="float: right; margin-top: 20px;">Enviar Respostas</a>
+
+        </form>
+
+    </div>
+
+</body>
+</html>
