@@ -29,9 +29,12 @@
 	                    <a th:if="${provaDTO.isSimulado() and !#strings.isEmpty(provaDTO.codigoSimulado)}" th:href="@{'/provas/editar/' + ${provaDTO.id} + '/desabilitar-simulado'}" class="btn btn-outline-danger">
 			                <i class="material-icons">picture_as_pdf</i> Desabilitar Simulado
 	                    </a>
-	                   	<a th:if="${provaDTO.isSimulado()}" class="btn btn-outline-danger">
-			                <i class="material-icons">visibility</i> Resultados do Simulado
-	                    </a>
+						<button th:if="${provaDTO.isSimulado()}"
+						        class="btn btn-outline-danger"
+						        data-bs-toggle="modal"
+						        data-bs-target="#resultadosSimuladoModal">
+						    <i class="material-icons">visibility</i> Resultados do Simulado
+						</button>
 						<a th:if="${provaDTO.isSimulado() and !#strings.isEmpty(provaDTO.codigoSimulado)}"
 						   href="#"
 						   class="btn btn-outline-danger"
@@ -360,7 +363,7 @@
 								        </div>
 								    </div>
                                     
-                                    <div th:if="${questoesSelecionadas == null || questoesSelecionadas.empty}" class="text-center py-4">
+                                    <div th:if="${provaQuestoes == null || provaQuestoes.empty}" class="text-center py-4">
                                         <span class="material-icons text-muted" style="font-size: 48px;">remove_circle</span>
                                         <p class="text-muted mt-2">Nenhuma questão incluída na prova ainda</p>
                                         <p class="text-muted">Volte para a aba "Questões Disponíveis" para adicionar questões à prova</p>
@@ -407,6 +410,87 @@
         </div>
 	</div>
 </main>
+
+<!-- MODAL RESULTADOS DO SIMULADO -->
+<div class="modal fade" id="resultadosSimuladoModal" tabindex="-1" aria-labelledby="resultadosSimuladoLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="resultadosSimuladoLabel">
+                    <i class="material-icons me-1">bar_chart</i>
+                    Resultados do Simulado
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+               	<!-- Caso existam tentativas -->
+               	<div th:if="${tentativasSimulado != null and !tentativasSimulado.isEmpty()}">
+			
+				    <!-- TOPO: Filtros e Botões -->
+				    <div class="d-flex justify-content-between align-items-center mb-3">
+				
+				    	<!-- Barra de Pesquisa -->
+				        <input type="text" id="pesquisaTentativas" class="form-control w-50"
+				               placeholder="Pesquisar por nome do aluno...">
+				
+				        <form th:action="@{'/provas/editar/' + ${provaDTO.id} + '/simulado/excluir-todas'}"
+				              method="post" 
+				              onsubmit="return confirm('Tem certeza que deseja excluir TODAS as tentativas?');">
+				            <button type="submit" class="btn btn-danger ms-3">
+				                <i class="material-icons">delete_forever</i> Excluir Todos
+				            </button>
+				        </form>
+				    </div>
+				
+				    <!-- Tabela -->
+				    <table class="table table-striped table-bordered align-middle" id="tabelaTentativas">
+				        <thead class="table-danger">
+				            <tr>
+				                <th>Aluno</th>
+				                <th>Semestre</th>
+				                <th>Data</th>
+				                <th>Acertos</th>
+				                <th style="width: 80px;">Ações</th>
+				            </tr>
+				        </thead>
+				        <tbody>
+				            <tr th:each="t : ${tentativasSimulado}">
+				                <td th:text="${t.aluno}"></td>
+				                <td th:text="${t.semestre} + '° Semestre'"></td>
+				                <td th:text="${#temporals.format(t.dataEnvio, 'dd/MM/yyyy HH:mm')}"></td>
+				                <td th:text="${t.totalAcertos} + ' / ' + ${totalQuestoes}"></td>
+				
+				                <td class="text-center">
+				                    <form th:action="@{'/provas/editar/' + ${provaDTO.id} + '/simulado/excluir-tentativa/' + ${t.id}}"
+				                          method="post"
+				                          onsubmit="return confirm('Excluir esta tentativa?');">
+				                        <button type="submit" class="btn btn-sm btn-danger">
+				                            <i class="material-icons" style="font-size:18px;">delete</i>
+				                        </button>
+				                    </form>
+				                </td>
+				            </tr>
+				        </tbody>
+				    </table>
+				</div>
+				<div th:unless="${tentativasSimulado != null and !tentativasSimulado.isEmpty()}">
+				    <div class="d-flex justify-content-between align-items-center mb-3">
+						<h3>Nenhum aluno realizou o simulado</h3>
+				    </div>
+				</div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    Fechar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 <script>
 document.addEventListener("DOMContentLoaded", function () {
@@ -479,7 +563,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 <script>
-//Filtro de pesquisa
+//Filtro de pesquisa de questões
 document.addEventListener("DOMContentLoaded", function () {
 
     const searchInput = document.getElementById("filtroPesquisa");
@@ -536,6 +620,37 @@ function copiarCodigo(e, el) {
 }
 </script>
 
+<script>
+//Filtro de pesquisa de resultados do simulado
+document.addEventListener("DOMContentLoaded", () => {
+    const inputPesquisa = document.getElementById("pesquisaTentativas");
+    const tabela = document.getElementById("tabelaTentativas").getElementsByTagName("tbody")[0];
+
+    inputPesquisa.addEventListener("keyup", () => {
+        let filtro = inputPesquisa.value.trim().toLowerCase();
+
+        for (let linha of tabela.rows) {
+            let nome = linha.cells[0].textContent.toLowerCase();
+            linha.style.display = nome.includes(filtro) ? "" : "none";
+        }
+    });
+});
+</script>
+
+//Abre modal de resultados do simulado caso o parâmetro modal=resultados seja verdadeiro
+<div th:if="${abrirModal == 'resultados'}">
+    <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Garantir que o elemento exista
+        var modalEl = document.getElementById('resultadosSimuladoModal');
+        if (!modalEl) return;
+
+        // Cria e mostra o modal (Bootstrap 5)
+        var modal = new bootstrap.Modal(modalEl);
+        modal.show();
+    });
+    </script>
+</div>
 
 
 </body>

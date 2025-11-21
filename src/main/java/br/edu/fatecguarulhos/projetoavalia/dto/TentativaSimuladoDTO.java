@@ -13,7 +13,7 @@ public class TentativaSimuladoDTO {
 	private String aluno;
     
     @NotBlank(message = "O semestre é obrigatório")
-	private String semestre;
+	private int semestre;
     
 	Prova simulado;
 	private int totalAcertos;
@@ -25,7 +25,7 @@ public class TentativaSimuladoDTO {
 	}
 
 	public TentativaSimuladoDTO(int id, @NotBlank(message = "O nome do aluno é obrigatório") String aluno,
-			@NotBlank(message = "O semestre é obrigatório") String semestre, Prova simulado, int totalAcertos,
+			@NotBlank(message = "O semestre é obrigatório") int semestre, Prova simulado, int totalAcertos,
 			LocalDateTime dataEnvio, boolean ativo) {
 		this.id = id;
 		this.aluno = aluno;
@@ -54,11 +54,11 @@ public class TentativaSimuladoDTO {
 		this.aluno = aluno;
 	}
 	
-	public String getSemestre() {
+	public int getSemestre() {
 		return semestre;
 	}
 
-	public void setSemestre(String semestre) {
+	public void setSemestre(int semestre) {
 		this.semestre = semestre;
 	}
 

@@ -1,6 +1,7 @@
 package br.edu.fatecguarulhos.projetoavalia.service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,8 +14,10 @@ import br.edu.fatecguarulhos.projetoavalia.model.entity.TentativaSimulado;
 import br.edu.fatecguarulhos.projetoavalia.repository.AlternativaRepository;
 import br.edu.fatecguarulhos.projetoavalia.repository.ProvaRepository;
 import br.edu.fatecguarulhos.projetoavalia.repository.TentativaSimuladoRepository;
+import jakarta.transaction.Transactional;
 
 @Service
+@Transactional
 public class TentativaSimuladoService {
 
 	@Autowired
@@ -29,13 +32,11 @@ public class TentativaSimuladoService {
     @Autowired
     private TentativaSimuladoRepository tentativaRepository;
 
-    // Buscar prova pelo código
     public Prova buscarPorCodigo(String codigo) {
         return provaRepository.findByCodigoSimuladoIgnoreCase(codigo)
             .orElseThrow(() -> new RuntimeException("Simulado não encontrado para o código informado."));
     }
 
-    // Processar e salvar a tentativa
     public TentativaSimulado registrarTentativa(
         Map<String, String> params,
         String codigoSimulado
@@ -43,8 +44,7 @@ public class TentativaSimuladoService {
         Prova prova = buscarPorCodigo(codigoSimulado);
 
         String aluno = params.get("nomeAluno");
-        String curso = params.get("cursoAluno");
-        String semestre = params.get("semestreAluno");
+        int semestre = Integer.parseInt(params.get("semestreAluno"));
 
         int acertos = 0;
 
@@ -72,4 +72,17 @@ public class TentativaSimuladoService {
 
         return tentativaRepository.save(tentativa);
     }
+
+	public List<TentativaSimulado> buscarPorProva(int id) {
+		return tentativaRepository.findBySimuladoOrderByDataEnvioDesc(provaService.buscarPorId(id));
+	}
+
+	public void excluir(int id) {
+		tentativaRepository.deleteById(id);
+	}
+
+	public void excluirPorProva(int id) {
+		tentativaRepository.deleteBySimulado(provaService.buscarPorId(id));
+		
+	}
 }

@@ -25,6 +25,7 @@ public class AlunoController {
 
 	@Autowired
 	private TentativaSimuladoService tentativaSimuladoService;
+	
     @Autowired
     private ProvaService provaService;
 

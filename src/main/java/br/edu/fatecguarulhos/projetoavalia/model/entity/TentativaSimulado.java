@@ -17,7 +17,7 @@ public class TentativaSimulado {
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 	private String aluno;
-	private String semestre;
+	private int semestre;
 	
 	@ManyToOne
 	@JoinColumn(name = "prova_id")
@@ -32,7 +32,7 @@ public class TentativaSimulado {
 		
 	}
 
-	public TentativaSimulado(int id, String aluno, String semestre, Prova simulado, int totalAcertos,
+	public TentativaSimulado(int id, String aluno, int semestre, Prova simulado, int totalAcertos,
 			LocalDateTime dataEnvio) {
 		this.id = id;
 		this.aluno = aluno;
@@ -62,11 +62,11 @@ public class TentativaSimulado {
 		this.aluno = aluno;
 	}
 
-	public String getSemestre() {
+	public int getSemestre() {
 		return semestre;
 	}
 
-	public void setSemestre(String semestre) {
+	public void setSemestre(int semestre) {
 		this.semestre = semestre;
 	}
 
