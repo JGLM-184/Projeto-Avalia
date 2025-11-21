@@ -23,6 +23,7 @@ public class ProvaDTO {
     private Curso curso;
     
 	private boolean simulado;
+	private String codigoSimulado = "";
 	private boolean ativo;
     
     public ProvaDTO() {
@@ -47,6 +48,7 @@ public class ProvaDTO {
 		this.professor = prova.getProfessor();
 		this.curso = prova.getCurso();
 		this.simulado = prova.isSimulado();
+		this.codigoSimulado = prova.getCodigoSimulado();
 		this.ativo = prova.isAtivo();
 	}
 
@@ -96,6 +98,14 @@ public class ProvaDTO {
 
 	public void setSimulado(boolean simulado) {
 		this.simulado = simulado;
+	}
+	
+	public String getCodigoSimulado() {
+		return codigoSimulado;
+	}
+
+	public void setCodigoSimulado(String codigoSimulado) {
+		this.codigoSimulado = codigoSimulado;
 	}
 
 	public boolean isAtivo() {

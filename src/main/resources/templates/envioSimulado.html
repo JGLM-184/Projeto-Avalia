@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -16,9 +16,8 @@
         <h3><b>Seu simulado foi enviado com sucesso!</b></h3>
 
         <form>
-			<p class="instrucao">
-				
-			            Acertos: x/10
+			<p class="instrucao" th:text="'Acertos: ' + ${acertos} + ' / ' + ${total}">
+			            Acertos: x / 10
 			</p>			
 			<a href="/aluno/buscar-simulado" class="btn btn-primary">Retornar à página de busca</a>
         </form>

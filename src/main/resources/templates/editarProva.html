@@ -23,6 +23,21 @@
                 <div class="d-flex justify-content-between align-items-center">
                     <h1 class="page-title">Montar Prova</h1>
                     <div class="btn-group">
+                        <a th:if="${provaDTO.isSimulado() and #strings.isEmpty(provaDTO.codigoSimulado)}" th:href="@{'/provas/editar/' + ${provaDTO.id} + '/habilitar-simulado'}" class="btn btn-outline-danger">
+			                <i class="material-icons">picture_as_pdf</i> Habilitar Simulado
+	                    </a>
+	                    <a th:if="${provaDTO.isSimulado() and !#strings.isEmpty(provaDTO.codigoSimulado)}" th:href="@{'/provas/editar/' + ${provaDTO.id} + '/desabilitar-simulado'}" class="btn btn-outline-danger">
+			                <i class="material-icons">picture_as_pdf</i> Desabilitar Simulado
+	                    </a>
+	                   	<a th:if="${provaDTO.isSimulado()}" class="btn btn-outline-danger">
+			                <i class="material-icons">visibility</i> Resultados do Simulado
+	                    </a>
+						<a th:if="${provaDTO.isSimulado() and !#strings.isEmpty(provaDTO.codigoSimulado)}"
+						   href="#"
+						   class="btn btn-outline-danger"
+						   onclick="copiarCodigo(event, this)">
+						    Código: <span th:text="${provaDTO.codigoSimulado}"></span>
+						</a>
                     	<a th:href="@{'/provas/detalhes/' + ${provaDTO.id}}" class="btn btn-outline-primary">
 			                <i class="material-icons">visibility</i> Exibir Prova
 	                    </a>
@@ -508,6 +523,17 @@ document.addEventListener("DOMContentLoaded", function () {
     if (disciplinaSelect) disciplinaSelect.addEventListener("change", filtrarQuestoes);
 
 });
+</script>
+
+<script>
+function copiarCodigo(e, el) {
+    e.preventDefault(); // impede navegação
+    const codigo = el.innerText.replace('Código: ', '').trim();
+
+    navigator.clipboard.writeText(codigo)
+        .then(() => alert("Código copiado!"))
+        .catch(() => alert("Erro ao copiar."));
+}
 </script>
 
 

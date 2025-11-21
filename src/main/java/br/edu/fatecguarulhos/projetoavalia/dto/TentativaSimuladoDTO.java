@@ -1,11 +1,8 @@
 package br.edu.fatecguarulhos.projetoavalia.dto;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 import br.edu.fatecguarulhos.projetoavalia.model.entity.Prova;
-import br.edu.fatecguarulhos.projetoavalia.model.entity.Questao;
 import jakarta.validation.constraints.NotBlank;
 
 public class TentativaSimuladoDTO {
@@ -15,9 +12,11 @@ public class TentativaSimuladoDTO {
     @NotBlank(message = "O nome do aluno é obrigatório")
 	private String aluno;
     
+    @NotBlank(message = "O semestre é obrigatório")
+	private String semestre;
+    
 	Prova simulado;
 	private int totalAcertos;
-	private List<Questao> questoesErradas = new ArrayList<>();
 	private LocalDateTime dataEnvio;
 	private boolean ativo;
 	
@@ -26,15 +25,18 @@ public class TentativaSimuladoDTO {
 	}
 
 	public TentativaSimuladoDTO(int id, @NotBlank(message = "O nome do aluno é obrigatório") String aluno,
-			Prova simulado, int totalAcertos, List<Questao> questoesErradas, LocalDateTime dataEnvio, boolean ativo) {
+			@NotBlank(message = "O semestre é obrigatório") String semestre, Prova simulado, int totalAcertos,
+			LocalDateTime dataEnvio, boolean ativo) {
 		this.id = id;
 		this.aluno = aluno;
+		this.semestre = semestre;
 		this.simulado = simulado;
 		this.totalAcertos = totalAcertos;
-		this.questoesErradas = questoesErradas;
 		this.dataEnvio = dataEnvio;
 		this.ativo = ativo;
 	}
+
+
 
 	public int getId() {
 		return id;
@@ -50,6 +52,14 @@ public class TentativaSimuladoDTO {
 
 	public void setAluno(String aluno) {
 		this.aluno = aluno;
+	}
+	
+	public String getSemestre() {
+		return semestre;
+	}
+
+	public void setSemestre(String semestre) {
+		this.semestre = semestre;
 	}
 
 	public Prova getSimulado() {
@@ -67,15 +77,7 @@ public class TentativaSimuladoDTO {
 	public void setTotalAcertos(int totalAcertos) {
 		this.totalAcertos = totalAcertos;
 	}
-
-	public List<Questao> getQuestoesErradas() {
-		return questoesErradas;
-	}
-
-	public void setQuestoesErradas(List<Questao> questoesErradas) {
-		this.questoesErradas = questoesErradas;
-	}
-
+	
 	public LocalDateTime getDataEnvio() {
 		return dataEnvio;
 	}

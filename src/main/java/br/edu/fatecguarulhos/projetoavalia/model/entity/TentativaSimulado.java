@@ -1,16 +1,12 @@
 package br.edu.fatecguarulhos.projetoavalia.model.entity;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
@@ -21,20 +17,13 @@ public class TentativaSimulado {
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 	private String aluno;
+	private String semestre;
 	
 	@ManyToOne
 	@JoinColumn(name = "prova_id")
 	Prova simulado;
 	
 	private int totalAcertos;
-	
-	@ManyToMany
-    @JoinTable(
-        name = "tentativaSimulado_questao",
-        joinColumns = @JoinColumn(name = "id"), 
-        inverseJoinColumns = @JoinColumn(name = "questao_id")
-    )
-	private List<Questao> questoesErradas = new ArrayList<>();
 	
 	private LocalDateTime dataEnvio;	
 	
@@ -43,14 +32,13 @@ public class TentativaSimulado {
 		
 	}
 
-
-	public TentativaSimulado(int id, String aluno, Prova simulado, int totalAcertos, List<Questao> questoesErradas,
+	public TentativaSimulado(int id, String aluno, String semestre, Prova simulado, int totalAcertos,
 			LocalDateTime dataEnvio) {
 		this.id = id;
 		this.aluno = aluno;
+		this.semestre = semestre;
 		this.simulado = simulado;
 		this.totalAcertos = totalAcertos;
-		this.questoesErradas = questoesErradas;
 		this.dataEnvio = dataEnvio;
 	}
 
@@ -74,6 +62,13 @@ public class TentativaSimulado {
 		this.aluno = aluno;
 	}
 
+	public String getSemestre() {
+		return semestre;
+	}
+
+	public void setSemestre(String semestre) {
+		this.semestre = semestre;
+	}
 
 	public Prova getSimulado() {
 		return simulado;
@@ -93,17 +88,6 @@ public class TentativaSimulado {
 	public void setTotalAcertos(int totalAcertos) {
 		this.totalAcertos = totalAcertos;
 	}
-
-
-	public List<Questao> getQuestoesErradas() {
-		return questoesErradas;
-	}
-
-
-	public void setQuestoesErradas(List<Questao> questoesErradas) {
-		this.questoesErradas = questoesErradas;
-	}
-
 
 	public LocalDateTime getDataEnvio() {
 		return dataEnvio;

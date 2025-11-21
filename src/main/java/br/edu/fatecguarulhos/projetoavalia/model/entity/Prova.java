@@ -15,7 +15,8 @@ import jakarta.persistence.UniqueConstraint;
 @Table(
     name = "prova",
     uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"titulo", "professor_id"})
+        @UniqueConstraint(columnNames = {"titulo", "professor_id"}),
+        @UniqueConstraint(columnNames = {"codigoSimulado"})
     }
 )
 public class Prova {
@@ -35,6 +36,7 @@ public class Prova {
 	private Curso curso;
 	
 	private boolean simulado;
+	private String codigoSimulado;
 	private boolean ativo;
 	
 	
@@ -43,16 +45,18 @@ public class Prova {
 		
 	}
 	
-	public Prova(int id, String titulo, LocalDate dataCriacao, Professor professor, Curso curso, boolean simulado,
-			boolean ativo) {
+	public Prova(int id, String titulo, LocalDate dataCriacao, Professor professor, Curso curso, boolean simulado, boolean ativo) {
 		this.id = id;
 		this.titulo = titulo;
 		this.dataCriacao = dataCriacao;
 		this.professor = professor;
 		this.curso = curso;
 		this.simulado = simulado;
+		this.codigoSimulado = "";
 		this.ativo = ativo;
 	}
+
+
 
 	//GETTERS E SETTERS
 	public int getId() {
@@ -101,6 +105,14 @@ public class Prova {
 
 	public void setSimulado(boolean simulado) {
 		this.simulado = simulado;
+	}
+
+	public String getCodigoSimulado() {
+		return codigoSimulado;
+	}
+
+	public void setCodigoSimulado(String codigoSimulado) {
+		this.codigoSimulado = codigoSimulado;
 	}
 
 	public boolean isAtivo() {

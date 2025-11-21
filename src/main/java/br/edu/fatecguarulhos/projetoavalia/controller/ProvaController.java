@@ -241,7 +241,20 @@ public class ProvaController {
         // 3) Retornar para aba de questões incluídas
         return "redirect:/provas/editar/" + provaId + "?aba=incluidas#abas";
     }
-
+    
+    @GetMapping("/editar/{id}/habilitar-simulado")
+	public String habilitarSimulado(@PathVariable int id, Model model) {
+    	provaService.habilitarSimulado(id);
+	    return "redirect:/provas/editar/" + id;
+    }
+    
+    @GetMapping("/editar/{id}/desabilitar-simulado")
+	public String desabilitarSimulado(@PathVariable int id, Model model) {
+    	provaService.desabilitarSimulado(id);
+	    return "redirect:/provas/editar/" + id;
+    }
+    
+    
     @GetMapping("/excluir/{id}")
     public String excluirProva(@PathVariable int id) {
         provaService.excluir(id);

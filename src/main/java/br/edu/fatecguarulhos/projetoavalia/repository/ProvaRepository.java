@@ -17,4 +17,8 @@ public interface ProvaRepository extends JpaRepository<Prova, Integer>{
 
 	List<Prova> findByProfessorIdIn(List<Integer> ids);
 
+	boolean existsByCodigoSimuladoIgnoreCase(String codigo);
+
+	Optional<Prova> findByCodigoSimuladoIgnoreCase(String codigoSimulado);
+
 }

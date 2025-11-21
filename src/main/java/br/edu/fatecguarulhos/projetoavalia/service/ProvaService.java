@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Random;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -16,7 +17,6 @@ import br.edu.fatecguarulhos.projetoavalia.dto.ProvaDTO;
 import br.edu.fatecguarulhos.projetoavalia.dto.ProvaDisciplinaDTO;
 import br.edu.fatecguarulhos.projetoavalia.dto.ProvaQuestaoDTO;
 import br.edu.fatecguarulhos.projetoavalia.model.entity.Curso;
-import br.edu.fatecguarulhos.projetoavalia.model.entity.Disciplina;
 import br.edu.fatecguarulhos.projetoavalia.model.entity.Professor;
 import br.edu.fatecguarulhos.projetoavalia.model.entity.Prova;
 import br.edu.fatecguarulhos.projetoavalia.model.entity.ProvaDisciplina;
@@ -96,7 +96,11 @@ public class ProvaService {
         return provaRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Prova não encontrada com id: " + id));
     }
-    
+
+	public Optional<Prova> buscaPorCodigoSimulado(String codigoSimulado) {
+		return provaRepository.findByCodigoSimuladoIgnoreCase(codigoSimulado); 
+	}
+	
     public Optional<Prova> buscarPorTituloEProfessorOptional(String titulo, int professorId) {
         return provaRepository.findByTituloAndProfessorId(titulo, professorId);
     }
@@ -159,6 +163,7 @@ public class ProvaService {
             Prova prova = provaOpt.get();
 
             boolean virouSimulado = !prova.isSimulado() && provaDTO.isSimulado();
+            boolean eraSimulado = prova.isSimulado() && !provaDTO.isSimulado();
 
             prova.setTitulo(provaDTO.getTitulo());
             prova.setDataCriacao(provaDTO.getDataCriacao() != null ? provaDTO.getDataCriacao() : LocalDate.now());
@@ -178,6 +183,10 @@ public class ProvaService {
                 questoesDaProva.removeIf(questao -> questao.getQuestao().isSimulado());
 
                 provaQuestaoRepository.deleteAll(questoesDaProva);
+            }
+            
+            if (eraSimulado) { 	
+            	prova.setCodigoSimulado("");
             }
             
             provaRepository.save(prova);
@@ -368,5 +377,56 @@ public class ProvaService {
                 )
                 .toList();
     }
+
+    public void habilitarSimulado(int id) {
+        Optional<Prova> provaOpt = provaRepository.findById(id);
+
+        if (provaOpt.isPresent()) {
+            Prova prova = provaOpt.get();
+
+            // Gera código único
+            String codigo = gerarCodigoSimuladoUnico();
+
+            prova.setCodigoSimulado(codigo);
+
+            provaRepository.save(prova);
+        }
+    }
+    
+    private String gerarCodigoSimuladoUnico() {
+        String codigo;
+
+        do {
+            codigo = gerarCodigoSimulado();
+        } while (provaRepository.existsByCodigoSimuladoIgnoreCase(codigo));
+
+        return codigo;
+    }
+
+    
+    private String gerarCodigoSimulado() {
+        int tamanho = 8;
+        String caracteres = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+
+        StringBuilder sb = new StringBuilder();
+        Random random = new Random();
+
+        for (int i = 0; i < tamanho; i++) {
+            sb.append(caracteres.charAt(random.nextInt(caracteres.length())));
+        }
+        return sb.toString();
+    }
+
+	public void desabilitarSimulado(int id) {
+		Optional<Prova> provaOpt = provaRepository.findById(id);
+
+        if (provaOpt.isPresent()) {
+            Prova prova = provaOpt.get();
+
+            prova.setCodigoSimulado("");
+
+            provaRepository.save(prova);
+        }
+	}
 
 }
