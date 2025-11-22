@@ -83,25 +83,27 @@
 
 			<hr class="my-4">
 
-			<h4>Disciplinas</h4>
-
-			<div id="formAddDisciplina" class="row g-3 align-items-end">
-			    <div class="col-md-6">
-			        <label class="form-label">Selecione uma Disciplina</label>
-			        <select id="disciplinaSelect" class="form-select">
-			            <!-- preenchido dinamicamente -->
-			        </select>
-			    </div>
-
-			    <div class="col-md-3">
-			        <button type="button" id="btnAddDisciplina" class="btn btn-geren">
-						<span class="material-icons">add</span>
-					</button>
-			    </div>
+			<div id="disciplinasContainer">
+				<h4>Disciplinas</h4>
+	
+				<div id="formAddDisciplina" class="row g-3 align-items-end">
+				    <div class="col-md-6">
+				        <label class="form-label">Selecione uma Disciplina</label>
+				        <select id="disciplinaSelect" class="form-select">
+				            <!-- preenchido dinamicamente -->
+				        </select>
+				    </div>
+	
+				    <div class="col-md-3">
+				        <button type="button" id="btnAddDisciplina" class="btn btn-geren">
+							<span class="material-icons">add</span>
+						</button>
+				    </div>
+				</div>
+	
+				<ul id="listaDisciplinas" class="list-group mt-3"></ul>
+				<input type="hidden" name="idsDisciplinas" id="disciplinasIds">
 			</div>
-
-			<ul id="listaDisciplinas" class="list-group mt-3"></ul>
-			<input type="hidden" name="idsDisciplinas" id="disciplinasIds">
 
 			<div class="form-actions" style="margin-top: 1rem;">
 			    <a th:href="@{/users/painel}" class="btn btn-secondary">Cancelar</a>
@@ -113,6 +115,17 @@
 
 	</div>
 </main>
+
+<script th:inline="javascript">
+    var idProfessor   = /*[[${idProfessor}]]*/ null;
+    var professor = {
+        idsCursos: /*[[${professor.idsCursos}]]*/ [],
+        idsDisciplinas: /*[[${professor.idsDisciplinas}]]*/ []
+    };
+    
+    var todasDisciplinas = /*[[${listaDisciplinas}]]*/ []
+</script>
+
 <script>
 let cursosSelecionados = [];
 let disciplinasSelecionadas = [];
@@ -133,24 +146,43 @@ function atualizarCursosUI() {
 
 // Função para remover um curso
 function removerCurso(id) {
+    // Remove o curso da lista
     cursosSelecionados = cursosSelecionados.filter(x => x !== id);
+
+    // Remover disciplinas associadas a esse curso
+    const disciplinasDoCurso = todasDisciplinas
+        .filter(d => String(d.curso.id) === String(id))
+        .map(d => String(d.id));
+
+    disciplinasSelecionadas = disciplinasSelecionadas.filter(
+        dId => !disciplinasDoCurso.includes(String(dId))
+    );
+
     atualizarCursosUI();
+    atualizarDisciplinasUI();
     carregarDisciplinas();
 }
 
 // Função para atualizar a lista de disciplinas na UI
 function atualizarDisciplinasUI() {
     const ul = document.getElementById("listaDisciplinas");
+    if (!ul) return;
+    
     ul.innerHTML = "";
+
     disciplinasSelecionadas.forEach(id => {
-        const nome = document.querySelector(`#disciplinaSelect option[value="${id}"]`)?.text || "";
+        const disc = todasDisciplinas.find(d => String(d.id) === String(id));
+        const nome = disc ? disc.nome : "(nome não encontrado)";
+
         ul.innerHTML += `<li class="list-group-item d-flex justify-content-between">
             ${nome}
             <button class="btn btn-sm btn-danger" type="button" onclick="removerDisciplina('${id}')">Remover</button>
         </li>`;
     });
+
     document.getElementById("disciplinasIds").value = disciplinasSelecionadas.join(",");
 }
+
 
 // Função para remover uma disciplina
 function removerDisciplina(id) {
@@ -161,6 +193,7 @@ function removerDisciplina(id) {
 // Função para carregar disciplinas dinamicamente a partir dos cursos selecionados
 function carregarDisciplinas() {
     const select = document.getElementById("disciplinaSelect");
+    if (!select) return;
     if (cursosSelecionados.length === 0) {
         select.innerHTML = "";
         return;
@@ -195,14 +228,16 @@ document.getElementById("btnAddCurso").addEventListener("click", function() {
 });
 
 // Botão adicionar disciplina
-document.getElementById("btnAddDisciplina").addEventListener("click", function() {
-    const select = document.getElementById("disciplinaSelect");
-    const id = select.value;
-    if (!disciplinasSelecionadas.includes(id)) {
-        disciplinasSelecionadas.push(id);
-        atualizarDisciplinasUI();
-    }
-});
+try {
+	document.getElementById("btnAddDisciplina").addEventListener("click", function() {
+	    const select = document.getElementById("disciplinaSelect");
+	    const id = select.value;
+	    if (!disciplinasSelecionadas.includes(id)) {
+	        disciplinasSelecionadas.push(id);
+	        atualizarDisciplinasUI();
+	    }
+	});
+} catch { }
 
 // Função para inicializar a edição (preenche listas com os valores do professor)
 function inicializarEdicao() {
@@ -226,6 +261,38 @@ function inicializarEdicao() {
 if (typeof idProfessor !== "undefined" && idProfessor != null) {
     inicializarEdicao();
 }
+
+//Ativa/Desativa incluir disciplinas ao desmarcar/marcar checkbox de coordenador
+function atualizarVisibilidadeDisciplinas() {
+    const checkbox = document.querySelector('input[name="coordenador"]');
+    const container = document.getElementById("disciplinasContainer");
+
+    if (!checkbox || !container) return;
+
+    if (checkbox.checked) {
+        // OCULTA O BLOCO
+        container.style.display = "none";
+
+        // REMOVE TODAS AS DISCIPLINAS
+        disciplinasSelecionadas = [];
+        atualizarDisciplinasUI();
+
+        // Também limpa o select dinamicamente
+        const select = document.getElementById("disciplinaSelect");
+        if (select) select.innerHTML = "";
+    } else {
+        // MOSTRA O BLOCO
+        container.style.display = "block";
+
+        // Recarrega as disciplinas disponíveis conforme os cursos selecionados
+        carregarDisciplinas();
+    }
+}
+
+
+document.querySelector('input[name="coordenador"]').addEventListener("change", atualizarVisibilidadeDisciplinas);
+document.addEventListener("DOMContentLoaded", atualizarVisibilidadeDisciplinas);
+
 </script>
 
 

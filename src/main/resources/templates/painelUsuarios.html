@@ -60,7 +60,7 @@
 					</td>
 					
 					<td class="quebraTexto" th:utext="${professor.nomesCursosFormatado}"></td>
-					<td class="quebraTexto" th:utext="${professor.nomesDisciplinasFormatado}"></td>
+					<td class="quebraTexto" th:utext="${professor.isCoordenador() ? 'Coordenador' : professor.nomesDisciplinasFormatado}"></td>
 
 					<td>
 					    <span class="usuarios-badge-status" 
