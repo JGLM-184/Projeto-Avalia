@@ -259,6 +259,13 @@ public class ProvaService {
 
             List<Questao> questoesDaDisciplina = 
                     questaoRepository.findByDisciplinaId(disciplinaId);
+            
+            // Se a prova for simulado, filtrar somente questões simuladas
+            if (prova.isSimulado()) {
+                questoesDaDisciplina = questoesDaDisciplina.stream()
+                        .filter(Questao::isSimulado)
+                        .toList();
+            }
 
             if (questoesDaDisciplina.isEmpty())
                 continue;

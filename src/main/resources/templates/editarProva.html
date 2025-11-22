@@ -639,9 +639,9 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 </script>
 
-//Abre modal de resultados do simulado caso o parâmetro modal=resultados seja verdadeiro
 <div th:if="${abrirModal == 'resultados'}">
     <script>
+	//Abre modal de resultados do simulado caso o parâmetro modal=resultados seja verdadeiro
     document.addEventListener("DOMContentLoaded", function () {
         // Garantir que o elemento exista
         var modalEl = document.getElementById('resultadosSimuladoModal');
