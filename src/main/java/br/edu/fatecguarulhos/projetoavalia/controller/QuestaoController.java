@@ -170,7 +170,11 @@ public class QuestaoController {
     
     
     @GetMapping("/gerenciar/editar/{id}")
-    public String editarQuestao(@PathVariable int id, Model model) {   	
+    public String editarQuestao(@PathVariable int id, Model model) {  
+    	
+    	model.addAttribute("paginaAtiva", "bancoQuestoes");
+        model.addAttribute("pageTitle", "Editar questão");
+    	
         model.addAttribute("questaoDTO", new QuestaoDTO(questaoService.buscarPorId(id)));
         model.addAttribute("professores", professorService.listarTodos());
         model.addAttribute("cursos", cursoService.listarTodos());

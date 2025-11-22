@@ -57,6 +57,9 @@ public class ProvaController {
         Professor professorLogado = provaService.getUsuarioLogado();
         List<Curso> cursosProfessor = cursoService.listarCursosPorProfessor(professorLogado.getId());
 
+        model.addAttribute("paginaAtiva", "montarProva");
+        model.addAttribute("pageTitle", "Montar Prova");
+        
         model.addAttribute("provaDTO", new ProvaDTO());
         model.addAttribute("cursos", cursosProfessor);
 
@@ -92,7 +95,10 @@ public class ProvaController {
     
 	@GetMapping("/banco")
 	public String bancoProvas(Model model) {
-	      
+	    
+		model.addAttribute("paginaAtiva", "bancoProvas");
+	    model.addAttribute("pageTitle", "Banco de Provas");
+		
 		model.addAttribute("provas", provaService.listarProvasVisiveis());
 	
 	    return "bancoProvas";
@@ -281,6 +287,9 @@ public class ProvaController {
             return "redirect:/provas/banco";
         }
 
+        model.addAttribute("paginaAtiva", "bancoProvas");
+	    model.addAttribute("pageTitle", "Visualizar Prova");
+        
         model.addAttribute("titulo", prova.getTitulo());
         model.addAttribute("curso", prova.getCurso());
         model.addAttribute("professor", prova.getProfessor());

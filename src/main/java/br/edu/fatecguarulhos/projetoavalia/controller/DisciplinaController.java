@@ -30,6 +30,10 @@ public class DisciplinaController {
 
     @GetMapping("/painel")
     public String listarDisciplinas(Model model) {
+    	
+    	model.addAttribute("paginaAtiva", "painel");
+	    model.addAttribute("pageTitle", "Gerenciar Disciplinas");
+    	
         model.addAttribute("disciplinas", disciplinaService.listarTodas());
         model.addAttribute("cursos", cursoService.listarTodos());
         model.addAttribute("disciplinaDTO", new DisciplinaDTO());

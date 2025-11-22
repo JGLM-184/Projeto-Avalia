@@ -21,6 +21,10 @@ public class CursoController {
 
     @GetMapping("/painel")
     public String listarCursos(Model model) {
+    	
+    	model.addAttribute("paginaAtiva", "painel");
+	    model.addAttribute("pageTitle", "Gerenciar Cursos");
+    	
         model.addAttribute("cursos", cursoService.listarTodos());
         model.addAttribute("cursoDTO", new CursoDTO());
         return "gerenciarCursos";
