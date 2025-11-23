@@ -12,26 +12,30 @@
 
     <link rel="icon" type="image/png" href="/imagens/logo.png">
 
-    <style>
-        body.modo-impressao .no-print,
-        @media print {
-            .no-print {
-                display: none !important;
-            }
-        }
+	<style>
+	    body.modo-impressao .no-print {
+	        display: none !important;
+	    }
 
-        @media print {
-            body {
-                margin: 20mm;
-                font-size: 15px;
-            }
+	    @media print {
+	        .no-print {
+	            display: none !important;
+	        }
+	    }
 
-            .pdf-question {
-                page-break-inside: avoid;
-                margin-bottom: 16px;
-            }
-        }
-    </style>
+	    @media print {
+	        body {
+	            margin: 20mm;
+	            font-size: 15px;
+	        }
+
+	        .pdf-question {
+	            page-break-inside: avoid;
+	            margin-bottom: 16px;
+	        }
+	    }
+	</style>
+
 </head>
 <body class="coordinator-layout">
 
