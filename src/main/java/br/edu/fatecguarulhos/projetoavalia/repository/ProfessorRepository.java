@@ -12,5 +12,6 @@ import br.edu.fatecguarulhos.projetoavalia.model.entity.Professor;
 public interface ProfessorRepository extends JpaRepository<Professor, Integer> {
 	
 	Optional<Professor> findByEmail(String email);	
-	
+	Optional<Professor> findByRe(String re);
+
 }

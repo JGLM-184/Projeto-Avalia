@@ -73,9 +73,14 @@ public class ProfessorService {
     
     //CADASTRO
     public Professor criarProfessor(ProfessorCadastroDTO dto) {
-        if (professorRepository.findByEmail(dto.getEmail()).isPresent()) {
-            throw new RuntimeException("Já existe um professor cadastrado com esse e-mail.");
-        }
+    	if (professorRepository.findByEmail(dto.getEmail()).isPresent()) {
+    	    throw new IllegalStateException("Já existe um professor cadastrado com esse e-mail.");
+    	}
+
+    	if (professorRepository.findByRe(dto.getRe()).isPresent()) {
+    	    throw new IllegalStateException("Já existe um professor cadastrado com esse RE.");
+    	}
+
         
         String senhaCriptografada = passwordEncoder.encode(dto.getSenha());
 
@@ -110,6 +115,21 @@ public class ProfessorService {
    public Professor atualizarProfessor(int id, ProfessorAtualizarDTO dto) {
     	Professor professor = professorRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Professor não encontrado."));
+    	
+
+        // valida RE único
+        professorRepository.findByRe(dto.getRe())
+            .filter(p -> p.getId() != id)
+            .ifPresent(p -> {
+                throw new IllegalStateException("Já existe outro professor usando esse RE.");
+            });
+
+        // valida email único
+        professorRepository.findByEmail(dto.getEmail())
+            .filter(p -> p.getId() != id)
+            .ifPresent(p -> {
+                throw new IllegalStateException("Já existe outro professor usando esse e-mail.");
+            });
 
         //ATUALIZA DADOS BÁSICO
         professor.setNome(dto.getNome());

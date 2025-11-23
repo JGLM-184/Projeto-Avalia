@@ -2,6 +2,8 @@ package br.edu.fatecguarulhos.projetoavalia.model.entity;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -20,6 +22,8 @@ public class Professor {
 	
 	private String nome;
 	private String email; 
+	
+	@Column(unique = true, nullable = false)
 	private String re; 
 	private String senha; 
 	

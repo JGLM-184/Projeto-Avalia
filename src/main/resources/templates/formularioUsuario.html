@@ -24,6 +24,16 @@
 			  th:object="${professor}">
 
 			<h2 th:text="${idProfessor != null} ? 'Editar Usuário' : 'Criar Novo Usuário'"></h2>
+			
+			<!-- MENSAGENS DE ERRO / SUCESSO -->
+			<div th:if="${errorMessage}" class="alert alert-danger" role="alert">
+			    <p th:text="${errorMessage}"></p>
+			</div>
+
+			<div th:if="${successMessage}" class="alert alert-success" role="alert">
+			    <p th:text="${successMessage}"></p>
+			</div>
+
 
 			<div class="form-group">
 				<input type="text" th:field="*{nome}" class="form-input" placeholder=" " required>

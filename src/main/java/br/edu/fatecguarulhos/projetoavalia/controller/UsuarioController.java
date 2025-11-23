@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,7 +19,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import br.edu.fatecguarulhos.projetoavalia.dto.ProfessorAtualizarDTO;
 import br.edu.fatecguarulhos.projetoavalia.dto.ProfessorCadastroDTO;
 import br.edu.fatecguarulhos.projetoavalia.dto.ProfessorDetalheDTO;
-import br.edu.fatecguarulhos.projetoavalia.dto.TrocaSenhaDTO;
 import br.edu.fatecguarulhos.projetoavalia.model.entity.Disciplina;
 import br.edu.fatecguarulhos.projetoavalia.model.entity.Professor;
 import br.edu.fatecguarulhos.projetoavalia.repository.CursoRepository;
@@ -26,6 +26,8 @@ import br.edu.fatecguarulhos.projetoavalia.repository.DisciplinaRepository;
 import br.edu.fatecguarulhos.projetoavalia.repository.ProfessorRepository;
 import br.edu.fatecguarulhos.projetoavalia.service.DisciplinaService;
 import br.edu.fatecguarulhos.projetoavalia.service.ProfessorService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 @Controller
 @RequestMapping("/users")
@@ -48,21 +50,53 @@ public class UsuarioController {
 	
 
 	@GetMapping("/painel")
-	public String painelUsuarios(Model model, Authentication authentication) {
+	public String painelUsuarios(Model model, Authentication authentication,
+	                             HttpServletRequest request, HttpServletResponse response) throws Exception {
 
-	    String emailLogado = authentication.getName();
+	    //Se não tem auth  volta pro login
+	    if (authentication == null) {
+	        return "redirect:/login";
+	    }
 
-	    Professor usuarioLogado = professorRepository.findByEmail(emailLogado)
-	            .orElseThrow(() -> new RuntimeException("Usuário logado não encontrado."));
+	    String emailSessao = authentication.getName();
 
+	    //Buscar no banco
+	    Professor professorBanco = professorRepository.findByEmail(emailSessao).orElse(null);
+
+	    //e não existe mais
+	    if (professorBanco == null) {
+	        request.getSession().invalidate();
+	        response.sendRedirect("/login?expirada");
+	        return null;
+	    }
+
+	    //Se está inativo  derruba sessão
+	    if (!professorBanco.isAtivo()) {
+	        request.getSession().invalidate();
+	        response.sendRedirect("/login?inativo");
+	        return null;
+	    }
+
+	    //Se email mudou  derruba sessão
+	    if (!professorBanco.getEmail().equals(emailSessao)) {
+	        request.getSession().invalidate();
+	        response.sendRedirect("/login?emailAlterado");
+	        return null;
+	    }
+
+	    //Se passou em todas verificações  entra no painel
 	    List<ProfessorDetalheDTO> professores = professorService.listarTodosDetalhado();
 
 	    model.addAttribute("professores", professores);
-	    model.addAttribute("usuarioLogado", usuarioLogado); // <-- ADD AQUI
+	    model.addAttribute("usuarioLogado", professorBanco);
 	    model.addAttribute("pageTitle", "Gerenciar usuários");
 
 	    return "painelUsuarios";
 	}
+
+
+
+
 
 	 
 	@GetMapping("/cadastrar")
@@ -82,11 +116,21 @@ public class UsuarioController {
 
 	
 	@PostMapping("/cadastrar")
-	public String salvarNovo(@ModelAttribute ProfessorCadastroDTO dto, RedirectAttributes redirectAttributes) {
-	    professorService.criarProfessor(dto);
-	    redirectAttributes.addFlashAttribute("successMessage", "Usuário cadastrado com sucesso!");
-	    return "redirect:/users/painel";
+	public String salvarNovo(
+	        @ModelAttribute ProfessorCadastroDTO dto,
+	        RedirectAttributes redirectAttributes) {
+
+	    try {
+	        professorService.criarProfessor(dto);
+	        redirectAttributes.addFlashAttribute("successMessage", "Usuário cadastrado com sucesso!");
+	        return "redirect:/users/painel";
+
+	    } catch (IllegalStateException e) {
+	        redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+	        return "redirect:/users/cadastrar";
+	    }
 	}
+
 	
 	
 	
@@ -126,12 +170,35 @@ public class UsuarioController {
 	 
 	 
 	@PostMapping("/editar/{id}")
-	public String salvarEdicao(@PathVariable int id, @ModelAttribute ProfessorAtualizarDTO dto, RedirectAttributes redirectAttributes) {
-	    professorService.atualizarProfessor(id, dto);
+	public String salvarEdicao(@PathVariable int id,
+	                           @ModelAttribute ProfessorAtualizarDTO dto,
+	                           HttpServletRequest request,
+	                           RedirectAttributes redirectAttributes) {
+
+	    Professor atualizado;
+
+	    try {
+	        atualizado = professorService.atualizarProfessor(id, dto);
+
+	    } catch (IllegalStateException e) { 
+	        redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+	        return "redirect:/users/editar/" + id;
+	    }
+
+	    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+	    String emailLogado = auth.getName();
+
+	    if (atualizado.getEmail().equals(emailLogado)) {
+	        request.getSession().invalidate();
+	        SecurityContextHolder.clearContext();
+	        return "redirect:/login";
+	    }
+
 	    redirectAttributes.addFlashAttribute("successMessage", "Alterações salvas com sucesso!");
 	    return "redirect:/users/painel";
 	}
-	 
+
+
 	 
 	 
 	 @GetMapping("/excluir/{id}")
