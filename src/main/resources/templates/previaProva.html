@@ -12,29 +12,81 @@
 
     <link rel="icon" type="image/png" href="/imagens/logo.png">
 
-	<style>
-	    body.modo-impressao .no-print {
-	        display: none !important;
-	    }
+    <style>
+        body.modo-impressao .no-print {
+            display: none !important;
+        }
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+            body {
+                margin: 15mm;
+                font-size: 15px;
+            }
+            .pdf-question {
+                page-break-inside: avoid;
+                margin-bottom: 18px;
+            }
+        }
+		
+        /* Cabeçalho organizado em tabela */
+        .header-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            font-size: 15px;
+        }
+        .header-table td {
+            padding: 4px 6px;
+        }
 
-	    @media print {
-	        .no-print {
-	            display: none !important;
-	        }
-	    }
+        /* Gabarito compacto */
+        .gabarito-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+        }
+        .gabarito-item {
+            border: 1px solid #000;
+            padding: 6px;
+            text-align: center;
+            font-size: 14px;
+        }
 
-	    @media print {
-	        body {
-	            margin: 20mm;
-	            font-size: 15px;
-	        }
+        /* Ajuste gabarito para não empurrar páginas */
+        .pdf-answer-sheet {
+            display: flex;
+            justify-content: center; /* centraliza horizontalmente */
+            align-items: center;     /* centraliza verticalmente */
+            margin-bottom: 20px;     /* espaço seguro */
+        }
 
-	        .pdf-question {
-	            page-break-inside: avoid;
-	            margin-bottom: 16px;
-	        }
-	    }
-	</style>
+        .gabarito-enem-table {
+            border-collapse: collapse;
+            font-size: 20px;
+        }
+
+        .gabarito-enem-table td, .gabarito-enem-table th {
+            border: 1px solid #000;
+            text-align: center;
+            padding: 2px;
+            width: 28px;
+            height: 28px;
+        }
+
+        .gabarito-enem-table .num-questao {
+            width: 36px;
+            font-weight: bold;
+            padding-right: 4px;
+        }
+
+        .gabarito-enem-table .alt {
+            width: 28px;
+        }
+		
+		
+    </style>
 
 </head>
 <body class="coordinator-layout">
@@ -55,66 +107,66 @@
 
             <div class="pdf-preview" id="pdfPreview">
 
-                <div class="pdf-header">
-                    <div class="pdf-title" th:text="${titulo}">TÍTULO DA PROVA</div>
-                    <div class="pdf-subtitle">CENTRO PAULA SOUZA</div>
-                    <div class="pdf-subtitle">FACULDADE DE TECNOLOGIA</div>
+                <!-- CABEÇALHO EM TABELA -->
+				
+				<table style="width: 100%; border-collapse: collapse; margin-bottom: 10px;">
+				    <tr>
+				        <td style="font-weight: bold; font-size: 14px;">CENTRO PAULA SOUZA</td>
+				        <td style="font-weight: bold; font-size: 14px; text-align: right;">FACULDADE DE TECNOLOGIA DE GUARULHOS</td>
+				    </tr>
+				</table>
+				
+                <table class="header-table">
+                    <tr><td colspan="2" style="height:8px;"></td></tr>
 
-                    <div class="pdf-info-grid">
+                    <tr>
+                        <td><strong>Professor:</strong></td>
+                        <td th:text="${professor.nome}"></td>
+                    </tr>
 
-                        <div class="pdf-info-item">
-                            <span class="pdf-info-label">Professor:</span>
-                            <div class="pdf-info-value" th:text="${professor.nome}">Professor</div>
-                        </div>
+                    <tr>
+                        <td><strong>Disciplina(s):</strong></td>
+                        <td>
+                            <span th:each="disciplina : ${disciplinas}" th:text="${disciplina.nome + ' '}"></span>
+                        </td>
+                    </tr>
 
-                        <div class="pdf-info-item">
-                            <span class="pdf-info-label" th:text="${disciplinas.size() > 1 ? 'Disciplinas:' : 'Disciplina:'}">Disciplina:</span>
-                            <div class="pdf-info-value">
-                                <span th:each="disciplina, iter : ${disciplinas}"
-                                      th:text="${disciplina.nome} + ' '"></span>
-                            </div>
-                        </div>
+                    <tr>
+                        <td><strong>Aluno:</strong></td>
+                        <td>____________________________________</td>
+                    </tr>
 
-                        <div class="pdf-info-item">
-                            <span class="pdf-info-label">Nome do Aluno:</span>
-                            <div class="pdf-info-value"> </div>
-                        </div>
+                    <tr>
+                        <td><strong>Data:</strong></td>
+                        <td>_____/______/__________</td>
+                    </tr>
+                </table>
+				
+				<table>
+					<tr>
+						<td colspan="2" style="font-size:30px; font-weight:bold;" th:text="${titulo}">TÍTULO</td>
+					</tr>
+				</table>
 
-                        <div class="pdf-info-item">
-                            <span class="pdf-info-label">Data:</span>
-                            <div class="pdf-info-value">_____/______/____________</div>
-                        </div>
+				<!-- GABARITO ESTILO ENEM (COLUNA ÚNICA) -->
+				<div class="pdf-answer-sheet">
+				    <table class="gabarito-enem-table">
+				        <tbody>
+				            <tr th:each="questao, iter : ${questoes}">
+				                <td class="num-questao" th:text="${iter.count}"></td>
+				                <td class="alt">A</td>
+				                <td class="alt">B</td>
+				                <td class="alt">C</td>
+				                <td class="alt">D</td>
+				                <td class="alt">E</td>
+				            </tr>
+				        </tbody>
+				    </table>
+				</div>
+				
+				<div class="page-break"></div>
 
-                    </div>
-                </div>
-
-                <div class="pdf-answer-sheet">
-                    <h4 class="text-center mb-3">Gabarito</h4>
-
-                    <table class="pdf-answer-table">
-                        <thead>
-                            <tr>
-                                <th>Questão</th>
-                                <th>A</th>
-                                <th>B</th>
-                                <th>C</th>
-                                <th>D</th>
-                                <th>E</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr th:each="questao, iter : ${questoes}">
-                                <td th:text="${iter.count}"></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-
+                <!-- QUESTÕES -->
                 <div class="pdf-questions">
 
                     <div th:if="${#lists.isEmpty(questoes)}" class="text-center py-4 text-muted">
@@ -123,31 +175,33 @@
 
                     <div th:each="questao, iter : ${questoes}" class="pdf-question">
 
-                        <div class="pdf-question">
-                            <span class="pdf-question-number" th:utext="${iter.count} + ') '"></span>
+                        <div>
+                            <span class="pdf-question-number" th:text="${iter.count} + ') '"></span>
                             <span class="pdf-question-text" th:utext="${questao.questao.enunciado}"></span>
                         </div>
 
                         <div th:if="${questao.questao.imagem != null}" class="pdf-question-image">
-                            <img th:src="${questao.questao.imagem}" style="max-width: 200px;">
+                            <img th:src="${questao.questao.imagem}" style="max-width: 600px;">
                         </div>
 
                         <div class="pdf-alternatives" th:if="${questao.questao.alternativas != null}">
-                            <div th:each="alternativa, iter : ${questao.questao.alternativas}" class="pdf-alternative">
+                            <div th:each="alternativa, iterAlt : ${questao.questao.alternativas}" class="pdf-alternative">
                                 <div class="pdf-alternative-letter"
-                                     th:text="'( ' + ${'ABCDE'.substring(iter.count - 1, iter.count)} + ' )'">
+                                     th:text="'( ' + ${'ABCDE'.substring(iterAlt.count - 1, iterAlt.count)} + ' )'">
                                 </div>
                                 <div class="pdf-alternative-text" th:utext="${alternativa.texto}"></div>
                             </div>
                         </div>
+
                     </div>
+
                 </div>
+
             </div>
 
         </div>
 
         <div class="preview-actions no-print">
-
             <button class="btn btn-normal no-print" data-bs-toggle="modal" data-bs-target="#modalGabarito">
                 Gabarito
             </button>
@@ -157,94 +211,69 @@
                 Imprimir
             </button>
 
-            <button class="btn btn-danger me-2" id="btnPDF">
-                <span class="material-icons" style="font-size:16px;">picture_as_pdf</span>
-                PDF
-            </button>
 
             <a th:href="@{'/provas/detalhes/' + ${provaId} + '?embaralhar=true'}" 
                class="btn btn-success">
                 <span class="material-icons" style="font-size:16px;">shuffle</span>
                 Embaralhar
             </a>
-
         </div>
     </main>
 
-    <!-- ======================  MODAL DO GABARITO  ====================== -->
+    <!-- MODAL DO GABARITO -->
     <div class="modal fade" id="modalGabarito" tabindex="-1" aria-labelledby="modalGabaritoLabel" aria-hidden="true">
-      <div class="modal-dialog modal-lg modal-dialog-centered">
-        <div class="modal-content">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
 
-          <div class="modal-header">
-            <h5 class="modal-title" id="modalGabaritoLabel">Gabarito da Prova</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalGabaritoLabel">Gabarito da Prova</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
 
-          <div class="modal-body" id="contentGabarito">
+                <div class="modal-body" id="contentGabarito">
 
-            <table class="table table-bordered text-center">
-                <thead>
-                    <tr>
-                        <th>Questão</th>
-                        <th>Resposta</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr th:each="questao, iter : ${questoes}">
-                        <td th:text="${iter.count}"></td>
-                        <td>
-                            <span th:each="alt, iter : ${questao.questao.alternativas}"
-                                  th:if="${alt.isCorreto()}">
-                                <span th:text="${iter.count == 1 ? 'A' : 
-                                                 iter.count == 2 ? 'B' : 
-                                                 iter.count == 3 ? 'C' :
-                                                 iter.count == 4 ? 'D' : 'E'}"></span>
-                            </span>
-                        </td>
-                    </tr>
-                </tbody>
+                    <table class="table table-bordered text-center">
+                        <thead>
+                            <tr>
+                                <th>Questão</th>
+                                <th>Resposta</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="questao, iter : ${questoes}">
+                                <td th:text="${iter.count}"></td>
+                                <td>
+                                    <span th:each="alt, iterAlt : ${questao.questao.alternativas}"
+                                          th:if="${alt.isCorreto()}">
+                                        <span th:text="${iterAlt.count == 1 ? 'A' : 
+                                                         iterAlt.count == 2 ? 'B' : 
+                                                         iterAlt.count == 3 ? 'C' :
+                                                         iterAlt.count == 4 ? 'D' : 'E'}"></span>
+                                    </span>
+                                </td>
+                            </tr>
+                        </tbody>
 
-            </table>
+                    </table>
 
-          </div>
+                </div>
 
-          <div class="modal-footer">
-            <button class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
 
-            <!-- BOTÃO DE IMPRIMIR O GABARITO -->
-            <button class="btn btn-primary" id="btnImprimirGabarito">
-                <span class="material-icons" style="font-size:16px;">print</span>
-                Imprimir Gabarito
-            </button>
+                    <button class="btn btn-primary" id="btnImprimirGabarito">
+                        <span class="material-icons" style="font-size:16px;">print</span>
+                        Imprimir Gabarito
+                    </button>
 
-          </div>
+                </div>
 
+            </div>
         </div>
-      </div>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-
-    <script>
-        document.getElementById("btnPDF").addEventListener("click", async () => {
-            window.scrollTo(0, 0);
-            await new Promise(resolve => setTimeout(resolve, 300));
-
-            const element = document.getElementById("pdfPreview");
-
-            const opt = {
-                margin: 10,
-                filename: 'prova.pdf',
-                image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2, scrollY: 0 },
-                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-            };
-
-            html2pdf().set(opt).from(element).save();
-        });
-    </script>
-
+	
     <script>
         document.getElementById("btnImprimirProva").addEventListener("click", () => {
             imprimirProva();
@@ -261,7 +290,6 @@
         }
     </script>
 
-    <!-- ======================  IMPRESSÃO DO GABARITO  ====================== -->
     <script>
         document.getElementById("btnImprimirGabarito").addEventListener("click", () => {
             imprimirGabarito();
