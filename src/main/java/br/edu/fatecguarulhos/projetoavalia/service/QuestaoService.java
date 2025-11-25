@@ -13,8 +13,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.security.core.Authentication;
-
 
 import br.edu.fatecguarulhos.projetoavalia.dto.AlternativaDTO;
 import br.edu.fatecguarulhos.projetoavalia.dto.QuestaoDTO;
@@ -48,9 +46,10 @@ public class QuestaoService {
     @Autowired
     private DisciplinaRepository disciplinaRepository;
 
-    private final String PASTA_STATIC = "src/main/resources/static";
-    private final String PASTA_IMAGENS = "src/main/resources/static/imagens/questoes/";
+    //PASTA EXTERNA PARA IMAGENS NA EC2
+    private final String PASTA_IMAGENS = "/home/ec2-user/imagens/questoes/";
     private final String DIRETORIO_IMAGEM = "/imagens/questoes/";
+
 
     //-------------------- CONSULTAS --------------------
 
@@ -85,25 +84,24 @@ public class QuestaoService {
     	return alternativaRepository.countByQuestaoId(questaoId);
     }
     
-    /* adicionado por amanda */
     public List<Questao> listarPorCursosEDisciplinasDoProfessor(Professor professor) {
         return questaoRepository.findByCursosOrDisciplinas(professor.getCursos(), professor.getDisciplinas());
     }
     
     public List<Questao> pesquisar(String termo) {
         if (termo == null || termo.trim().isEmpty()) {
-            return questaoRepository.findAll(); // Se não digitar nada, retorna todas
+            return questaoRepository.findAll(); 
         }
         return questaoRepository.pesquisarPorTermo(termo);
     }
     
- // No QuestaoService.java - adicione este método
     public List<Questao> buscarQuestoesPorIds(List<Integer> ids) {
         if (ids == null || ids.isEmpty()) {
             return List.of();
         }
         return questaoRepository.findAllById(ids);
     }
+    
 //Adicionado por Leonardo para mostrar as questões marcadas na previa da prova
     
     public List<String> buscarSugestoes(String termo) {
@@ -210,18 +208,22 @@ public class QuestaoService {
                 extensaoImagem = nomeAntigo.substring(nomeAntigo.lastIndexOf("."));
             }
 
-            String novoNomeImagem = nomeImagem + extensaoImagem;
+            String novoNomeImagem = nomeImagem + "_" + System.currentTimeMillis() + extensaoImagem;
 
             Path pastaUpload = Paths.get(PASTA_IMAGENS);
             Files.createDirectories(pastaUpload);
 
-            Files.copy(file.getInputStream(), pastaUpload.resolve(novoNomeImagem), StandardCopyOption.REPLACE_EXISTING);
+            Files.copy(file.getInputStream(),
+                    pastaUpload.resolve(novoNomeImagem),
+                    StandardCopyOption.REPLACE_EXISTING);
 
             return DIRETORIO_IMAGEM + novoNomeImagem;
+
         } catch (IOException e) {
             throw new RuntimeException("Erro ao salvar imagem: " + e.getMessage());
         }
     }
+
     
   //-------------------- EXCLUIR IMAGEM NA PARTE DE ATUALIZAR QUESTÃO --------------------
     public void removerImagem(int id) {
@@ -230,7 +232,8 @@ public class QuestaoService {
         // Se tiver imagem salva, tenta excluir do disco
         if (questao.getImagem() != null && !questao.getImagem().isEmpty()) {
             try {
-                Path caminhoImagem = Paths.get(PASTA_STATIC + questao.getImagem());
+            	String nome = questao.getImagem().replace("/imagens/questoes/", "");
+            	Path caminhoImagem = Paths.get(PASTA_IMAGENS + nome);
                 Files.deleteIfExists(caminhoImagem);
             } catch (IOException e) {
                 System.err.println("Erro ao excluir imagem: " + e.getMessage());
@@ -293,7 +296,7 @@ public class QuestaoService {
         Optional<Questao> questaoOpt = questaoRepository.findById(id);
 
         if (questaoOpt.isPresent()) {
-        	dto.setImagem(salvarImagem(String.valueOf(dto.getId()), file));
+        	dto.setImagem(salvarImagem("questao_" + id, file));
         }
 
         return atualizar(id, dto);
@@ -306,19 +309,17 @@ public class QuestaoService {
         if (questaoOpt.isPresent()) {
             Questao questao = questaoOpt.get();
 
-            // Excluir imagem, se existir
             if (questao.getImagem() != null) {
                 try {
-                    Path caminhoImagem = Paths.get(PASTA_STATIC + questao.getImagem());
+                    String nome = questao.getImagem().replace("/imagens/questoes/", "");
+                    Path caminhoImagem = Paths.get(PASTA_IMAGENS + nome);
                     Files.deleteIfExists(caminhoImagem);
                 } catch (IOException e) {
                     System.err.println("Não foi possível excluir a imagem: " + e.getMessage());
                 }
             }
 
-            // Excluir alternativas da questão
             alternativaRepository.deleteByQuestao(questao);
-
             questaoRepository.deleteById(id);
         }
     }

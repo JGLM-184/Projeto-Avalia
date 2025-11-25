@@ -15,8 +15,8 @@ public class SecurityConfig {
 		
 		 http
 	        .authorizeHttpRequests(auth -> auth
-	        		//TORNA ESSAS ROTAS PÚBLICAS (NÃO PEDE LOGIN) PARA O DESENVOLVIMENTO
-	        	    .requestMatchers("/login/**", "/imagens/**","/css/**", "/js/**", "/erro403", "/error", "/teste/**", "/aluno/**").permitAll()
+	        		//TORNA ESSAS ROTAS PÚBLICAS (NÃO PEDE LOGIN)
+	        	    .requestMatchers("login",  "/login/**", "/imagens/**","/css/**", "/js/**", "/erro403", "/error", "/teste/**", "/aluno/**").permitAll()
 	        	    
 	        	    //QUALQUER USUÁRIO AUTENTICADO PODE ACESSAR ESSAS ROTAS
 	        	    .requestMatchers("/inicio/**", "/questao/**", "/provas/**", "/primeira-senha").authenticated()
@@ -28,6 +28,7 @@ public class SecurityConfig {
 	        //CUIDA DA PARTE DE LOGIN, CHAMA A API QUE TEM O LOGIN.HTML E LEVA AO INICIO.HTML
             .formLogin(form -> form
                 .loginPage("/login")
+                .loginProcessingUrl("/login")
                 .defaultSuccessUrl("/inicio", true)
                 .permitAll()
             )
@@ -46,8 +47,6 @@ public class SecurityConfig {
                     .accessDeniedPage("/erro403")
             )
 
-            //CSRF: PROTEÇÃO CONTRA REQUISIÇÕES MALICIOSAS USANDO A SESSÃO DO USUÁRIO
-            //PODE SER DESABILITADA EM TESTES PARA FACILITAR
             .csrf(csrf -> csrf.disable());
 
         return http.build();
