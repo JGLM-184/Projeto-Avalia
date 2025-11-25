@@ -725,7 +725,16 @@ body {
     padding: 5px;
 }
 
+.btn.btn-remover {
+    background-color: rgb(255, 155, 121);
+    color: var(--text-light);
+}
 
+.btn.btn-remover:hover {
+    background-color: rgb(255, 128, 0);
+    color: black;
+    border-color: rgb(242, 118, 6);
+}
 
 /* ------------------------------------------- */
 /* COMPONENTES ESPECÍFICOS DO COORDENADOR */

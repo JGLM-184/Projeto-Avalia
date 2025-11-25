@@ -222,6 +222,25 @@ public class QuestaoService {
             throw new RuntimeException("Erro ao salvar imagem: " + e.getMessage());
         }
     }
+    
+  //-------------------- EXCLUIR IMAGEM NA PARTE DE ATUALIZAR QUESTÃO --------------------
+    public void removerImagem(int id) {
+        Questao questao = buscarPorId(id);
+
+        // Se tiver imagem salva, tenta excluir do disco
+        if (questao.getImagem() != null && !questao.getImagem().isEmpty()) {
+            try {
+                Path caminhoImagem = Paths.get(PASTA_STATIC + questao.getImagem());
+                Files.deleteIfExists(caminhoImagem);
+            } catch (IOException e) {
+                System.err.println("Erro ao excluir imagem: " + e.getMessage());
+            }
+        }
+
+        // Remove referência da imagem no banco
+        questao.setImagem(null);
+        questaoRepository.save(questao);
+    }
 
     //-------------------- ATUALIZAR --------------------
     public Optional<Questao> atualizar(int id, QuestaoDTO dto) {
@@ -303,4 +322,5 @@ public class QuestaoService {
             questaoRepository.deleteById(id);
         }
     }
+    
 }

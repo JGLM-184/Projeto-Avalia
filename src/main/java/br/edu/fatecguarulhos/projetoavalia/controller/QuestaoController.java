@@ -171,36 +171,55 @@ public class QuestaoController {
     
     @GetMapping("/gerenciar/editar/{id}")
     public String editarQuestao(@PathVariable int id, Model model) {  
-    	
-    	model.addAttribute("paginaAtiva", "bancoQuestoes");
+        
+        //Pega o autor logado
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        Professor autorLogado = professorRepository.findByEmail(auth.getName())
+                .orElseThrow(() -> new RuntimeException("Professor não encontrado"));
+        
+        model.addAttribute("paginaAtiva", "bancoQuestoes");
         model.addAttribute("pageTitle", "Editar questão");
-    	
+        
+        model.addAttribute("autorLogado", autorLogado);  // 🔥 IMPORTANTE
+        
         model.addAttribute("questaoDTO", new QuestaoDTO(questaoService.buscarPorId(id)));
         model.addAttribute("professores", professorService.listarTodos());
-        model.addAttribute("cursos", cursoService.listarTodos());
         model.addAttribute("qntAlternativas", questaoService.contarAlternativasPorId(id));
 
         // Busca as disciplinas com base no curso da questão
         model.addAttribute("disciplinas", disciplinaService.buscarPorCursoQuestaoId(id));
-        
+
         model.addAttribute("isEdicaoQuestao", true);
         
-        return "gerenciarQuestoes"; // ou outra view específica de edição
+        return "gerenciarQuestoes";
     }
-
     
     @PostMapping("/gerenciar/atualizar/{id}")
     public String atualizarQuestao(@PathVariable int id,
                                    @ModelAttribute QuestaoDTO dto,
-                                   @RequestParam(value = "file", required = false) MultipartFile file) {
+                                   @RequestParam(value = "file", required = false) MultipartFile file,
+                                   @RequestParam(value = "removerImagem", required = false) String removerImagem) {
+
+        Questao questaoAtual = questaoService.buscarPorId(id);
+
+        // Se clicou no botão remover imagem
+        if ("true".equals(removerImagem)) {
+            questaoService.removerImagem(id);
+            dto.setImagem(null); // garante que será salva como null
+        } else {
+            // Mantém a imagem antiga se nada foi feito
+            dto.setImagem(questaoAtual.getImagem());
+        }
+
+        // Se enviou nova imagem
         if (file != null && !file.isEmpty()) {
             questaoService.atualizar(id, dto, file);
         } else {
             questaoService.atualizar(id, dto);
         }
+
         return "redirect:/questao/banco";
     }
-    
 
     @GetMapping("/gerenciar/excluir/{id}")
     public String excluirQuestao(@PathVariable int id) {

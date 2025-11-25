@@ -27,7 +27,14 @@
 			<!-- Tag de usuário -->
 			<div class="mb-3">
 			    <label class="form-label">Autor</label>
-			    <input type="text" class="form-autor" th:value="${questaoDTO.autor.nome}" disabled>
+
+			    <!-- Campo visível (apenas leitura) -->
+			    <input type="text" class="form-autor" 
+			           th:value="${questaoDTO.autor.nome}" 
+			           disabled>
+
+			    <!-- Campo oculto para enviar o ID do autor no POST -->
+			    <input type="hidden" th:field="*{autor.id}">
 			</div>
 				
 	            <div class="row">
@@ -35,17 +42,17 @@
 					    <label class="form-label">Curso</label>
 					    <select id="cursoSelect" class="form-select" th:field="*{curso.id}" required>
 					        <option value="0" disabled selected>Selecione...</option>
-					        <option th:each="curso : ${cursos}"
+					        <option th:each="curso : ${autorLogado.cursos}"
 					                th:value="${curso.id}"
 					                th:text="${curso.nome}"></option>
 					    </select>
 					</div>
-					
+				
 					<div class="col-md-4 mb-3">
 					    <label class="form-label">Disciplina</label>
-					    <select id="disciplinaSelect" class="form-select" th:field="*{disciplina.id}" required>
-					        <option value="0" disabled selected>Selecione uma disciplina...</option>
-					    </select>
+						<select id="disciplinaSelect" class="form-select" th:field="*{disciplina.id}" data-selected="${questaoDTO.disciplina.id}">
+						    <option value="0" disabled>Selecione...</option>
+						</select>
 					</div>
 	            </div>
 
@@ -59,17 +66,43 @@
 	                <textarea class="form-control quebraTexto" th:field="*{enunciado}" rows="3" required></textarea>
 	            </div>
 
-	            <div class="mb-3">
-	                <label class="form-label">Imagem (opcional)</label>
-					
+				<div class="mb-3">
+				    <label class="form-label">Imagem (opcional)</label>
+
 					<div class="image-placeholder-edicao">
-					    <input type="file" class="image-input" name="file" accept="image/*" onchange="previewImage(event)">
-					    <div class="image-content">
-					        <span class="material-icons">add</span>
+
+					    <!-- Input invisível -->
+					    <input type="file" class="image-input" name="file"
+					           style="display:none;" accept="image/*">
+
+					    <!-- Se tem imagem -->
+					    <img class="image-preview"
+					         th:if="${questaoDTO.imagem != null and questaoDTO.imagem != ''}"
+					         th:src="${questaoDTO.imagem}"
+					         alt="Imagem da Questão"
+					         style="max-width:100%; max-height:100%;">
+
+					    <!-- Botão remover imagem -->
+					    <button type="button"
+					            th:if="${questaoDTO.imagem != null and questaoDTO.imagem != ''}"
+					            id="btnRemoverImagem"
+					            class="btn btn-remover btn-sm"
+					            style="position:absolute; top:5px; right:5px;">
+					        Remover
+					    </button>
+
+					    <!-- Se NÃO tem imagem -->
+					    <div class="image-content"
+					         th:if="${questaoDTO.imagem == null or questaoDTO.imagem == ''}"
+					         style="text-align:center; color:#666;">
+					        <span class="material-icons" style="font-size:40px;">add</span>
 					        <p>Adicionar imagem</p>
 					    </div>
 					</div>
-	            </div>
+
+				    <!-- Campo oculto indicando remoção -->
+				    <input type="hidden" name="removerImagem" id="removerImagemInput" value="false">
+				</div>
 				
 				<div class="mb-3">
 				    <label class="form-label">Quantidade de Alternativas</label>
@@ -81,26 +114,29 @@
 				</div>
 				
 				<h5>Alternativas</h5>
-				
 				<div id="alternativasContainerEditar">
 				    <!-- Render inicial das alternativas vindas do servidor -->
 				    <div th:each="alt, iterStat : *{alternativas}" class="mb-3 alternativa-item">
-				        <div class="input-group">
-				            <span class="input-group-text">[[${(iterStat.index + 1) + ')'}]]</span>
-				            <input type="text" class="form-control"
-				                   th:field="*{alternativas[__${iterStat.index}__].texto}"
-				                   placeholder="Digite o texto da alternativa...">
-				            <input type="radio"
-				                   name="alternativaCorretaIndex"
-				                   th:value="${iterStat.index}"
-				                   th:checked="${alt.correto}" 
-				                   required/> Correta
-				        </div>
+						<div class="input-group" style="display: flex; align-items: center; gap: 10px;">
+						    <input type="radio"
+						           name="alternativaCorretaIndex"
+						           th:value="${iterStat.index}"
+						           th:checked="${alt.correto}" required>
+
+						    <span>
+						        [[${T(java.lang.Character).toString(65 + iterStat.index)}]])
+						    </span>
+
+						    <input type="text"
+						           class="alternative-item"
+						           th:field="*{alternativas[__${iterStat.index}__].texto}"
+						           placeholder="Digite o texto da alternativa..." />
+						</div>
 				    </div>
 				</div>
 
 	            <div class="text-end mt-4">
-	                <button type="submit" class="btn btn-primary">Atualizar Questão</button>
+	                <button type="submit" class="btn btn-normal">Atualizar Questão</button>
 	                <a th:href="@{/questao/banco}" class="btn btn-secondary">Cancelar</a>
 	            </div>
 	        </div>
@@ -116,29 +152,31 @@
     const selectEditar = document.getElementById("quantidadeAlternativasEditar");
 
     function gerarAlternativasEditar(qtd) {
-        // Captura os valores já existentes (para não perder o que o usuário digitou)
         const valoresExistentes = Array.from(containerEditar.querySelectorAll('input[type="text"]'))
             .map(input => input.value);
+
         const indexCorreta = containerEditar.querySelector('input[type="radio"]:checked')?.value;
 
-        containerEditar.innerHTML = ""; // limpa o container
+        containerEditar.innerHTML = "";
 
         for (let i = 0; i < qtd; i++) {
             const div = document.createElement("div");
             div.classList.add("mb-3", "alternativa-item");
 
+            const letra = String.fromCharCode(65 + i); // A, B, C...
+
             const textoExistente = valoresExistentes[i] || "";
             const checked = indexCorreta == i ? "checked" : "";
 
             div.innerHTML = `
-                <div class="input-group">
-                    <span class="input-group-text">${i+1})</span>
-                    <input type="text" class="form-control"
+                <div class="input-group" style="display: flex; align-items: center; gap: 10px;">
+                    <input type="radio" name="alternativaCorretaIndex" value="${i}" ${checked} required>
+                    <span>${letra})</span>
+                    <input type="text" class="alternative-item"
                         name="alternativas[${i}].texto"
                         value="${textoExistente}"
                         placeholder="Digite o texto da alternativa..."
                         required>
-                    <input type="radio" name="alternativaCorretaIndex" value="${i}" ${checked} required> Correta
                 </div>
             `;
             containerEditar.appendChild(div);
@@ -150,64 +188,139 @@
     });
 </script>
 
+
 <!--  Script para as disciplinas mudarem de acordo com o curso selecionado -->
 <script>
 document.addEventListener("DOMContentLoaded", function() {
+
     const cursoSelect = document.getElementById("cursoSelect");
     const disciplinaSelect = document.getElementById("disciplinaSelect");
 
-    cursoSelect.addEventListener("change", function() {
-        const cursoId = this.value;
-
+    // Função que carrega disciplinas
+    function carregarDisciplinas(cursoId, disciplinaSelecionada) {
         if (!cursoId) return;
 
-        fetch(`/teste/api/disciplinas/por-curso/${cursoId}`)
+        fetch(`/questao/disciplinas/api/por-curso/${cursoId}`)
             .then(response => {
                 if (!response.ok) throw new Error("Erro ao buscar disciplinas");
                 return response.json();
             })
             .then(disciplinas => {
-                disciplinaSelect.innerHTML = '<option value="" disabled selected>Selecione...</option>';
+                disciplinaSelect.innerHTML = '<option value="0" disabled>Selecione...</option>';
 
                 disciplinas.forEach(d => {
                     const option = document.createElement("option");
                     option.value = d.id;
                     option.textContent = d.nome;
+
+                    // Seleciona automaticamente a disciplina da questão
+                    if (disciplinaSelecionada && Number(disciplinaSelecionada) === d.id) {
+                        option.selected = true;
+                    }
+
                     disciplinaSelect.appendChild(option);
                 });
             })
             .catch(err => {
                 console.error(err);
-                disciplinaSelect.innerHTML = '<option value="" disabled selected>Erro ao carregar disciplinas</option>';
+                disciplinaSelect.innerHTML =
+                    '<option value="0" disabled selected>Erro ao carregar disciplinas</option>';
             });
+    }
+
+    // Carrega disciplinas automaticamente ao abrir a tela
+    const cursoInicial = cursoSelect.value;
+    const disciplinaInicial = disciplinaSelect.dataset.selected;
+
+    if (cursoInicial && cursoInicial !== "0") {
+        carregarDisciplinas(cursoInicial, disciplinaInicial);
+    }
+
+    // Carrega disciplinas ao trocar o curso
+    cursoSelect.addEventListener("change", function() {
+        carregarDisciplinas(this.value, null);
     });
+
 });
 </script>
 
+
 <!-- Script para mostrar imagem dentro da area -->
 <script>
-function previewImage(event) {
-    const placeholder = event.target.closest('.image-placeholder');
-    const content = placeholder.querySelector('.image-content');
+document.addEventListener("DOMContentLoaded", function() {
 
-    // cria um elemento <img> com a prévia
-    const file = event.target.files[0];
-    if (file) {
+    const placeholder = document.querySelector('.image-placeholder-edicao');
+    const input = placeholder.querySelector('.image-input');
+    const content = placeholder.querySelector('.image-content');
+    const preview = placeholder.querySelector('.image-preview');
+
+    // Tornar toda a área clicável
+    placeholder.addEventListener("click", () => input.click());
+
+    // Atualizar visual quando escolher nova imagem
+    input.addEventListener('change', function(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
         const reader = new FileReader();
         reader.onload = function(e) {
-            // cria ou atualiza o preview
-            let img = placeholder.querySelector('.image-preview');
-            if (!img) {
-                img = document.createElement('img');
-                img.classList.add('image-preview');
+
+            if (preview) {
+                preview.src = e.target.result;
+            } else {
+                // Criar a imagem se ainda não existir
+                const img = document.createElement("img");
+                img.classList.add("image-preview");
+                img.style.maxWidth = "100%";
+                img.style.maxHeight = "100%";
+                img.src = e.target.result;
                 placeholder.appendChild(img);
             }
-            img.src = e.target.result;
-            content.style.display = 'none'; // esconde o texto/ícone
+
+            if (content) content.style.display = 'none';
         };
         reader.readAsDataURL(file);
+    });
+
+});
+</script>
+
+<!-- Script para remover imagem -->
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+
+    const btnRemover = document.getElementById("btnRemoverImagem");
+    const removerInput = document.getElementById("removerImagemInput");
+    const placeholder = document.querySelector(".image-placeholder-edicao");
+    const preview = document.querySelector(".image-preview");
+
+    if (btnRemover) {
+        btnRemover.addEventListener("click", function(event) {
+            event.stopPropagation(); // evitar abrir seleção de arquivo
+
+            // Marca que deve remover no backend
+            removerInput.value = "true";
+
+            // Some com a imagem
+            if (preview) preview.remove();
+
+            // Some com o botão
+            btnRemover.remove();
+
+            // Volta o bloco "Adicionar imagem"
+            const content = document.createElement("div");
+            content.classList.add("image-content");
+            content.style.textAlign = "center";
+            content.style.color = "#666";
+            content.innerHTML = `
+                <span class="material-icons" style="font-size:40px;">add</span>
+                <p>Adicionar imagem</p>
+            `;
+            placeholder.appendChild(content);
+        });
     }
-}
+
+});
 </script>
 
 </body>
