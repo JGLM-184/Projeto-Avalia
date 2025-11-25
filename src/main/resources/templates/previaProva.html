@@ -12,82 +12,6 @@
 
     <link rel="icon" type="image/png" href="/imagens/logo.png">
 
-    <style>
-        body.modo-impressao .no-print {
-            display: none !important;
-        }
-        @media print {
-            .no-print {
-                display: none !important;
-            }
-            body {
-                margin: 15mm;
-                font-size: 15px;
-            }
-            .pdf-question {
-                page-break-inside: avoid;
-                margin-bottom: 18px;
-            }
-        }
-		
-        /* Cabeçalho organizado em tabela */
-        .header-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 20px;
-            font-size: 15px;
-        }
-        .header-table td {
-            padding: 4px 6px;
-        }
-
-        /* Gabarito compacto */
-        .gabarito-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 8px;
-        }
-        .gabarito-item {
-            border: 1px solid #000;
-            padding: 6px;
-            text-align: center;
-            font-size: 14px;
-        }
-
-        /* Ajuste gabarito para não empurrar páginas */
-        .pdf-answer-sheet {
-            display: flex;
-            justify-content: center; /* centraliza horizontalmente */
-            align-items: center;     /* centraliza verticalmente */
-            margin-bottom: 20px;     /* espaço seguro */
-        }
-
-        .gabarito-enem-table {
-            border-collapse: collapse;
-            font-size: 20px;
-        }
-
-        .gabarito-enem-table td, .gabarito-enem-table th {
-            border: 1px solid #000;
-            text-align: center;
-            padding: 2px;
-            width: 28px;
-            height: 28px;
-        }
-
-        .gabarito-enem-table .num-questao {
-            width: 36px;
-            font-weight: bold;
-            padding-right: 4px;
-        }
-
-        .gabarito-enem-table .alt {
-            width: 28px;
-        }
-		
-		
-    </style>
-
 </head>
 <body class="coordinator-layout">
 
@@ -100,7 +24,7 @@
                 <div class="col-12">
                     <a th:href="@{'/provas/editar/' + ${provaId}}" class="btn btn-outline-secondary">
                         <span class="material-icons">arrow_back</span>
-                        Voltar para edição
+                        Voltar
                     </a>
                 </div>
             </div>
@@ -213,7 +137,7 @@
 
 
             <a th:href="@{'/provas/detalhes/' + ${provaId} + '?embaralhar=true'}" 
-               class="btn btn-success">
+               class="btn btn-cancel">
                 <span class="material-icons" style="font-size:16px;">shuffle</span>
                 Embaralhar
             </a>
