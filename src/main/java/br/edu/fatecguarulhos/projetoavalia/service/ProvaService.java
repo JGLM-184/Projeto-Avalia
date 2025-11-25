@@ -28,6 +28,8 @@ import br.edu.fatecguarulhos.projetoavalia.repository.ProvaDisciplinaRepository;
 import br.edu.fatecguarulhos.projetoavalia.repository.ProvaQuestaoRepository;
 import br.edu.fatecguarulhos.projetoavalia.repository.ProvaRepository;
 import br.edu.fatecguarulhos.projetoavalia.repository.QuestaoRepository;
+import br.edu.fatecguarulhos.projetoavalia.repository.TentativaSimuladoRepository;
+import br.edu.fatecguarulhos.projetoavalia.repository.TentativaSimuladoRepository;
 import jakarta.transaction.Transactional;
 
 @Service
@@ -42,6 +44,9 @@ public class ProvaService {
 
     @Autowired
     private ProvaQuestaoRepository provaQuestaoRepository;
+    
+    @Autowired
+    private TentativaSimuladoRepository tentativaSimuladoRepository;
     
     @Autowired
     private ProfessorRepository professorRepository;
@@ -200,7 +205,8 @@ public class ProvaService {
 
         // Remove associações antes da exclusão
         provaQuestaoRepository.deleteByProva(prova);
-        provaDisciplinaRepository.deleteByProva(prova);
+        provaDisciplinaRepository.deleteByProva(prova);	
+        tentativaSimuladoRepository.deleteBySimulado(prova);
 
         provaRepository.delete(prova);
     }
