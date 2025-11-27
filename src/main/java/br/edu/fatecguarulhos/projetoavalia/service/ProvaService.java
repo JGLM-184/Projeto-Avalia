@@ -243,7 +243,6 @@ public class ProvaService {
 
         Prova prova = provaRepository.findById(provaId).orElseThrow();
 
-        // Exemplo de chave: "quantidades[12]"
         for (String chave : quantidades.keySet()) {
             String valor = quantidades.get(chave);
 
@@ -263,27 +262,30 @@ public class ProvaService {
             // Extrair ID da disciplina da string "quantidades[ID]"
             int disciplinaId = extrairIdDisciplina(chave);
 
-            List<Questao> questoesDaDisciplina = 
+            List<Questao> questoesDaDisciplina =
                     questaoRepository.findByDisciplinaId(disciplinaId);
-            
-            // Se a prova for simulado, filtrar somente questões simuladas
+
+            // Se for simulado, filtrar somente questões marcadas como simulado
             if (prova.isSimulado()) {
                 questoesDaDisciplina = questoesDaDisciplina.stream()
                         .filter(Questao::isSimulado)
-                        .toList();
+                        .toList(); // retorna lista possivelmente imutável
             }
 
-            if (questoesDaDisciplina.isEmpty())
+            if (questoesDaDisciplina == null || questoesDaDisciplina.isEmpty())
                 continue;
 
-            // Limitar à quantidade existente
-            int limite = Math.min(quantidadeSolicitada, questoesDaDisciplina.size());
+            // Fallback: garantir lista mutável antes de embaralhar
+            List<Questao> listaMutavel = new ArrayList<>(questoesDaDisciplina);
 
-            // Embaralhar para pegar aleatórias
-            Collections.shuffle(questoesDaDisciplina);
+            // Limitar à quantidade existente
+            int limite = Math.min(quantidadeSolicitada, listaMutavel.size());
+
+            // Embaralhar com segurança
+            Collections.shuffle(listaMutavel);
 
             // Selecionar as primeiras N
-            List<Questao> selecionadas = questoesDaDisciplina.subList(0, limite);
+            List<Questao> selecionadas = listaMutavel.subList(0, limite);
 
             // Criar links ProvaQuestao
             for (Questao q : selecionadas) {
@@ -296,14 +298,13 @@ public class ProvaService {
     }
 
     private int extrairIdDisciplina(String chave) {
-        // chave vem no formato: quantidades[10]
         try {
             return Integer.parseInt(chave.replace("quantidades[", "").replace("]", ""));
         } catch (Exception e) {
             return 0;
         }
     }
-
+    
     public ProvaDisciplina adicionarDisciplina(ProvaDisciplinaDTO provaDisciplinaDTO) {
         ProvaDisciplina provaDisciplina = new ProvaDisciplina();
         

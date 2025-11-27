@@ -608,13 +608,41 @@ document.addEventListener("DOMContentLoaded", function () {
 
 <script>
 function copiarCodigo(e, el) {
-    e.preventDefault(); // impede navegação
+    e.preventDefault();
+
     const codigo = el.innerText.replace('Código: ', '').trim();
 
-    navigator.clipboard.writeText(codigo)
-        .then(() => alert("Código copiado!"))
-        .catch(() => alert("Erro ao copiar."));
+    // --- Tenta usar a API moderna ---
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(codigo)
+            .then(() => alert("Código copiado!"))
+            .catch(() => fallbackCopiar(codigo));
+    } else {
+        fallbackCopiar(codigo);
+    }
 }
+
+function fallbackCopiar(texto) {
+    // Cria um textarea oculto
+    const area = document.createElement("textarea");
+    area.value = texto;
+    area.style.position = "fixed";   // impede rolagem
+    area.style.top = "-9999px";
+    document.body.appendChild(area);
+
+    area.select();
+    area.setSelectionRange(0, area.value.length); // iOS compatível
+
+    try {
+        document.execCommand("copy");
+        alert("Código copiado!");
+    } catch (err) {
+        alert("Não foi possível copiar automaticamente. Copie manualmente.");
+    }
+
+    document.body.removeChild(area);
+}
+
 </script>
 
 <script>

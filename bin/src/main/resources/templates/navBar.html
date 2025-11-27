@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
 </head>
@@ -13,26 +13,28 @@
     <ul class="nav-menu">
 		<!-- Navbar: Cadastro de Questão -->
 		<li class="nav-item" th:classappend="${paginaAtiva == 'cadastroQuestao'} ? ' active' : ''">
-		    <a th:href="@{/cadastroQuestao}"> <span class="material-icons">description</span> Cadastro de Questão </a>
+		    <a th:href="@{/questao/cadastrar}"> <span class="material-icons">description</span> Cadastro de Questão </a>
 		</li>
 		
 		<!-- Navbar: Banco de Questões -->
 		<li class="nav-item" th:classappend="${paginaAtiva == 'bancoDeQuestoes'} ? ' active' : ''">
-			<a th:href="@{/bancoDeQuestoes}"> <span class="material-icons">search</span> Banco de Questões</a>
+			<a th:href="@{/questao/banco}"> <span class="material-icons">search</span> Banco de Questões</a>
 		</li>
 		
 		<!-- Navbar: Montar Prova -->
         <li class="nav-item" th:classappend="${paginaAtiva == 'montarProva'} ? ' active' : ''">
-		    <a th:href="@{/montarProva}"> <span class="material-icons">edit_note</span> Montar Prova </a>
+		    <a th:href="@{/provas/montar}"> <span class="material-icons">edit_note</span> Montar Prova </a>
 		</li>
 		
-		<!-- Navbar: Banco de provas -->
+		<!-- Navbar: Banco de Provas -->
         <li class="nav-item" th:classappend="${paginaAtiva == 'bancoProvas'} ? ' active' : ''">
-			<a th:href="@{/bancoProvas}"> <span class="material-icons">folder_open</span> Banco de Provas</a>
+			<a th:href="@{/provas/banco}"> <span class="material-icons">folder_open</span> Banco de Provas</a>
 		</li>
 		
-		<!-- Navbar: Gerenciar Usuários -->
-        <li class="nav-item"><a><span class="material-icons">group</span> Área do coordenador</a></li>
+		<!-- Navbar: Área do Coordenador -->
+		<li class="nav-item" sec:authorize="hasRole('ADMIN')" th:classappend="${paginaAtiva == 'painel'} ? ' active ' : ''">
+		    <a th:href="@{/coordenador/painel}"> <span class="material-icons">group</span> Área do coordenador</a>
+		</li>
     </ul>
     </nav>
 

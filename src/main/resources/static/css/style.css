@@ -1233,6 +1233,19 @@ body {
 	justify-content: center;
 }
 
+.btn.btn-outline-voltar {
+	background-color: rgb(147, 147, 147);
+	color: #fff;
+    border: none;
+	width: 12rem;
+	height: 2.3rem;
+	font-size: 1rem;
+	text-align: center;
+	align-items: center;
+	align-content: center;
+	justify-content: center;
+}
+
 .btn {
     display: flex;              /* Necessário para alinhar ícone e texto */
     align-items: center;        /* Alinha verticalmente ao centro */

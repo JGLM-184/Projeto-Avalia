@@ -3,107 +3,195 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Banco de Questões</title>
-	<link rel="stylesheet" th:href="@{/css/style.css}">
+    <title>Gerenciar Disciplinas</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+	
+	<link rel="icon" type="image/png" href="/imagens/logo.png">
 </head>
-
-<body class="coordinator-layout">
-<!-- Navbar -->
+<body class="coordinator-layout bg-light">
 <div th:replace="~{navbar :: navbar}"></div>
-<body class="bg-light">
-    <div class="container py-5">
-        <h1 class="text-center mb-4">Gerenciar Disciplinas</h1>
 
-        <!-- ================= FORMULÁRIO ================= -->
-        <div class="card shadow-sm mb-4">
-            <div class="card-body">
-                <h5 th:text="${isEdicaoDisciplina} ? 'Editar Disciplina' : 'Cadastrar Nova Disciplina'" class="card-title mb-3"></h5>
+<div class="container py-5">
 
-                <!-- Formulário de criação -->
-                <form th:if="${isEdicaoDisciplina != true}" th:action="@{/disciplinas/salvar}" method="post">
-                    <div class="mb-3">
-                        <label for="nome" class="form-label">Nome da Disciplina</label>
-                        <input type="text" id="nome" name="nome" th:value="${disciplinaDTO.nome}" class="form-control" placeholder="Digite o nome da disciplina" required>
-                    </div>
+    <!-- Formulário de criação -->
+    <div class="card-novaDisciplina shadow-sm mb-4" th:if="${!isEdicaoDisciplina}">
+        <div class="card-body">
+            <h5 class="card-title mb-3">Cadastrar Nova Disciplina</h5>
+            <form th:action="@{/disciplinas/salvar}" method="post">
+				
+				<div class="row align-items-end">
+				    <div class="col-md-7">
+				        <label class="form-label">Disciplina</label>
+				        <input type="text" name="nome" th:value="${disciplinaDTO.nome}" class="form-control"
+				               placeholder="Digite o nome da disciplina" required>
+				    </div>
 
-                    <div class="mb-3">
-                        <label for="curso" class="form-label">Curso</label>
-                        <select id="curso" name="curso" class="form-select" required>
-                            <option value="" disabled selected>Selecione um curso</option>
-                            <option th:each="curso : ${cursos}" th:value="${curso.id}" th:text="${curso.nome}"></option>
-                        </select>
-                    </div>
+				    <div class="col-md-3">
+				        <label class="form-label">Curso</label>
+				        <select name="curso" class="form-select" required>
+				            <option value="" disabled selected>Selecione um curso</option>
+				            <option th:each="curso : ${cursos}" th:value="${curso.id}" th:text="${curso.nome}"></option>
+				        </select>
+				    </div>
 
-                    <button type="submit" class="btn btn-success">Salvar</button>
-                </form>
-
-                <!-- Formulário de edição -->
-                <form th:if="${isEdicaoDisciplina == true}" th:action="@{'/disciplinas/atualizar/' + ${disciplinaDTO.id}}" method="post">
-                    <div class="mb-3">
-                        <label for="nome" class="form-label">Nome da Disciplina</label>
-                        <input type="text" id="nome" name="nome" th:value="${disciplinaDTO.nome}" class="form-control" required>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="curso" class="form-label">Curso</label>
-                        <select id="curso" name="curso" class="form-select" required>
-                            <option value="" disabled>Selecione um curso</option>
-                            <option th:each="curso : ${cursos}"
-                                    th:value="${curso.id}"
-                                    th:text="${curso.nome}"
-                                    th:selected="${disciplinaDTO.curso != null} ? ${curso.id} == ${disciplinaDTO.curso.id} : false">
-                            </option>
-                        </select>
-                    </div>
-
-                    <button type="submit" class="btn btn-primary">Atualizar</button>
-                    <a th:href="@{/disciplinas/painel}" class="btn btn-secondary ms-2">Cancelar</a>
-                </form>
-            </div>
-        </div>
-
-        <!-- ================= LISTA DE DISCIPLINAS ================= -->
-        <div class="card shadow-sm">
-            <div class="card-body">
-                <h5 class="card-title mb-3">Lista de Disciplinas</h5>
-
-                <table class="table table-bordered table-hover align-middle">
-                    <thead class="table-light">
-                        <tr>
-                            <th>ID</th>
-                            <th>Nome</th>
-                            <th>Curso</th>
-                            <th class="text-center" style="width: 180px;">Ações</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr th:each="disciplina : ${disciplinas}">
-                            <td th:text="${disciplina.id}"></td>
-                            <td th:text="${disciplina.nome}"></td>
-                            <td th:text="${disciplina.curso.nome}"></td>
-                            <td class="text-center">
-                                <a th:href="@{'/disciplinas/editar/' + ${disciplina.id}}" class="btn btn-sm btn-warning">Editar</a>
-                                <a th:href="@{'/disciplinas/excluir/' + ${disciplina.id}}"
-                                   onclick="return confirm('Tem certeza que deseja excluir esta disciplina?');"
-                                   class="btn btn-sm btn-danger ms-1">Excluir</a>
-                            </td>
-                        </tr>
-                        <tr th:if="${#lists.isEmpty(disciplinas)}">
-                            <td colspan="4" class="text-center text-muted">Nenhuma disciplina cadastrada.</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <div class="text-center mt-4">
-            <a th:href="@{/teste}" class="btn btn-outline-secondary">Voltar à Página de Testes</a>
+				    <div class="col-md-1 align-items-end">
+				        <button class="btn btn-normal" style="width: 8rem;">Salvar</button>
+				    </div>
+				</div>
+            </form>
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Lista de Disciplinas -->
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <h5 class="card-title mb-3">Lista de Disciplinas</h5>
+            <table class="table table-bordered table-hover align-middle">
+                <thead class="table-cabecalho">
+                <tr>
+                    <th>ID</th>
+                    <th>Nome</th>
+                    <th>Curso</th>
+                    <th class="text-center">Ações</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="disciplina : ${disciplinas}">
+                    <td th:text="${disciplina.id}"></td>
+                    <td th:text="${disciplina.nome}"></td>
+                    <td th:text="${disciplina.curso.nome}"></td>
+                    <td class="text-center">
+                        <button class="btn action-btn" style="background: rgb(224, 221, 255)" data-bs-toggle="modal" data-bs-target="#editModal"
+                                th:attr="data-id=${disciplina.id}, data-nome=${disciplina.nome}, data-curso=${disciplina.curso.id}">
+								<span class="material-icons" style="font-size:16px;">edit</span>
+                        </button>
+						
+                        <a th:href="@{'/disciplinas/excluir/' + ${disciplina.id}}" 
+						   class="btn action-btn delete-btn" style="background: rgb(247, 202, 202); margin-left: 0.5rem"
+                           th:attr="data-id=${disciplina.id}, data-nome=${disciplina.nome}">
+						   <span class="material-icons" style="font-size:16px;">delete</span>
+						</a>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(disciplinas)}">
+                    <td colspan="4" class="text-center text-muted">Nenhuma disciplina cadastrada.</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+	<div class="text-center mt-4">
+        <a th:href="@{'/coordenador/painel'}" class="btn btn-outline-secondary">Voltar ao painel</a>
+    </div>
+</div>
+
+<!-- Modal de edição -->
+<div class="modal fade" id="editModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form id="formEditarDisciplina" method="post">
+                <div class="modal-header">
+                    <h5 class="modal-title">Editar Disciplina</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Nome</label>
+                        <input type="text" id="editarDisciplinaNome" class="form-control" name="nome" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Curso</label>
+                        <select id="editarDisciplinaCurso" class="form-select" name="curso" required>
+                            <option value="" disabled>Selecione um curso</option>
+                            <option th:each="curso : ${cursos}" th:value="${curso.id}" th:text="${curso.nome}"></option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Atualizar</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de confirmação de exclusão -->
+<div class="modal fade" id="confirmDeleteModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title">Confirmar Exclusão</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                Tem certeza que deseja excluir esta disciplina?
+                <div class="mt-2 text-muted small" id="disciplinaToDeleteInfo"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <a id="confirmDeleteBtn" class="btn btn-danger">Excluir</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de mensagem -->
+<div class="modal fade" id="messageModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body text-center">
+                <p id="messageText"></p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" data-bs-dismiss="modal">Ok</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script th:inline="javascript">
+document.addEventListener("click", function(e) {
+    if (e.target.matches("[data-bs-target='#editModal']")) {
+        const id = e.target.getAttribute("data-id");
+        const nome = e.target.getAttribute("data-nome");
+        const cursoId = e.target.getAttribute("data-curso");
+
+        document.getElementById("editarDisciplinaNome").value = nome;
+        document.getElementById("editarDisciplinaCurso").value = cursoId;
+        document.getElementById("formEditarDisciplina").action = "/disciplinas/atualizar/" + id;
+    }
+});
+
+document.querySelectorAll('.delete-btn').forEach(btn => {
+    btn.addEventListener('click', function(e) {
+        e.preventDefault();
+        const link = this.getAttribute('href');
+        const nome = this.getAttribute('data-nome');
+        document.getElementById('confirmDeleteBtn').setAttribute('href', link);
+        document.getElementById('disciplinaToDeleteInfo').innerText = "Disciplina: " + nome;
+        new bootstrap.Modal(document.getElementById('confirmDeleteModal')).show();
+    });
+});
+
+window.addEventListener("DOMContentLoaded", () => {
+    const error = /*[[${errorMessage}]]*/ null;
+    const success = /*[[${successMessage}]]*/ null;
+
+    if (error !== null && error !== "") {
+        document.getElementById("messageText").innerText = error;
+        new bootstrap.Modal(document.getElementById("messageModal")).show();
+    } else if (success !== null && success !== "") {
+        document.getElementById("messageText").innerText = success;
+        new bootstrap.Modal(document.getElementById("messageModal")).show();
+    }
+});
+</script>
+
 </body>
 </html>

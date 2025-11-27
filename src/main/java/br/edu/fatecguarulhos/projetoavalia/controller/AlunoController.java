@@ -29,6 +29,11 @@ public class AlunoController {
     @Autowired
     private ProvaService provaService;
 
+    @GetMapping("/voltar-login")
+    public String voltarLogin() {
+        return "login";
+    }
+    
     @GetMapping("/buscar-simulado")
     public String procurarSimulado() {
         return "buscarSimulado";

@@ -14,16 +14,22 @@ public class SecurityConfig {
 	 public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		
 		 http
-	        .authorizeHttpRequests(auth -> auth
-	        		//TORNA ESSAS ROTAS PÚBLICAS (NÃO PEDE LOGIN)
-	        	    .requestMatchers("login",  "/login/**", "/imagens/**","/css/**", "/js/**", "/erro403", "/error", "/teste/**", "/aluno/**").permitAll()
-	        	    
-	        	    //QUALQUER USUÁRIO AUTENTICADO PODE ACESSAR ESSAS ROTAS
-	        	    .requestMatchers("/inicio/**", "/questao/**", "/provas/**", "/primeira-senha").authenticated()
-	        	    
-	        	    //SOMENTE UM COORDENADOR PODE ACESSAS ESSAS ROTAS
-	        	    .requestMatchers("/coordenador/**", "/cursos/**", "/disciplinas/**", "/users/**").hasRole("ADMIN")
-	        	)
+         .authorizeHttpRequests(auth -> auth
+             .requestMatchers(
+                 "/login", "/login/**",
+                 "/imagens/**","/css/**", "/js/**",
+                 "/erro403", "/error",
+                 "/teste/**",
+                 "/aluno/**"
+             ).permitAll()
+
+             .requestMatchers("/inicio/**", "/questao/**", "/provas/**", "/primeira-senha")
+             .authenticated()
+
+             .requestMatchers("/coordenador/**", "/cursos/**", "/disciplinas/**", "/users/**")
+             .hasRole("ADMIN")
+         )
+
 	        
 	        //CUIDA DA PARTE DE LOGIN, CHAMA A API QUE TEM O LOGIN.HTML E LEVA AO INICIO.HTML
             .formLogin(form -> form

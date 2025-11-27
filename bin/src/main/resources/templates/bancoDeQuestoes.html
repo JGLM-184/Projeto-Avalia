@@ -4,10 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Banco de Questões</title>
-    <link rel="stylesheet" th:href="@{/style.css}">
+	<link rel="stylesheet" th:href="@{/css/style.css}">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+	
+	<link rel="icon" type="image/png" href="/imagens/logo.png">
 </head>
 
 <body class="coordinator-layout">
@@ -20,86 +22,145 @@
         <div class="card">
             
         <!-- Barra de Pesquisa -->
-		<form th:action="@{/questao/pesquisa}" method="get">
-		    <div class="search-input-container">
-		        <input type="text" class="form-input" id="pesquisaInput" name="nome" list="sugestoes"
-		               placeholder="Pesquisar questão por enunciado, disciplina ou curso...">
-		        <datalist id="sugestoes"></datalist>
-		        <button class="clear-button" type="submit">
-		            <span class="material-icons">search</span>
-		        </button>
-				<button class="clear-button" type="reset">
-		            <span class="material-icons">close</span>
-		        </button>
-		    </div>
-		</form>
-		
-		<!-- Checkbox para "apenas minhas questões" -->
-		<form th:action="@{/bancoDeQuestoes}" method="get" class="filtro-form">
-		    <div class="custom-checkbox-filtrar">
-		        <input type="checkbox" name="meus" id="meus"
-		               th:checked="${mostrarApenasMinhasQuestoes}" 
-		               onchange="this.form.submit()">
-		        <label for="meus">Mostrar apenas minhas questões</label>
-		    </div>
-		</form>
-		
-        <!-- Lista de Provas -->
-	<div class="card mt-3 shadow-sm">
-		<div class="provas-list">
-	        <h5 class="discipline-badge">Questões Cadastradas</h5>
-	    </div>
+        <form th:action="@{/questao/pesquisa}" method="get">
+            <div class="search-input-container">
+                <input type="text" class="form-input" id="pesquisaInput" name="nome" list="sugestoes"
+                       placeholder="Pesquisar questão por enunciado, disciplina ou curso...">
+                <datalist id="sugestoes"></datalist>
+                <button class="clear-button" type="submit">
+                    <span class="material-icons">search</span>
+                </button>
+                <a th:href="@{'/questao/banco'}" class="clear-button" type="reset">
+                    <span class="material-icons">close</span>
+                </a>
+            </div>
+        </form>
+        
+        <!-- Checkbox para "apenas minhas questões" -->
+        <form th:action="@{/questao/banco}" method="get" class="filtro-form">
+            <div class="custom-checkbox-filtrar">
+                <input type="checkbox" name="meus" id="meus"
+                       th:checked="${mostrarApenasMinhasQuestoes}" 
+                       onchange="this.form.submit()">
+                <label for="meus">Mostrar apenas minhas questões</label>
+            </div>
+        </form>
+        
+        <!-- Lista de questões -->
+        <div class="card mt-3 shadow-sm">
+            <div class="provas-list">
+                <h5 class="discipline-badge">Questões Cadastradas</h5>
+            </div>
             <div>
-				<tr th:each="questao : ${questoes}">
-                <div class="prova-item">
+                <!-- Mensagem de alerta se não houver resultados -->
+                <div th:if="${mensagem}" class="alert alert-warning text-center mt-3" role="alert">
+                    <span th:text="${mensagem}"></span>
+                </div>
+
+                <!-- Loop de questões -->
+                <div th:each="questao : ${questoes}" class="prova-item mb-3">
                     <div class="prova-content quebraTexto">
                         <div class="prova-meta">
-							<td><span th:text="${questao.autor.nome}" class="disciplineAutor"></span></td>
-							<br><br>
-                            <td><span th:text="${questao.disciplina.nome}" class="discipline"></span></td>
-							<td><span th:text="${questao.curso.nome}" class="discipline"></span></td>
-						
-							<td><span class="disciplineSimulado" th:text="${questao.simulado} ? 'Simulado' : 'Prova'"></span></td>
-							
+                            <span th:text="${questao.autor.nome}" class="disciplineAutor"></span>
+                            <br><br>
+                            <span th:text="${questao.disciplina.nome}" class="discipline"></span>
+                            <span th:text="${questao.curso.nome}" class="discipline"></span>
                         </div>
-                        <td th:text="${questao.enunciado}" class="quebraTexto"></td>
+						
+						<div>
+                            <span class="disciplineSimulado" th:text="${questao.simulado} ? 'Simulado' : 'Prova'"></span>
+                        </div>
+						
+                        <div class="quebraTexto" th:text="${questao.enunciado}"></div>
                     </div>
-					<div class="prova-actions">
-					    <!-- Editar: coordenador OU autor -->
-					    <a th:if="${professorLogado.coordenador or questao.autor.id == professorLogado.id}"
-					       th:href="@{'/teste/questoes/editar/' + ${questao.id}}"
-					       class="btn action-btn"
-					       style="background: rgb(243, 243, 243);">
-					        <span class="material-icons">edit</span>Editar
-					    </a>
 
-					    <!-- Excluir: somente coordenador -->
-					    <a th:if="${professorLogado.coordenador}"
-					       th:href="@{'/teste/questoes/excluir/' + ${questao.id}}"
-					       class="btn action-btn"
-					       style="background: rgb(255, 188, 185);"
-					       onclick="return confirm('Tem certeza que deseja excluir esta questão?')">
-					        <span class="material-icons">delete</span>Excluir
-					    </a>
-					</div>
-                </div>
+                    <div class="prova-actions mt-2">
+                        <!-- Editar: coordenador OU autor -->
+						<a th:if="${professorLogado.coordenador or questao.autor.id == professorLogado.id}"
+						   th:href="@{'/questao/gerenciar/editar/' + ${questao.id}}"
+						   class="btn action-btn"
+						   style="background: rgb(243, 243, 243);">
+						    <span class="material-icons">edit</span>Editar
+						</a>
+
+                        <!-- Excluir: somente coordenador -->
+                        <a th:if="${professorLogado.coordenador}"
+                           th:href="@{'/questao/gerenciar/excluir/' + ${questao.id}}"
+                           class="btn action-btn"
+                           style="background: rgb(248, 166, 116);"
+                           onclick="return confirm('Tem certeza que deseja excluir esta questão?')">
+                            <span class="material-icons">delete</span>Excluir
+                        </a>
+
+                        <!-- Ver Detalhes -->
+                        <button type="button" class="btn action-btn" 
+                                style="background: rgb(200, 230, 255);" 
+                                data-bs-toggle="modal"
+                                th:data-bs-target="'#detalhesModal__' + ${questao.id}">
+                            <span class="material-icons">info</span>
+                        </button>
+                    </div>
+                </div> 
             </div>
-        </div>
         </div>
     </div>
 </main>
 
-<!-- Script para metodo de pesquisa -->
+<!-- Modais de Detalhes (fora do loop) -->
+<div th:each="questao : ${questoes}">
+    <div class="modal fade" th:id="'detalhesModal__' + ${questao.id}" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" th:text="'Detalhes da Questão #' + ${questao.id}"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                </div>
+                <div class="modal-body quebraTexto">
+                    
+                    <p><strong>Autor:</strong> <span th:text="${questao.autor.nome}"></span></p>
+					<p><strong>Curso:</strong> <span th:text="${questao.curso.nome}"></span></p>
+                    <p><strong>Disciplina:</strong> <span th:text="${questao.disciplina.nome}"></span></p>
+                    <p><strong>Tipo:</strong> <span th:text="${questao.simulado} ? 'Simulado' : 'Prova'"></span></p>
+					<p><strong>Enunciado:</strong> <span th:text="${questao.enunciado}"></span></p>
+
+					<!-- Alternativas -->
+					<div>
+					  <p><strong>Alternativas:</strong></p>
+					  <ul>
+					    <li th:each="alt, iterStat : ${questao.alternativas}">
+					      <span th:text="${'abcde'[iterStat.index]} + ') '"></span>
+					      <span th:text="${alt.texto}"></span>
+					      <span th:if="${alt.correto}"> ✅</span>
+					    </li>
+					  </ul>
+					</div>
+
+					<!-- Imagem, se houver -->
+					<div th:if="${questao.imagem != null and questao.imagem != ''}" class="mt-2">
+					    <img th:src="${questao.imagem}" 
+					         alt="Imagem da Questão" class="img-fluid rounded">
+					</div>
+					
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Script para método de pesquisa -->
 <script>
 document.getElementById("pesquisaInput").addEventListener("input", function() {
     const termo = this.value;
-    if (termo.length < 2) return; // só busca se digitar 2+ letras
+    if (termo.length < 2) return;
 
     fetch(`/questao/sugestoes?termo=${encodeURIComponent(termo)}`)
         .then(res => res.json())
         .then(data => {
             const lista = document.getElementById("sugestoes");
-            lista.innerHTML = ""; // limpa sugestões antigas
+            lista.innerHTML = "";
             data.forEach(item => {
                 const option = document.createElement("option");
                 option.value = item;
@@ -108,6 +169,5 @@ document.getElementById("pesquisaInput").addEventListener("input", function() {
         });
 });
 </script>
-
 </body>
 </html>

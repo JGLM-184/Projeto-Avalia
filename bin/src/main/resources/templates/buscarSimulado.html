@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buscar Simulado</title>
+
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+	
+	<link rel="icon" type="image/png" href="/imagens/logo.png">
+</head>
+
+<body class="login-page">
+
+    <div class="card login-card">
+
+        <h3><b>Buscar Simulado</b></h3>
+
+        <p class="instrucao">
+            Digite o código do simulado fornecido pelo professor para iniciar.
+        </p>
+
+        <!-- MENSAGEM DE ERRO (se existir) -->
+        <p th:if="${erro}" th:text="${erro}" style="color: red; font-weight: bold;"></p>
+
+        <!-- ENVIA PARA /aluno/fazer-simulado?codigo=XXXXX -->
+        <form th:action="@{/aluno/fazer-simulado}" method="get">
+
+            <div class="form-group">
+                <input type="text" id="codigo" name="codigo" class="form-input" placeholder=" " required>
+                <label for="codigo">Código do Simulado</label>
+            </div>
+
+            <!-- O botão agora SUBMETE o form -->
+            <button type="submit" class="btn btn-primary">Buscar</button>
+
+        </form>
+
+    </div>
+
+</body>
+</html>
